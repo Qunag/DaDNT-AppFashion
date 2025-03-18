@@ -1,0 +1,10 @@
+backend/.env
+
+
+backend/node_modules/
+FashionApp/node_modules/
+
+
+
+FashionApp/.expo/
+FashionApp/.expo-shared/
