@@ -1,10 +1,12 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Animated, StyleSheet, Dimensions, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
+  const navigation = useNavigation();
   return (
     <>
       {/* Nền mờ khi Profile mở */}
@@ -21,9 +23,10 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name = "bag-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Oders</Text>
+        <TouchableOpacity style={styles.button}
+          onPress={() => navigation.navigate("Cart")}>
+          <Ionicons name="bag-outline" size={24} color="white" />
+          <Text style={styles.buttonText}>Cart</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
           <Ionicons name="heart-outline" size={24} color="white" />
@@ -53,7 +56,8 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           <Ionicons name="alert-circle-outline" size={24} color="white" />
           <Text style={styles.buttonText}>About</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button}
+          onPress={() => navigation.navigate("Login")}>
           <Ionicons name="log-out-outline" size={24} color="white" />
           <Text style={styles.buttonText}>LogOut</Text>
         </TouchableOpacity>
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 250,
-    backgroundColor: "#8077fe",
+    backgroundColor: "#6342E8",
     padding: 20,
     shadowColor: "#000",
     shadowOpacity: 0.3,
@@ -89,6 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    marginTop: 55,
   },
   avatar: {
     width: 50,
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
-    backgroundColor: "#8077fe",
+    backgroundColor: "#6342E8",
     borderRadius: 5,
     marginVertical: 5,
     alignItems: "center",

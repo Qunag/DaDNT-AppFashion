@@ -20,15 +20,15 @@ export default function Cart() {
                 {/* Hình ảnh sản phẩm */}
                 <Image
                     source={{
-                        uri: "https://neonize.gumlet.io/wp-content/uploads/2022/08/Valorant-Logo-Neon-Light-Sign-Neonize.jpg",
+                        uri: "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739805514/AirJordan1Low_Black.jpg",
                     }}
                     style={styles.image}
                 />
 
                 <View style={styles.content}>
-                    <Text style={styles.productName}>Printed Shirt</Text>
-                    <Text style={styles.collection}>GEETA COLLECTION</Text>
-                    <Text style={styles.price}>$28.00 <Text style={styles.currency}>USD</Text></Text>
+                    <Text style={styles.productName}>Air Jordan 1 Low</Text>
+                    <Text style={styles.collection}>Nike</Text>
+                    <Text style={styles.price}>3600000<Text style={styles.currency}>VND</Text></Text>
                     <View style={styles.quantityContainer}>
                         <QuantitySelector onChange={(value) => console.log("Số lượng:", value)} />
                     </View>
@@ -43,15 +43,19 @@ export default function Cart() {
             <TouchableOpacity style={styles.checkoutButton} onPress={() => setCheckoutVisible(true)}>
                 <Text style={styles.checkoutText}>GO TO CHECKOUT</Text>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.checkoutPrice}>$135.96</Text>
+                    <Text style={styles.checkoutPrice}>3600000</Text>
                 </View>
             </TouchableOpacity>
 
             {/* Màn hình Checkout */}
-            <CheckoutScreen visible={checkoutVisible} onClose={() => setCheckoutVisible(false)} />
+            <CheckoutScreen visible={checkoutVisible} onClose={() => {
+                setCheckoutVisible(false);
+            }} />
         </View>
     );
 }
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -62,7 +66,8 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 20,
-        margin: 20,
+        marginTop: 50,
+        marginBottom: 20
     },
     itemBox: {
         flexDirection: "row",
@@ -77,6 +82,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         width: "90%",
         position: "relative",
+        marginTop: 30
     },
     image: {
         width: 60,
@@ -91,7 +97,7 @@ const styles = StyleSheet.create({
     productName: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "#6a1b9a",
+        color: "#6342E8",
     },
     collection: {
         fontSize: 12,
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#6a1b9a",
+        backgroundColor: "#6342E8",
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderRadius: 50,
@@ -154,5 +160,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 20,
         top: 40,
-      },
+    },
 });
+
+

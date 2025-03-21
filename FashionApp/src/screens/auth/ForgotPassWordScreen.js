@@ -1,32 +1,30 @@
-// ForgotPasswordScreen.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import InputField from '../components/InputField';
 import AuthButton from '../components/AuthButton';
-import styles from '../styles/LoginStyles';
+import { forgotPassword } from '../services/authService';
+import styles from '../styles/ForgotPasswordStyles';
+import { StyleSheet } from 'react-native';
+import { COLORS, SIZES, FONTS } from '../constants/theme';
 
 export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState('');
-
     const navigation = useNavigation();
 
     const handleForgotPassword = async () => {
         try {
-            const response = await axios.post('http://10.0.2.2:3000/v1/auth/forgot-password', { email });
+            await forgotPassword(email);
             Alert.alert('Success', 'A password reset link has been sent to your email.');
-            navigation.navigate('TestLoginScreen');
+            navigation.navigate('Login');
         } catch (error) {
-            console.error('Forgot password error:', error);
-            Alert.alert('Error', 'Failed to send reset link. Please try again.');
+            Alert.alert('Error', error.message || 'Failed to send reset link. Please try again.');
         }
     };
 
     return (
         <View style={styles.container}>
-            {/* Nửa trên */}
             <ImageBackground source={require('../assets/anh2.png')} style={styles.topSection}>
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="white" />
@@ -35,9 +33,8 @@ export default function ForgotPasswordScreen() {
                 <Text style={styles.welcomeText}>Forgot Password</Text>
             </ImageBackground>
 
-            {/* Nửa dưới */}
             <View style={styles.bottomSection}>
-                <Text style={{ fontSize: 16, marginBottom: 20 }}>
+                <Text style={styles.instructionText}>
                     Enter your email to receive a password reset link.
                 </Text>
                 <InputField
@@ -49,13 +46,36 @@ export default function ForgotPasswordScreen() {
                     onChangeText={setEmail}
                     autoCapitalize="none"
                 />
-
                 <AuthButton title="SEND RESET LINK" onPress={handleForgotPassword} />
-
-                <TouchableOpacity onPress={() => navigation.navigate('TestLoginScreen')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <Text style={styles.signupText}>Back to Login</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: COLORS.white },
+    topSection: { flex: 1.2, justifyContent: 'center', alignItems: 'center', width: '100%' },
+    overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+    backButton: { position: 'absolute', top: 40, left: 10, zIndex: 10, padding: 10 },
+    welcomeText: { fontSize: 24, fontWeight: 'bold', color: COLORS.white, textAlign: 'center' },
+    bottomSection: {
+        flex: 1.8,
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        padding: SIZES.padding,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: -3 },
+        shadowRadius: 10,
+    },
+    instructionText: { fontSize: SIZES.font, marginBottom: 20, textAlign: 'center' },
+    signupText: { color: COLORS.primary, fontWeight: 'bold', marginTop: 15 },
+});
+
+

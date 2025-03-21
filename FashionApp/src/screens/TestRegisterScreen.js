@@ -22,7 +22,7 @@ export default function RegisterScreen() {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:3000/v1/auth/register', {
+            const response = await axios.post('http://10.0.2.2:3000/v1/auth/register', {
                 name,
                 email,
                 password,

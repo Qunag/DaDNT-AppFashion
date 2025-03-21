@@ -1,0 +1,113 @@
+{
+    "project_root": "my-clothing-store",
+    "folders": {
+        "src": {
+            "components": "Chứa các component dùng chung như Button, Card, ProductItem, ...",
+            "screens": "Chứa các màn hình chính như HomeScreen, ProductDetailScreen, CartScreen, CheckoutScreen, ...",
+            "navigation": "Chứa cấu hình điều hướng sử dụng React Navigation",
+
+            "hooks": "Chứa các custom hooks như useAuth, useCart, ...",
+            "utils": "Chứa các hàm tiện ích như formatCurrency, validateInput, ...",
+            "constants": "Chứa các hằng số như API endpoints, theme styles, ...",
+            "services": "Chứa các API call services như authService, productService, cartService, ..."
+        },
+        "assets": "Chứa hình ảnh, icon, fonts, ...",
+        "config": "Chứa các file cấu hình như theme.js, env.js, ...",
+        "tests": "Chứa các file test cho ứng dụng"
+    },
+    "files": {
+        "App.js": "Điểm khởi đầu của ứng dụng",
+        "package.json": "Chứa danh sách dependencies và scripts",
+        "babel.config.js": "Cấu hình Babel",
+        "metro.config.js": "Cấu hình Metro bundler"
+    }
+}
+
+
+
+screens/
+│── Auth/               # Chứa các màn hình liên quan đến xác thực người dùng
+│   │── LoginScreen.js
+│   │── RegisterScreen.js
+│   │── ForgotPasswordScreen.js
+│   │── ResetPasswordScreen.js
+│
+│── Home/               # Màn hình trang chủ và các danh mục chính
+│   │── HomeScreen.js
+│   │── CategoryScreen.js
+│
+│── Product/            # Chứa các màn hình liên quan đến sản phẩm
+│   │── ProductListScreen.js
+│   │── ProductDetailScreen.js
+│
+│── Cart/               # Màn hình giỏ hàng và thanh toán
+│   │── CartScreen.js
+│   │── CheckoutScreen.js
+│   │── OrderSummaryScreen.js
+│
+│── User/               # Chứa các màn hình liên quan đến tài khoản người dùng
+│   │── ProfileScreen.js
+│   │── EditProfileScreen.js
+│   │── OrderHistoryScreen.js
+│   │── OrderDetailScreen.js
+│
+│── Settings/           # Cài đặt ứng dụng
+│   │── SettingsScreen.js
+│   │── ChangePasswordScreen.js
+│   │── NotificationsScreen.js
+│
+│── Search/             # Tìm kiếm sản phẩm
+│   │── SearchScreen.js
+│   │── SearchResultsScreen.js
+│
+│── Wishlist/           # Danh sách yêu thích
+│   │── WishlistScreen.js
+│
+│── Support/            # Hỗ trợ khách hàng
+│   │── ContactUsScreen.js
+│   │── FAQScreen.js
+│
+│── Onboarding/         # Màn hình giới thiệu ứng dụng
+│   │── OnboardingScreen.js
+│   │── WelcomeScreen.js
+│
+│── index.js            # Export tất cả màn hình để dễ import trong Navigation
+
+
+
+
+components/
+│── UI/                    # Các thành phần giao diện chung
+│   │── Button.js
+│   │── Card.js
+│   │── Divider.js
+│   │── Modal.js
+│   │── Spinner.js
+│
+│── Auth/                  # Các thành phần liên quan đến xác thực
+│   │── InputField.js
+│   │── AuthButton.js
+│
+│── Product/               # Thành phần hiển thị sản phẩm
+│   │── ProductItem.js
+│   │── ProductList.js
+│   │── ProductCard.js
+│
+│── Cart/                  # Thành phần giỏ hàng
+│   │── CartItem.js
+│   │── CartSummary.js
+│
+│── User/                  # Thành phần người dùng
+│   │── Avatar.js
+│   │── ProfileHeader.js
+│
+│── Forms/                 # Các thành phần input chung
+│   │── TextInputField.js
+│   │── PasswordInput.js
+│   │── DropdownSelect.js
+│
+│── Navigation/            # Thanh điều hướng
+│   │── BottomTabNavigator.js
+│   │── DrawerNavigator.js
+│
+│── index.js               # Export tất cả các component để dễ import

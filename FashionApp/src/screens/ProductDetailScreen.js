@@ -60,7 +60,7 @@ const ProductDetailScreen = () => {
       {/* Chọn size và nút thêm vào giỏ hàng */}
       <View style={styles.footer}>
         <View style={styles.sizeContainer}>
-          {["S", "M", "L", "XL", "XXL"].map((size) => (
+          {["38", "39", "40", "41", "42"].map((size) => (
             <TouchableOpacity
               key={size}
               style={[styles.sizeButton, selectedSize === size && styles.selectedSize]}
@@ -70,7 +70,8 @@ const ProductDetailScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity style={styles.addToCartButton}>
+        <TouchableOpacity style={styles.addToCartButton}
+          onPress={() => navigation.navigate("Home")}>
           <Ionicons name="cart-outline" size={24} color="white" />
           <Text style={styles.addToCartText}>ADD TO CART</Text>
         </TouchableOpacity>
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   selectedSize: {
-    backgroundColor: "#8077fe",
+    backgroundColor: "#6342E8",
   },
   sizeText: {
     fontSize: 16,
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     flexDirection: "row",
-    backgroundColor: "#8077fe",
+    backgroundColor: "#6342E8",
     padding: 15,
     borderRadius: 10,
     justifyContent: "center",

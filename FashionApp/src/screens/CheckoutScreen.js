@@ -1,9 +1,25 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import SelectionModal from "../components/SelectionModal";
 
 export default function CheckoutScreen({ visible, onClose }) {
-    const navigator = useNavigation();
+    const navigation = useNavigation();
+
+    const [deliveryMethod, setDeliveryMethod] = useState("Chọn");
+    const [paymentMethod, setPaymentMethod] = useState("Chọn");
+    const [promoCode, setPromoCode] = useState("Chọn");
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalOptions, setModalOptions] = useState([]);
+    const [onSelectOption, setOnSelectOption] = useState(() => () => { });
+
+    const openModal = (options, onSelect) => {
+        setModalOptions(options);
+        setOnSelectOption(() => onSelect);
+        setModalVisible(true);
+    };
+
     return (
         <Modal visible={visible} animationType="slide" transparent={true}>
             <View style={styles.overlay}>
@@ -14,47 +30,61 @@ export default function CheckoutScreen({ visible, onClose }) {
 
                     <Text style={styles.header}>Checkout</Text>
 
-                    <View style={styles.option}>
-                        <Text style={styles.label}>Delivery</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.actionText}>Select Method ▶</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {/* Delivery Option */}
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => openModal(["Mặc định", "Chậm", "Hỏa tốc"], setDeliveryMethod)}
+                    >
+                        <Text style={styles.label}>Phương thức giao hàng</Text>
+                        <Text style={styles.actionText}>{deliveryMethod}</Text>
+                    </TouchableOpacity>
 
-                    <View style={styles.option}>
-                        <Text style={styles.label}>Payment</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.actionText}>💳 ▶</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {/* Payment Option */}
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => openModal(["MoMo", "Thanh toán khi nhận hàng", "Thẻ tín dụng"], setPaymentMethod)}
+                    >
+                        <Text style={styles.label}>Phương thức Thanh Toán</Text>
+                        <Text style={styles.actionText}>{paymentMethod}</Text>
+                    </TouchableOpacity>
 
-                    <View style={styles.option}>
-                        <Text style={styles.label}>Promo Code</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.actionText}>Pick discount ▶</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {/* Promo Code */}
+                    <TouchableOpacity
+                        style={styles.option}
+                        onPress={() => openModal(["Giảm 10%", "Giảm 20%", "Miễn phí ship"], setPromoCode)}
+                    >
+                        <Text style={styles.label}>Mã giảm giá</Text>
+                        <Text style={styles.actionText}>{promoCode}</Text>
+                    </TouchableOpacity>
 
-                    <View style={styles.option}>
-                        <Text style={styles.label}>Total Cost</Text>
-                        <Text style={styles.totalCost}>$135.96 ▶</Text>
+                    {/* Total Cost */}
+                    <View style={styles.totalCostContainer}>
+                        <Text style={styles.label}>Thanh toán</Text>
+                        <Text style={styles.totalCost}>3,600,000₫</Text>
                     </View>
 
                     <Text style={styles.terms}>
-                        By placing an order you agree to our Terms And Conditions.
+                        Bằng cách đặt hàng, bạn đồng ý với Điều khoản và Điều kiện của chúng tôi.
                     </Text>
 
                     <TouchableOpacity
                         style={styles.placeOrderButton}
                         onPress={() => {
-                            onClose();  // Đóng modal
-                            setTimeout(() => navigator.navigate("Success"), 300); // Chuyển màn hình sau khi modal đóng
+                            onClose();
+                            setTimeout(() => navigation.navigate("Success"), 300);
                         }}
                     >
-                        <Text style={styles.placeOrderText}>PLACE ORDER</Text>
+                        <Text style={styles.placeOrderText}>ĐẶT HÀNG</Text>
                     </TouchableOpacity>
                 </View>
             </View>
+
+            <SelectionModal
+                visible={modalVisible}
+                options={modalOptions}
+                onSelect={onSelectOption}
+                onClose={() => setModalVisible(false)}
+            />
         </Modal>
     );
 }
@@ -63,19 +93,21 @@ const styles = StyleSheet.create({
     overlay: {
         flex: 1,
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-        justifyContent: "flex-end",
+        justifyContent: "center",
+        alignItems: "center",
     },
     container: {
+        width: "90%",
         backgroundColor: "white",
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        borderRadius: 20,
         padding: 20,
-        paddingBottom: 40,
+        borderWidth: 2,
+        borderColor: "#6342E8",
     },
     closeButton: {
         position: "absolute",
-        right: 20,
-        top: 20,
+        right: 15,
+        top: 15,
     },
     closeText: {
         fontSize: 18,
@@ -91,20 +123,28 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderWidth: 1,
+        borderColor: "#6342E8",
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginVertical: 5,
     },
     label: {
         fontSize: 16,
     },
     actionText: {
-        color: "#6a1b9a",
+        color: "#6342E8",
         fontWeight: "bold",
+    },
+    totalCostContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
     },
     totalCost: {
         fontSize: 16,
         fontWeight: "bold",
-        color: "#6a1b9a",
+        color: "#6342E8",
     },
     terms: {
         fontSize: 12,
@@ -113,7 +153,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     placeOrderButton: {
-        backgroundColor: "#6a1b9a",
+        backgroundColor: "#6342E8",
         paddingVertical: 15,
         borderRadius: 50,
         alignItems: "center",

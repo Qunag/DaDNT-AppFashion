@@ -17,7 +17,7 @@ export default function TestLoginScreen() {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/v1/auth/login', { email, password });
+            const response = await axios.post('http://10.0.2.2:3000/v1/auth/login', { email, password });
             Alert.alert('Login Successful', 'You have successfully logged in.');
             navigation.navigate('TestHomeScreen');
         } catch (error) {

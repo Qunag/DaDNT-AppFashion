@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
-
 import CustomButton from '../components/Button';
 import { Ionicons } from '@expo/vector-icons';
-
-
 import { useNavigation } from '@react-navigation/native';
 
 const SplashScreen = () => {
@@ -18,15 +15,14 @@ const SplashScreen = () => {
       <Image source={require('../assets/anh2.png')} style={styles.anh2} />
       <Image source={require('../assets/anh4.png')} style={styles.anh4} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Geeta</Text>
+        <Text style={styles.text}>Panda</Text>
         <Text style={{ fontSize: 20, color: '#000', textAlign: 'center', fontWeight: 'bold', marginTop: 110 }}>Create your fashion{'\n'}in your own way</Text>
-        <Text style={{ fontSize: 12, fontWeight: 'bold', marginTop: 30 }}>Each men and women has their own style, Geeta {'\n'}          help you to create your unique style.</Text>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', marginTop: 30, textAlign: 'center' }}>Each men and women has their own style,{'\n'}  Panda help you to create your unique style.</Text>
 
 
-        <CustomButton title="LOGIN" type='outline' onPress={() => navigation.push('Login')} />
+        <CustomButton title="LOGIN" type='fill' onPress={() => navigation.push('Login')} />
         <Text style={{ top: 98, fontSize: 14, fontWeight: 'bold' }}>--- OR ---</Text>
-        <CustomButton title="REGISTER" type='fill' onPress={() => navigation.push('Register')} />
-
+        <CustomButton title="REGISTER" type='outline' onPress={() => navigation.push('Register')} />
 
       </View>
     </View>
@@ -36,7 +32,6 @@ const SplashScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    resizeMode: 'contain',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -55,13 +50,10 @@ const styles = StyleSheet.create({
   },
   anh4: {
     flex: 1,
-
-
-    width: 414, // Chiều rộng ảnh
-    height: 875, // Chiều cao ảnh
-    position: 'absolute', // Đặt ảnh này lên trên anh 2
+    width: 414,
+    height: 875,
+    position: 'absolute', // Đặt ảnh này lên trên anh 1
     resizeMode: 'contain',
-
   },
   textContainer: {
     position: 'absolute',
@@ -69,7 +61,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
-
   text: {
     fontSize: 60,
     top: 40,

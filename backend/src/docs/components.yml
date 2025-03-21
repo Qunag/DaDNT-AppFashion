@@ -35,9 +35,9 @@ components:
       type: object
       properties:
         access:
-          $ref: '#/components/schemas/Token'
+          $ref: "#/components/schemas/Token"
         refresh:
-          $ref: '#/components/schemas/Token'
+          $ref: "#/components/schemas/Token"
 
     Error:
       type: object
@@ -53,7 +53,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 400
             message: Email already taken
@@ -62,7 +62,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 401
             message: Please authenticate
@@ -71,7 +71,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 403
             message: Forbidden
@@ -80,7 +80,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 404
             message: Not found
