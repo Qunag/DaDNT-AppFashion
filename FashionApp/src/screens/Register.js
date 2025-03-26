@@ -19,7 +19,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleChange = (field, value) => {
-    setForm({ ...form, [field]: value });
+    setForm(prev => ({ ...prev, [field]: value }));
   };
 
   const handleRegister = async () => {

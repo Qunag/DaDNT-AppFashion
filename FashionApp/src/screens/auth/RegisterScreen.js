@@ -30,7 +30,7 @@ export default function RegisterScreen() {
         try {
             await registerUser(name, email, password);
             Alert.alert('Success', 'Registration successful! You can now log in.');
-            navigation.navigate('LoginScreen');
+            navigation.navigate('Login');
         } catch (error) {
             Alert.alert('Registration Failed', error);
         }

@@ -34,7 +34,11 @@ const queryUsers = async (filter, options) => {
  * @returns {Promise<User>}
  */
 const getUserById = async (id) => {
-  return User.findById(id);
+  const user = await User.findById(id);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  return user;
 };
 
 /**

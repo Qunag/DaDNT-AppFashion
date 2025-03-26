@@ -1,6 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
+
+
+
 const CustomButton = ({ title, onPress, type }) => {
   return (
     <TouchableOpacity style={type === 'outline' ? styles.outline : styles.fill} onPress={onPress}>
@@ -8,6 +11,7 @@ const CustomButton = ({ title, onPress, type }) => {
     </TouchableOpacity>
   );
 };
+
 
 export default CustomButton;
 
