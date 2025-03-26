@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { password, objectId } = require('./custom.validation');
+const { roles } = require('../config/roles');
 
 const createUser = {
   body: Joi.object().keys({
@@ -30,11 +31,18 @@ const updateUser = {
   params: Joi.object().keys({
     userId: Joi.required().custom(objectId),
   }),
+
+
   body: Joi.object()
     .keys({
+      name: Joi.string(),
       email: Joi.string().email(),
       password: Joi.string().custom(password),
-      name: Joi.string(),
+      role: Joi.string().valid(...roles),
+      phone: Joi.string().regex(/^\d{9,15}$/),
+      address: Joi.string(),
+      loyalty_points: Joi.number().min(0),
+      isEmailVerified: Joi.boolean(),
     })
     .min(1),
 };
