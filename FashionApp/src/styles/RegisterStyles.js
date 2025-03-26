@@ -3,22 +3,22 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#fff' },
     topSection: { flex: 1.2, justifyContent: 'center', alignItems: 'center', width: '100%' },
-    overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+    overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0, 0, 0, 0.1)' },
     backButton: { position: 'absolute', top: 40, left: 10, zIndex: 10, padding: 10 },
-    welcomeText: { fontSize: 24, fontWeight: 'bold', color: 'white', textAlign: 'center' },
+    welcomeText: { fontSize: 24, fontWeight: 'bold', color: 'black', textAlign: 'center' },
     subText: { fontSize: 16, color: 'white', textAlign: 'center', marginTop: 5 },
     bottomSection: {
-        flex: 1.8,
-        backgroundColor: 'white',
+        flex: 2,
+        padding: 20,
+        backgroundColor: '#FFFFFF',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        padding: 20,
-        alignItems: 'center',
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: -3 },
         shadowRadius: 10,
     },
+
     inputWrapper: { width: '100%', marginBottom: 15 },
     label: { alignSelf: 'flex-start', marginBottom: 5, fontWeight: 'bold' },
     inputContainer: {
