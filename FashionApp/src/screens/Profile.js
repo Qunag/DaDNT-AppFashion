@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Animated, StyleSheet, Dimensions, Image } from "react-native";
+import { View, Text, TouchableOpacity, Animated, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-const { width } = Dimensions.get("window");
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
+
   return (
     <>
       {/* Nền mờ khi Profile mở */}
@@ -14,50 +14,38 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
 
       {/* Bảng Profile */}
       <Animated.View style={[styles.profilePanel, { left: profileAnim }]}>
-        {/* Thông tin người dùng */}
-        <View style={styles.profileHeader}>
-          <Image source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} style={styles.avatar} />
+        {/* Thông tin người dùng - Chuyển thành NÚT */}
+        <TouchableOpacity 
+          style={styles.profileHeader} 
+          onPress={() => navigation.navigate("EditProfile")} // Điều hướng đến EditProfileScreen
+        >
+          <Image 
+            source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} 
+            style={styles.avatar} 
+          />
           <View style={styles.userInfo}>
             <Text style={styles.userName}>Trần Phạm Nhật Quân</Text>
             <Text style={styles.userEmail}>quan@gmail.com</Text>
           </View>
-        </View>
+          <Ionicons name="chevron-forward-outline" size={20} color="white" />
+        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}
-          onPress={() => navigation.navigate("Cart")}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Cart")}>
           <Ionicons name="bag-outline" size={24} color="white" />
           <Text style={styles.buttonText}>Cart</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name="heart-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>WishList</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name="egg-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Delivery Address</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name="card-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Payment Methods</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name="ticket-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Promo Cord</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Ionicons name="notifications-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Notifications</Text>
-        </TouchableOpacity>
+
         <TouchableOpacity style={styles.button}>
           <Ionicons name="help-circle-outline" size={24} color="white" />
           <Text style={styles.buttonText}>Help</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.button}>
           <Ionicons name="alert-circle-outline" size={24} color="white" />
           <Text style={styles.buttonText}>About</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}
-          onPress={() => navigation.navigate("Login")}>
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Login")}>
           <Ionicons name="log-out-outline" size={24} color="white" />
           <Text style={styles.buttonText}>LogOut</Text>
         </TouchableOpacity>
@@ -78,7 +66,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowOffset: { width: 2, height: 0 },
     elevation: 10,
-    zIndex: 100, // Luôn nổi trên cùng
+    zIndex: 100,
   },
   overlay: {
     position: "absolute",
@@ -94,6 +82,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     marginTop: 55,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.1)", // Hiệu ứng nhấn đẹp hơn
   },
   avatar: {
     width: 50,

@@ -69,7 +69,6 @@ const HomeScreen = () => {
 
       )}
  
-      {/* <Watch /> */}
 
     </View>
   );

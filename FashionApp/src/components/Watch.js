@@ -1,14 +1,6 @@
 import React from "react";
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
-// const products = [
-//   { id: "1", name: "Sản phẩm 1",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "2", name: "Sản phẩm 2",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "3", name: "Sản phẩm 3",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "4", name: "Sản phẩm 4",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "5", name: "Sản phẩm 5",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "6", name: "Sản phẩm 6",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-// ];
 
 const Watch = () => {
   const handlePress = (item) => {

@@ -1,43 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import SearchBar from "./SearchBar";
 
 export default function Toolbar({ toggleProfile }) {
-      const navigation = useNavigation();
+  const navigation = useNavigation();
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
     <View style={styles.container}>
-      <View style={styles.box1}>
-        {/* Logo */}
-        <TouchableOpacity>
-          <Text style={styles.text}>Panda.</Text>
-        </TouchableOpacity>
-      </View>
+      {showSearch ? (
+        <SearchBar onClose={() => setShowSearch(false)} />
+      ) : (
+        <>
+          <View style={styles.box1}>
+            <TouchableOpacity>
+              <Text style={styles.text}>Panda.</Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={styles.box2}>
-        {/* Các nút chức năng */}
-        <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        </TouchableOpacity>
+          <View style={styles.box2}>
+            <TouchableOpacity>
+              <Ionicons name="notifications-outline" size={24} color="black" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Cart")}>
-          <Ionicons name="bag-outline" size={24} color="black" />
-        </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+              <Ionicons name="bag-outline" size={24} color="black" />
+            </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Ionicons name="heart-outline" size={24} color="black" />
-        </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowSearch(true)}>
+              <Ionicons name="search-outline" size={24} color="black" />
+            </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Ionicons name="search-outline" size={24} color="black" />
-        </TouchableOpacity>
-
-        {/* Nút Menu mở Profile */}
-        <TouchableOpacity onPress={toggleProfile}>
-          <Ionicons name="menu-outline" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity onPress={toggleProfile}>
+              <Ionicons name="menu-outline" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 }
