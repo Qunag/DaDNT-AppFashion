@@ -1,26 +1,38 @@
 const Joi = require('joi');
 
-const createProduct = {
+const addNewProduct = {
     body: Joi.object().keys({
         name: Joi.string().required(),
+        sizes: Joi.array().items(Joi.number()).min(1).required(),
+        brand: Joi.string().required(),
         price: Joi.number().min(0).required(),
-        description: Joi.string().allow(''),
-        stock: Joi.number().min(0).required(),
+        quantity: Joi.number().min(0).required(),
+        colors: Joi.array().items(
+            Joi.object({
+                color_name: Joi.string().required(),
+                image_url: Joi.string().uri().required(),
+            })
+        ),
     }),
 };
 
 const getProducts = {
     query: Joi.object().keys({
-        name: Joi.string(),
-        sortBy: Joi.string(),
-        limit: Joi.number().integer(),
-        page: Joi.number().integer(),
+        brand: Joi.string().optional(),
+        page: Joi.number().integer().min(1).default(1),
+        limit: Joi.number().integer().min(1).default(10),
     }),
 };
 
-const getProduct = {
+const getProductById = {
     params: Joi.object().keys({
         productId: Joi.string().required(),
+    }),
+};
+
+const searchProductsByName = {
+    params: Joi.object().keys({
+        name: Joi.string().required(),
     }),
 };
 
@@ -30,12 +42,19 @@ const updateProduct = {
     }),
     body: Joi.object()
         .keys({
-            name: Joi.string(),
-            price: Joi.number().min(0),
-            description: Joi.string().allow(''),
-            stock: Joi.number().min(0),
+            name: Joi.string().optional(),
+            sizes: Joi.array().items(Joi.number()).min(1).optional(),
+            brand: Joi.string().optional(),
+            price: Joi.number().min(0).optional(),
+            quantity: Joi.number().min(0).optional(),
+            colors: Joi.array().items(
+                Joi.object({
+                    color_name: Joi.string().required(),
+                    image_url: Joi.string().uri().required(),
+                })
+            ).optional(),
         })
-        .min(1), // Đảm bảo có ít nhất 1 trường để cập nhật
+        .min(1),
 };
 
 const deleteProduct = {
@@ -44,10 +63,26 @@ const deleteProduct = {
     }),
 };
 
+const updateProductQuantities = {
+    body: Joi.object().keys({
+        updates: Joi.array()
+            .items(
+                Joi.object({
+                    productId: Joi.string().required(),
+                    quantity: Joi.number().required(), // Có thể âm để trừ
+                })
+            )
+            .min(1)
+            .required(),
+    }),
+};
+
 module.exports = {
-    createProduct,
+    addNewProduct,
     getProducts,
-    getProduct,
+    getProductById,
+    searchProductsByName,
     updateProduct,
     deleteProduct,
+    updateProductQuantities,
 };

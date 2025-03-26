@@ -3,15 +3,14 @@ import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import CustomButton from '../components/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import BackButton from '../components/BackButton';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-      </TouchableOpacity>
+      <BackButton />
       <Image source={require('../assets/anh2.png')} style={styles.anh2} />
       <Image source={require('../assets/anh4.png')} style={styles.anh4} />
       <View style={styles.textContainer}>

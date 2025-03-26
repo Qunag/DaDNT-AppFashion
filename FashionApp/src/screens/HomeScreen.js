@@ -39,7 +39,10 @@ const HomeScreen = () => {
       <Toolbar toggleProfile={toggleProfile} />
       <Profile isVisible={isProfileVisible} toggleProfile={toggleProfile} profileAnim={profileAnim} />
       <Brand />
+
       <Watch products={products} loading={loading} />
+
+     
     </View>
   );
 };
@@ -51,6 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f8f8",
     position: "relative",
   },
+
 });
 
 export default HomeScreen;

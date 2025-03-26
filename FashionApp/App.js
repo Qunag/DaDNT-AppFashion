@@ -57,7 +57,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoadingScreen from './src/screens/Loading';
+import LoadingScreen from './src/screens/LoadingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import LoginScreen from './src/screens/Login';
 import RegisterScreen from './src/screens/Register';
@@ -67,7 +67,12 @@ import FailedScreen from "./src/screens/FailedScreen";
 import HomeScreen from './src/screens/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
+
 import EditProfileScreen from './src/screens/EditProfileScreen';
+
+import CodeScreen from './src/screens/CodeScreen';
+import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+
 
 
 const Stack = createStackNavigator();
@@ -83,6 +88,8 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="CodeScreen" component={CodeScreen} />
+        <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
         <Stack.Screen name="Success" component={SuccessScreen} />
         <Stack.Screen name="Failed" component={FailedScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />

@@ -1,8 +1,6 @@
-const isEmulator = false; // Đặt thành true khi chạy trên emulator, false trên máy thật
+// const isEmulator = false; // Đặt thành true khi chạy trên emulator, false trên máy thật
 
-const API_URL = isEmulator
-    ? 'http://10.0.2.2:3000/v1' // Emulator Android
-    : 'http://192.168.1.100:3000/v1'; // Thay 192.168.1.x bằng IP LAN của máy tính
+const API_URL = "http://localhost:3000/v1";
 export const API_ENDPOINTS = {
     AUTH: {
         REGISTER: `${API_URL}/auth/register`,

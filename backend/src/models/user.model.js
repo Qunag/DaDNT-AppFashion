@@ -40,6 +40,24 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
+    phone: {
+      type: String,
+      trim: true,
+      validate(value) {
+        if (value && !validator.isMobilePhone(value, 'any')) {
+          throw new Error('Invalid phone number');
+        }
+      },
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    loyalty_points: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -50,7 +68,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// add plugin that converts mongoose to json
+// Add plugins
 userSchema.plugin(toJSON);
 userSchema.plugin(paginate);
 

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Alert, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BackButton from '../components/BackButton';
+import InputField from '../components/InputField'; 
+import styles from '../styles/ForgotStyles';
+import CustomButton from '../components/Button';
 
 export default function ForgotPasswordScreen() {
     const navigation = useNavigation();
@@ -13,6 +16,7 @@ export default function ForgotPasswordScreen() {
         return emailRegex.test(email);
     };
 
+    // Hàm xử lý gửi OTP
     const handleSendOTP = async () => {
         if (!email) {
             Alert.alert('Error', 'Vui lòng nhập email');
@@ -25,100 +29,36 @@ export default function ForgotPasswordScreen() {
         }
 
         try {
-            const response = await fetch("Điền Link Vào đây", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                Alert.alert('Thành công', 'Mã OTP đã được gửi vào email');
-                navigation.navigate('VerifyOTP', { email });
-            } else {
-                Alert.alert('Error', data.message || 'Không thể gửi OTP');
-            }
+            // Giả lập gửi OTP (thay bằng API thực tế nếu có)
+            Alert.alert('Thành công', 'Mã OTP đã được gửi về email của bạn');
+            navigation.navigate('CodeScreen', { email }); 
         } catch (error) {
-            Alert.alert('Error', 'Có lỗi xảy ra, vui lòng thử lại');
+            console.error('Error sending OTP:', error);
+            Alert.alert('Error', 'Không thể gửi OTP. Vui lòng thử lại sau.');
         }
     };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.container}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-
+                <BackButton /> {/* Sử dụng component BackButton */}
                 <View style={styles.content}>
                     <Text style={styles.title}>Forgot password</Text>
                     <Text style={styles.subtitle}>Enter email to receive OTP code</Text>
 
-                    <TextInput
-                        style={styles.input}
+                    
+                    <InputField
+                        // label="Email"
+                        icon="mail-outline"
                         placeholder="Enter email"
-                        keyboardType="email-address"
                         value={email}
                         onChangeText={setEmail}
-                        autoCapitalize="none"
+                        keyboardType="email-address"
                     />
 
-                    <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-                        <Text style={styles.buttonText}>Send OTP code</Text>
-                    </TouchableOpacity>
+                    <CustomButton title="Send OTP" onPress={handleSendOTP} />
                 </View>
             </View>
         </TouchableWithoutFeedback>
-
     );
 }
-
-const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: '#fff', 
-        paddingHorizontal: 20 
-    },
-    backButton: { 
-        position: 'absolute', 
-        top: 40, 
-        left: 10, 
-        padding: 10 
-    },
-    content: { 
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center' 
-    },
-    title: { 
-        fontSize: 24, 
-        fontWeight: 'bold', 
-        marginBottom: 10 
-    },
-    subtitle: { 
-        fontSize: 16, 
-        color: 'gray', 
-        marginBottom: 20 
-    },
-    input: {
-        width: '100%',
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        marginBottom: 20
-    },
-    button: {
-        backgroundColor: '#007bff',
-        paddingVertical: 12,
-        width: '100%',
-        alignItems: 'center',
-        borderRadius: 54
-    },
-    buttonText: { 
-        color: '#fff', 
-        fontSize: 16, 
-        fontWeight: 'bold' 
-    }
-});

@@ -24,7 +24,9 @@ if (config.env !== 'test') {
 
 
 
+
 app.use(cors());
+
 
 // set security HTTP headers
 app.use(helmet());
