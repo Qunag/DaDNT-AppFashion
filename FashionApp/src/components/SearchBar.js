@@ -18,8 +18,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f0f0f0",
+    borderWidth: 1,
     borderRadius: 10,
+    borderColor: "#6342E8",
     paddingHorizontal: 10,
+    margin: 14.5,
     flex: 1,
   },
   input: {

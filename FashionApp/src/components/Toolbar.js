@@ -47,6 +47,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 15,
+    backgroundColor: "#f0f0",
+    borderWidth: 3,  
+    borderColor: "#6342E8",  
+    borderBottomLeftRadius: 30,  // Bo tròn góc dưới trái
+    borderBottomRightRadius: 30, // Bo tròn góc dưới phải
+    borderTopWidth: 0,  // Ẩn viền trên
+    borderRightWidth: 0.5,
+    borderLeftWidth: 0.5,
+    alignItems: "center",  
+    justifyContent: "center",
   },
   text: {
     color: "black",

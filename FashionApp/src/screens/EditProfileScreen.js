@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -64,9 +64,13 @@ const EditProfileScreen = () => {
         <Text style={styles.label}>Địa chỉ</Text>
         <TextInput style={styles.input} value={address} onChangeText={setAddress} editable={isEditing} />
 
-        <View style={styles.profileContainer}>
-            <Button title={isEditing ? "Lưu" : "Sửa thông tin"} onPress={() => (isEditing ? handleSave() : setIsEditing(true))} />
-        </View>
+        {/* Nút lưu / sửa thông tin */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => (isEditing ? handleSave() : setIsEditing(true))}
+        >
+          <Text style={styles.buttonText}>{isEditing ? "Lưu" : "Sửa"}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -78,7 +82,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-  profileContainer:{
+  profileContainer: {
     marginTop: 50,
   },
   backButton: {
@@ -113,6 +117,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 5,
     backgroundColor: "#f2f2f2",
+  },
+  button: {
+    backgroundColor: "#6342E8",
+    paddingVertical: 12,
+    paddingHorizontal: 100,
+    borderRadius: 8,
+    alignSelf: "center",  // Giữ nút không kéo dài hết màn hình
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

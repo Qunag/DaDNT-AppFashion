@@ -5,13 +5,13 @@ export default function Brand() {
   return (
     <View style={styles.container}>
       {/* Dòng kẻ ngang trên */}
-      <View style={styles.separator} />
+      {/* <View style={styles.separator} /> */}
 
       <View style={styles.logoContainer}>
         {/* Nike */}
         <TouchableOpacity>
           <Image
-            source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg" }}
+            source={{ uri: "https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo-700x394.png" }}
             style={styles.logo}
           />
         </TouchableOpacity>
@@ -42,7 +42,7 @@ export default function Brand() {
       </View>
 
       {/* Dòng kẻ ngang dưới */}
-      <View style={styles.separator} />
+      {/* <View style={styles.separator} /> */}
     </View>
   );
 }
