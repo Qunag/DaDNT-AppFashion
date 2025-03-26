@@ -83,6 +83,10 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+const updateUserPassword = async (email, hashedPassword) => {
+  await User.findOneAndUpdate({ email }, { password: hashedPassword });
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -90,4 +94,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  updateUserPassword,
 };

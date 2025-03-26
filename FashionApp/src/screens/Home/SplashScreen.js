@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import CustomButton from '../components/Button';
+import CustomButton from '../../components/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import BackButton from '../components/BackButton';
+import BackButton from '../../components/BackButton';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -11,8 +11,8 @@ const SplashScreen = () => {
   return (
     <View style={styles.container}>
       <BackButton />
-      <Image source={require('../assets/anh2.png')} style={styles.anh2} />
-      <Image source={require('../assets/anh4.png')} style={styles.anh4} />
+      <Image source={require('../../assets/anh2.png')} style={styles.anh2} />
+      <Image source={require('../../assets/anh4.png')} style={styles.anh4} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>Panda</Text>
         <Text style={{ fontSize: 20, color: '#000', textAlign: 'center', fontWeight: 'bold', marginTop: 110 }}>Create your fashion{'\n'}in your own way</Text>

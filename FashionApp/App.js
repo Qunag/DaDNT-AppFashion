@@ -57,18 +57,18 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoadingScreen from './src/screens/LoadingScreen';
-import SplashScreen from './src/screens/SplashScreen';
-import LoginScreen from './src/screens/Login';
-import RegisterScreen from './src/screens/Register';
-import ForgotPasswordScreen from './src/screens/ForgotPassword';
+import LoadingScreen from './src/screens/Home/LoadingScreen';
+import SplashScreen from './src/screens/Home/SplashScreen';
+import LoginScreen from './src/screens/Auth/LoginScreen';
+import RegisterScreen from './src/screens/Auth/RegisterScreen';
+import ForgotPasswordScreen from './src/screens/Auth/ForgotPassWordScreen';
 import SuccessScreen from "./src/screens/SuccessScreen";
 import FailedScreen from "./src/screens/FailedScreen";
-import HomeScreen from './src/screens/HomeScreen';
+import HomeScreen from './src/screens/Home/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
-import CodeScreen from './src/screens/CodeScreen';
-import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+import CodeScreen from './src/screens/Auth/CodeScreen';
+import ResetPasswordScreen from './src/screens/Auth/ResetPasswordScreen';
 
 
 const Stack = createStackNavigator();

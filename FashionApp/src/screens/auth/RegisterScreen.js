@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, Alert, ImageBackground, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import InputField from '../components/InputField';
-import AuthButton from '../components/AuthButton';
-import { registerUser } from '../services/authService';
-import styles from '../styles/RegisterStyles';
+import InputField from '../../components/InputField';
+import AuthButton from '../../components/AuthButton';
+import { registerUser } from '../../services/authService';
+import styles from '../../styles/RegisterStyles';
 
 export default function RegisterScreen() {
     const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
@@ -29,19 +29,33 @@ export default function RegisterScreen() {
 
         try {
             await registerUser(name, email, password);
-            Alert.alert('Success', 'Registration successful! You can now log in.');
-            navigation.navigate('Login');
+            Alert.alert('Success', 'Registration successful! You can now log in.', [
+                { text: 'OK', onPress: () => navigation.navigate('CodeScreen') },
+            ]);
         } catch (error) {
-            Alert.alert('Registration Failed', error);
+            if (error.message === 'Email already taken') {
+                Alert.alert(
+                    'Email Already Exists',
+                    'This email is already registered. Please try another email.',
+                    [
+                        { text: 'OK', onPress: () => setForm({ ...form, email: '' }) }, // Xóa trường email
+                    ]
+                );
+            } else {
+                Alert.alert('Error', error.message || 'An error occurred. Please try again.');
+            }
         }
+
+
+
     };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
-                <ImageBackground source={require('../assets/anh2.png')} style={styles.topSection}>
+                <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
                     <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back" size={24} color="white" />
+                        <Ionicons name="arrow-back" size={24} color="black" />
                     </TouchableOpacity>
                     <Text style={styles.welcomeText}>Create an Account</Text>
                 </ImageBackground>

@@ -1,6 +1,8 @@
-// const isEmulator = false; // Đặt thành true khi chạy trên emulator, false trên máy thật
+const isEmulator = true;
 
-const API_URL = "http://localhost:3000/v1";
+const API_URL = isEmulator
+    ? "http://10.0.2.2:3000/v1"
+    : "http://192.168.1.100:3000/v1";
 export const API_ENDPOINTS = {
     AUTH: {
         REGISTER: `${API_URL}/auth/register`,

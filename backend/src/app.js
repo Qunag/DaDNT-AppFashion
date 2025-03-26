@@ -43,8 +43,20 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:8081', // Metro Bundler (React Native)
+    'http://192.168.1.100:8081', // Metro Bundler trên thiết bị thật
+    'exp://192.168.1.100:8081', // Metro Bundler (nếu dùng Expo)
+    'http://10.0.2.2:8081', // Giả lập Android
+    'http://localhost:3000', // React
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // Nếu bạn cần gửi cookie hoặc header xác thực
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // jwt authentication
 app.use(passport.initialize());

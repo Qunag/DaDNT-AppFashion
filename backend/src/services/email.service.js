@@ -23,21 +23,25 @@ const sendEmail = async (to, subject, text) => {
   await transport.sendMail(msg);
 };
 
-/**
- * Send reset password email
- * @param {string} to
- * @param {string} token
- * @returns {Promise}
- */
-const sendResetPasswordEmail = async (to, token) => {
-  const subject = 'Reset password';
-  // replace this url with the link to the reset password page of your front-end app
-  const resetPasswordUrl = `http://link-to-app/reset-password?token=${token}`;
+
+const sendResetPasswordEmail = async (to) => {
+  const subject = 'Your New Password';
+
+  // Tạo mật khẩu ngẫu nhiên
+  const newPassword = crypto.randomBytes(6).toString('hex'); // VD: "a3f2b9c8"
+  const hashedPassword = await bcrypt.hash(newPassword, 10); // Mã hóa mật khẩu
+
+  // Cập nhật mật khẩu mới vào database
+  await updateUserPassword(to, hashedPassword);
+
   const text = `Dear user,
-To reset your password, click on this link: ${resetPasswordUrl}
-If you did not request any password resets, then ignore this email.`;
+Your password has been reset successfully. Your new password is: ${newPassword}
+Please log in and change your password as soon as possible for security reasons.`;
+
   await sendEmail(to, subject, text);
 };
+
+module.exports = { sendResetPasswordEmail };
 
 /**
  * Send verification email
@@ -47,11 +51,8 @@ If you did not request any password resets, then ignore this email.`;
  */
 const sendVerificationEmail = async (to, token) => {
   const subject = 'Email Verification';
-  // replace this url with the link to the email verification page of your front-end app
-  const verificationEmailUrl = `http://link-to-app/verify-email?token=${token}`;
-  const text = `Dear user,
-To verify your email, click on this link: ${verificationEmailUrl}
-If you did not create an account, then ignore this email.`;
+
+  const text = `Dear user, You are receiving this email because you (or someone else) have created a new account at FashionApp.`;
   await sendEmail(to, subject, text);
 };
 
@@ -60,4 +61,6 @@ module.exports = {
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
-};
+}
+
+

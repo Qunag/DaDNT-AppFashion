@@ -2,30 +2,35 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import InputField from '../components/InputField';
-import AuthButton from '../components/AuthButton';
-import { forgotPassword } from '../services/authService';
-import styles from '../styles/ForgotPasswordStyles';
+import InputField from '../../components/InputField';
+import AuthButton from '../../components/AuthButton';
+import { forgotPassword } from '../../services/authService';
+// import styles from '../../styles/ForgotPasswordStyles';
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZES, FONTS } from '../constants/theme';
+import { COLORS, SIZES, FONTS } from '../../constants/theme';
 
 export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState('');
     const navigation = useNavigation();
 
     const handleForgotPassword = async () => {
+        if (!email.trim()) {
+            Alert.alert('Error', 'Please enter a valid email.');
+            return;
+        }
+
         try {
             await forgotPassword(email);
-            Alert.alert('Success', 'A password reset link has been sent to your email.');
+            Alert.alert('Success', 'A new password has been sent to your email. Please check your inbox.');
             navigation.navigate('Login');
         } catch (error) {
-            Alert.alert('Error', error.message || 'Failed to send reset link. Please try again.');
+            Alert.alert('Error', error.message || 'Failed to reset password. Please try again.');
         }
     };
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../assets/anh2.png')} style={styles.topSection}>
+            <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="white" />
                 </TouchableOpacity>
@@ -77,5 +82,4 @@ const styles = StyleSheet.create({
     instructionText: { fontSize: SIZES.font, marginBottom: 20, textAlign: 'center' },
     signupText: { color: COLORS.primary, fontWeight: 'bold', marginTop: 15 },
 });
-
 

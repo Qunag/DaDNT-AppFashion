@@ -10,7 +10,7 @@ const InputField = ({ label, icon, placeholder, value, onChangeText, secureTextE
                 <Ionicons name={icon} size={25} color="#888" style={styles.icon} />
                 <TextInput
                     style={styles.input}
-                    placeholder={placeholder}
+                    placeholder={placeholder || ''}
                     value={value}
                     onChangeText={onChangeText}
                     secureTextEntry={secureTextEntry}

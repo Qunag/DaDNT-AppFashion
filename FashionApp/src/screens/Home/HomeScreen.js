@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated, FlatList, ActivityIndicator, Image, TouchableOpacity } from "react-native";
 import axios from "axios";
-import Toolbar from "../components/Toolbar";
-import Brand from "../components/Brand";
-import Watch from "../components/Watch";
-import Profile from "./Profile";
+import Toolbar from "../../components/Toolbar";
+import Brand from "../../components/Brand";
+import Watch from "../../components/Watch";
+import Profile from "../Profile";
 import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
@@ -16,7 +16,7 @@ const HomeScreen = () => {
 
 
   useEffect(() => {
-    axios.get("http://localhost:5000/products")
+    axios.get()
       .then(response => {
         setProducts(response.data);
         setLoading(false);
