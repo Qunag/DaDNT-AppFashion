@@ -24,7 +24,10 @@ export default function LoginScreen() {
     }
     try {
 
+
+
       await axios.post('http://192.168.1.100:3000/v1/auth/login', { email, password });
+
 
       Alert.alert('Login Successful', 'You have successfully logged in.');
       navigation.navigate('Home');
