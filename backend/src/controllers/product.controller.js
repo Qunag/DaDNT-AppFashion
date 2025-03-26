@@ -1,39 +1,50 @@
 const httpStatus = require('http-status');
-const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
 const { productService } = require('../services');
 
-const createProduct = catchAsync(async (req, res) => {
-    const product = await productService.createProduct(req.body);
+const addNewProduct = catchAsync(async (req, res) => {
+    const product = await productService.addNewProduct(req.body);
     res.status(httpStatus.CREATED).send(product);
 });
 
 const getProducts = catchAsync(async (req, res) => {
-    const filter = pick(req.query, ['name']);
-    const options = pick(req.query, ['sortBy', 'limit', 'page']);
-    const result = await productService.queryProducts(filter, options);
+    const filter = { brand: req.query.brand };
+    const pagination = { page: parseInt(req.query.page), limit: parseInt(req.query.limit) };
+    const result = await productService.getProducts(filter, pagination);
     res.send(result);
 });
 
-const getProduct = catchAsync(async (req, res) => {
+const getProductById = catchAsync(async (req, res) => {
     const product = await productService.getProductById(req.params.productId);
     res.send(product);
 });
 
+const searchProductsByName = catchAsync(async (req, res) => {
+    const products = await productService.searchProductsByName(req.params.name);
+    res.send(products);
+});
+
 const updateProduct = catchAsync(async (req, res) => {
-    const product = await productService.updateProductById(req.params.productId, req.body);
+    const product = await productService.updateProduct(req.params.productId, req.body);
     res.send(product);
 });
 
 const deleteProduct = catchAsync(async (req, res) => {
-    await productService.deleteProductById(req.params.productId);
+    await productService.deleteProduct(req.params.productId);
     res.status(httpStatus.NO_CONTENT).send();
 });
 
+const updateProductQuantities = catchAsync(async (req, res) => {
+    const updatedProducts = await productService.updateProductQuantities(req.body.updates);
+    res.send(updatedProducts);
+});
+
 module.exports = {
-    createProduct,
+    addNewProduct,
     getProducts,
-    getProduct,
+    getProductById,
+    searchProductsByName,
     updateProduct,
     deleteProduct,
+    updateProductQuantities,
 };

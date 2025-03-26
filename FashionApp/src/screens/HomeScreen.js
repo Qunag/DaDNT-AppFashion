@@ -47,6 +47,7 @@ const HomeScreen = () => {
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
+
         <FlatList
           data={products}
           keyExtractor={(item) => item._id}
@@ -68,7 +69,7 @@ const HomeScreen = () => {
         />
 
       )}
- 
+
       {/* <Watch /> */}
 
     </View>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     elevation: 3,
-    borderWidth: 2, 
+    borderWidth: 2,
     borderColor: "black",
   },
   productImage: {

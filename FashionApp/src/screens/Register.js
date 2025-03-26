@@ -8,6 +8,7 @@ import styles from '../styles/RegisterStyles';
 import BackButton from '../components/BackButton';
 
 export default function RegisterScreen() {
+
     const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
     const navigation = useNavigation();
 
@@ -51,7 +52,9 @@ export default function RegisterScreen() {
                     <InputField label="Confirm Password" icon="lock-closed-outline" placeholder="Confirm password" secureTextEntry value={form.confirmPassword} onChangeText={(text) => handleChange('confirmPassword', text)} />
 
                     <AuthButton title="REGISTER" onPress={handleRegister} />
-                </View>
+                      </View>
+
+  
             </View>
         </TouchableWithoutFeedback>
     );
