@@ -67,8 +67,10 @@ import FailedScreen from "./src/screens/FailedScreen";
 import HomeScreen from './src/screens/Home/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
-import CodeScreen from './src/screens/Auth/CodeScreen';
-import ResetPasswordScreen from './src/screens/Auth/ResetPasswordScreen';
+import EditProfileScreen from './src/screens/EditProfileScreen';
+import CodeScreen from './src/screens/CodeScreen';
+import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+
 
 
 const Stack = createStackNavigator();
@@ -91,6 +93,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
         <Stack.Screen name="Cart" component={Cart} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

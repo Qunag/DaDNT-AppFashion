@@ -1,45 +1,62 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-// const products = [
-//   { id: "1", name: "Sản phẩm 1",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "2", name: "Sản phẩm 2",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "3", name: "Sản phẩm 3",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "4", name: "Sản phẩm 4",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "5", name: "Sản phẩm 5",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-//   { id: "6", name: "Sản phẩm 6",cost: '1500000', image: "https://res-console.cloudinary.com/dfqdh40iu/media_explorer_thumbnails/910475c266b6bda96924172fe6ddc6d3/detailed" },
-// ];
-
-const Watch = () => {
-  const handlePress = (item) => {
-    Alert.alert("Thông báo", `Bạn đã chọn ${item.name}`);
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => handlePress(item)}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.text}>{item.name}</Text>
-      <Text style={styles.text}>{item.cost}</Text>
-    </TouchableOpacity>
-  );
+const Watch = ({ products, loading }) => {
+  const navigation = useNavigation();
 
   return (
-    <FlatList
-      data={products}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      numColumns={2} // Hiển thị 2 cột
-      columnWrapperStyle={styles.row} // Cách dòng giữa các cột
-    />
+    <View style={styles.container}>
+      <Text style={styles.text}>Danh sách sản phẩm</Text>
+      
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={products}
+          keyExtractor={(item) => item._id}
+          numColumns={2} // Hiển thị 2 cột
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.productItem}
+              onPress={() => navigation.navigate("ProductDetail", { product: item })}
+            >
+              <Image source={{ uri: item.colors[0].image_url }} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productPrice}>Giá: {item.price} VNĐ</Text>
+                <Text style={styles.productBrand}>Thương hiệu: {item.brand}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  row: {
-    justifyContent: "space-between",
-    marginHorizontal: 10,
+  container: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: "#f0f0",
+    borderWidth: 3,  
+    borderColor: "#6342E8",  
+    borderTopLeftRadius: 30,  
+    borderTopRightRadius: 30, 
+    borderBottomWidth: 0,  
+    borderRightWidth: 0.5,
+    borderLeftWidth: 0.5,
   },
-  itemContainer: {
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "black",
+    marginTop: 20,
+    textAlign: "center",
+    textDecorationLine: "underline",
+  },
+  productItem: {
     flex: 1,
     backgroundColor: "#f9f9f9",
     margin: 10,
@@ -50,14 +67,28 @@ const styles = StyleSheet.create({
     borderWidth: 2, 
     borderColor: "black",
   },
-  image: {
+  productImage: {
     width: 80,
-    height: 100,
-    marginBottom: 10,
+    height: 80,
+    borderRadius: 8,
   },
-  text: {
-    fontSize: 16,
+  productInfo: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  productName: {
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
+  },
+  productPrice: {
+    fontSize: 16,
+    color: "#e74c3c",
+  },
+  productBrand: {
+    fontSize: 14,
+    color: "#666",
   },
 });
 
