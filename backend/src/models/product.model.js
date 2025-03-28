@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
@@ -8,14 +9,6 @@ const productSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
-        sizes: {
-            type: [Number],
-            required: true,
-            validate: {
-                validator: (v) => v.length > 0,
-                message: 'Sizes array cannot be empty',
-            },
-        },
         brand: {
             type: String,
             required: true,
@@ -25,12 +18,10 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0,
-        },
-        quantity: {
-            type: Number,
-            required: true,
-            min: 0,
-            default: 0,
+            validate: {
+                validator: Number.isInteger,
+                message: 'Price must be an integer.',
+            },
         },
         colors: [
             {
@@ -44,6 +35,29 @@ const productSchema = new mongoose.Schema(
                     required: true,
                     trim: true,
                 },
+                sizes: [
+                    {
+                        size: {
+                            type: Number,
+                            required: true,
+                            min: 0,
+                            validate: {
+                                validator: Number.isInteger,
+                                message: 'Size must be an integer.',
+                            },
+                        },
+                        quantity: {
+                            type: Number,
+                            required: true,
+                            min: 0,
+                            default: 0,
+                            validate: {
+                                validator: Number.isInteger,
+                                message: 'Quantity must be an integer.',
+                            },
+                        },
+                    },
+                ],
             },
         ],
     },
@@ -52,13 +66,8 @@ const productSchema = new mongoose.Schema(
     }
 );
 
-
 productSchema.plugin(toJSON);
 productSchema.plugin(paginate);
-
-
-
-
 
 const Product = mongoose.model('Product', productSchema);
 module.exports = Product;

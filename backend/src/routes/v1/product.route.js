@@ -1,3 +1,4 @@
+// src/routes/v1/product.route.js
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
@@ -11,10 +12,8 @@ router.get('/', validate(productValidation.getProducts), productController.getPr
 router.get('/:productId', validate(productValidation.getProductById), productController.getProductById);
 router.patch('/:productId', auth('manageProducts'), validate(productValidation.updateProduct), productController.updateProduct);
 router.delete('/:productId', auth('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
-router.get('/search/:name', validate(productValidation.searchProductsByName), productController.searchProductsByName);
-router.patch('/update-quantities', auth('manageProducts'), validate(productValidation.updateProductQuantities), productController.updateProductQuantities);
-
-
+router.get('/search', validate(productValidation.searchProductsByName), productController.searchProductsByName);
+router.patch('/quantities', auth('manageProducts'), validate(productValidation.updateProductQuantities), productController.updateProductQuantities);
 
 /**
  * @swagger
@@ -41,20 +40,12 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *               name:
  *                 type: string
  *                 example: "Nike Air Max"
- *               sizes:
- *                 type: array
- *                 items:
- *                   type: number
- *                 example: [40, 41, 42]
  *               brand:
  *                 type: string
  *                 example: "Nike"
  *               price:
  *                 type: number
  *                 example: 3000000
- *               quantity:
- *                 type: number
- *                 example: 50
  *               colors:
  *                 type: array
  *                 items:
@@ -66,12 +57,29 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *                     image_url:
  *                       type: string
  *                       example: "https://example.com/black.jpg"
+ *                     sizes:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           size:
+ *                             type: number
+ *                             example: 40
+ *                           quantity:
+ *                             type: number
+ *                             example: 50
+ *                         required:
+ *                           - size
+ *                           - quantity
+ *                   required:
+ *                     - color_name
+ *                     - image_url
+ *                     - sizes
  *             required:
  *               - name
- *               - sizes
  *               - brand
  *               - price
- *               - quantity
+ *               - colors
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -86,7 +94,6 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *       403:
  *         description: Forbidden
  */
-
 
 /**
  * @swagger
@@ -112,6 +119,19 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *           type: integer
  *           default: 10
  *         description: Number of products per page
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: "created_at"
+ *         description: Field to sort by
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "desc"
+ *         description: Sort order
  *     responses:
  *       200:
  *         description: List of products
@@ -120,7 +140,6 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *             schema:
  *               $ref: '#/components/schemas/ProductList'
  */
-
 
 /**
  * @swagger
@@ -145,7 +164,6 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *       404:
  *         description: Product not found
  */
-
 
 /**
  * @swagger
@@ -172,20 +190,12 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *               name:
  *                 type: string
  *                 example: "Nike Air Max Updated"
- *               sizes:
- *                 type: array
- *                 items:
- *                   type: number
- *                 example: [40, 41, 42]
  *               brand:
  *                 type: string
  *                 example: "Nike"
  *               price:
  *                 type: number
  *                 example: 3200000
- *               quantity:
- *                 type: number
- *                 example: 60
  *               colors:
  *                 type: array
  *                 items:
@@ -197,6 +207,24 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *                     image_url:
  *                       type: string
  *                       example: "https://example.com/black.jpg"
+ *                     sizes:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           size:
+ *                             type: number
+ *                             example: 40
+ *                           quantity:
+ *                             type: number
+ *                             example: 50
+ *                         required:
+ *                           - size
+ *                           - quantity
+ *                   required:
+ *                     - color_name
+ *                     - image_url
+ *                     - sizes
  *     responses:
  *       200:
  *         description: Updated product
@@ -213,7 +241,6 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *       404:
  *         description: Product not found
  */
-
 
 /**
  * @swagger
@@ -241,38 +268,47 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *         description: Product not found
  */
 
-
 /**
  * @swagger
- * /products/search/{name}:
+ * /products/search:
  *   get:
  *     summary: Search products by name
  *     tags: [Products]
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: name
  *         required: true
  *         schema:
  *           type: string
  *         description: Product name to search (partial match, case-insensitive)
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of products per page
  *     responses:
  *       200:
  *         description: List of matching products
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               $ref: '#/components/schemas/ProductList'
  *       404:
  *         description: No products found
  */
 
 /**
  * @swagger
- * /products/update-quantities:
+ * /products/quantities:
  *   patch:
- *     summary: Update quantities of one or multiple products
+ *     summary: Update quantities of a product after a purchase
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -283,29 +319,38 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *           schema:
  *             type: object
  *             properties:
+ *               productId:
+ *                 type: string
+ *                 example: "507f1f77bcf86cd799439011"
  *               updates:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
- *                     productId:
+ *                     color_name:
  *                       type: string
- *                       example: "507f1f77bcf86cd799439011"
+ *                       example: "Đen"
+ *                     size:
+ *                       type: number
+ *                       example: 40
  *                     quantity:
  *                       type: number
- *                       example: -10
+ *                       example: 10
+ *                   required:
+ *                     - color_name
+ *                     - size
+ *                     - quantity
  *                 minItems: 1
  *             required:
+ *               - productId
  *               - updates
  *     responses:
  *       200:
- *         description: Updated products
+ *         description: Updated product
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Product'
+ *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Bad request
  *       401:
@@ -315,6 +360,5 @@ router.patch('/update-quantities', auth('manageProducts'), validate(productValid
  *       404:
  *         description: Product not found
  */
-
 
 module.exports = router;

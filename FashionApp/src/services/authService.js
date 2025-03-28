@@ -3,14 +3,10 @@ import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 
 export const registerUser = async (name, email, password) => {
-    try {
-        const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
-        return response.data;
-    } catch (error) {
-        const message = error.response?.data?.message || 'Registration failed. Please try again.';
-        throw new Error(message);
-    }
-};
+
+    const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
+    return response.data;
+}
 export const loginUser = async (email, password) => {
     try {
         console.log('Login URL:', API_ENDPOINTS.AUTH.LOGIN);

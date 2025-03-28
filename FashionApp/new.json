@@ -1,0 +1,237 @@
+{
+    "_id": "product001",
+    "name": "Nike Air Force 1",
+    "brand": "Nike",
+    "price": {
+        "$numberInt": "2900000"
+    },
+    "colors": [
+        {
+            "color_name": "Đen",
+            "image_url": "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739804725/AirForce1_Black.jpg",
+            "sizes": [
+                {
+                    "$numberInt": "38",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "39",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "40",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "41",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "42",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                }
+            ]
+        },
+        {
+            "color_name": "Trắng",
+            "image_url": "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739804725/AirForce1_White.jpg",
+            "sizes": [
+                {
+                    "$numberInt": "38",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "39",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "40",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "41",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                },
+                {
+                    "$numberInt": "42",
+                    "quantity": {
+                        "$numberInt": "100"
+                    }
+                }
+            ]
+        }
+    ],
+    "created_at": "2025-02-17T10:00:00Z",
+    "updated_at": "2025-02-17T10:00:00Z"
+}
+{
+    "_id": {
+        "$oid": "67e6b50cd3208d3c082ee450"
+    },
+    "name": "Nike Air Force 1",
+    "brand": "Nike",
+    "price": {
+        "$numberInt": "2900000"
+    },
+    "colors": [
+        {
+            "_id": {
+                "$oid": "67e6b50cd3208d3c082ee451"
+            },
+            "color_name": "Đen",
+            "image_url": "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739804725/AirForce1_Black.jpg",
+            "sizes": [
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee452"
+                    },
+                    "size": {
+                        "$numberInt": "38"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee453"
+                    },
+                    "size": {
+                        "$numberInt": "39"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee454"
+                    },
+                    "size": {
+                        "$numberInt": "40"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee455"
+                    },
+                    "size": {
+                        "$numberInt": "41"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee456"
+                    },
+                    "size": {
+                        "$numberInt": "42"
+                    }
+                }
+            ]
+        },
+        {
+            "_id": {
+                "$oid": "67e6b50cd3208d3c082ee457"
+            },
+            "color_name": "Trắng",
+            "image_url": "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739804725/AirForce1_White.jpg",
+            "sizes": [
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee458"
+                    },
+                    "size": {
+                        "$numberInt": "38"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee459"
+                    },
+                    "size": {
+                        "$numberInt": "39"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee45a"
+                    },
+                    "size": {
+                        "$numberInt": "40"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee45b"
+                    },
+                    "size": {
+                        "$numberInt": "41"
+                    }
+                },
+                {
+                    "quantity": {
+                        "$numberInt": "100"
+                    },
+                    "_id": {
+                        "$oid": "67e6b50cd3208d3c082ee45c"
+                    },
+                    "size": {
+                        "$numberInt": "42"
+                    }
+                }
+            ]
+        }
+    ],
+    "createdAt": {
+        "$date": {
+            "$numberLong": "1743172876959"
+        }
+    },
+    "updatedAt": {
+        "$date": {
+            "$numberLong": "1743172876959"
+        }
+    },
+    "__v": {
+        "$numberInt": "0"
+    }
+}
