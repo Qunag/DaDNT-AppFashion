@@ -9,6 +9,8 @@ import styles from '../../styles/RegisterStyles';
 
 export default function RegisterScreen() {
     const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+    const [isPasswordVisible, setPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu
+    const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu xác nhận
     const navigation = useNavigation();
 
     const handleChange = (field, value) => {
@@ -45,9 +47,6 @@ export default function RegisterScreen() {
                 Alert.alert('Error', error.message || 'An error occurred. Please try again.');
             }
         }
-
-
-
     };
 
     return (
@@ -61,10 +60,53 @@ export default function RegisterScreen() {
                 </ImageBackground>
 
                 <View style={styles.bottomSection}>
-                    <InputField label="Full Name" icon="person-outline" placeholder="Enter your name" value={form.name} onChangeText={(text) => handleChange('name', text)} />
-                    <InputField label="Email" icon="mail-outline" placeholder="Enter email" keyboardType="email-address" value={form.email} onChangeText={(text) => handleChange('email', text)} />
-                    <InputField label="Password" icon="lock-closed-outline" placeholder="Enter password" secureTextEntry value={form.password} onChangeText={(text) => handleChange('password', text)} />
-                    <InputField label="Confirm Password" icon="lock-closed-outline" placeholder="Confirm password" secureTextEntry value={form.confirmPassword} onChangeText={(text) => handleChange('confirmPassword', text)} />
+                    <InputField
+                        label="Full Name"
+                        icon="person-outline"
+                        placeholder="Enter your name"
+                        value={form.name}
+                        onChangeText={(text) => handleChange('name', text)}
+                    />
+                    <InputField
+                        label="Email"
+                        icon="mail-outline"
+                        placeholder="Enter email"
+                        keyboardType="email-address"
+                        value={form.email}
+                        onChangeText={(text) => handleChange('email', text)}
+                    />
+                    <InputField
+                        label="Password"
+                        icon="lock-closed-outline"
+                        placeholder="Enter password"
+                        secureTextEntry={!isPasswordVisible} // Ẩn/hiện mật khẩu
+                        value={form.password}
+                        onChangeText={(text) => handleChange('password', text)}
+                        rightIcon={
+                            <Ionicons
+                                name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                                size={24}
+                                color="gray"
+                                onPress={() => setPasswordVisible(!isPasswordVisible)} // Toggle trạng thái
+                            />
+                        }
+                    />
+                    <InputField
+                        label="Confirm Password"
+                        icon="lock-closed-outline"
+                        placeholder="Confirm password"
+                        secureTextEntry={!isConfirmPasswordVisible} // Ẩn/hiện mật khẩu xác nhận
+                        value={form.confirmPassword}
+                        onChangeText={(text) => handleChange('confirmPassword', text)}
+                        rightIcon={
+                            <Ionicons
+                                name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                                size={24}
+                                color="gray"
+                                onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)} // Toggle trạng thái
+                            />
+                        }
+                    />
 
                     <AuthButton title="REGISTER" onPress={handleRegister} />
                 </View>
