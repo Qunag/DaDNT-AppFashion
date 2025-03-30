@@ -68,8 +68,8 @@ import HomeScreen from './src/screens/Home/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
 import EditProfileScreen from './src/screens/EditProfileScreen';
-import CodeScreen from './src/screens/CodeScreen';
-import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+import CodeScreen from './src/screens/Auth/CodeScreen';
+import ResetPasswordScreen from './src/screens/Auth/ResetPasswordScreen';
 
 
 

@@ -8,9 +8,11 @@ import AuthButton from '../../components/AuthButton';
 import BackButton from '../../components/BackButton';
 import { loginUser } from '../../services/authService';
 import styles from '../../styles/LoginStyles';
+import { Ionicons } from '@expo/vector-icons'; // Import thêm icon nếu chưa có
 
 export default function LoginScreen() {
     const [credentials, setCredentials] = useState({ email: '', password: '', isRemember: false });
+    const [isPasswordVisible, setPasswordVisible] = useState(false); // State để quản lý hiển thị mật khẩu
     const navigation = useNavigation();
 
     const handleChange = (field, value) => {
@@ -52,9 +54,17 @@ export default function LoginScreen() {
                         label="Password"
                         icon="lock-closed-outline"
                         placeholder="Enter your password"
-                        secureTextEntry
+                        secureTextEntry={!isPasswordVisible} // Thay đổi trạng thái hiển thị mật khẩu
                         value={credentials.password}
                         onChangeText={text => handleChange('password', text)}
+                        rightIcon={
+                            <Ionicons
+                                name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                                size={24}
+                                color="gray"
+                                onPress={() => setPasswordVisible(!isPasswordVisible)} // Toggle trạng thái
+                            />
+                        }
                     />
 
                     <View style={styles.row}>

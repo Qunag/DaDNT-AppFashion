@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Import icon
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles/ResetPasswordStyles';
 import BackButton from '../../components/BackButton';
@@ -10,6 +11,8 @@ export default function ResetPassword() {
     const navigation = useNavigation();
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [isPasswordVisible, setPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu
+    const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu xác nhận
 
     const handleResetPassword = () => {
         if (!newPassword || !confirmPassword) {
@@ -39,22 +42,40 @@ export default function ResetPassword() {
                 <Text style={styles.title}>Reset Password</Text>
                 <Text style={styles.subtitle}>Enter your new password</Text>
 
+                {/* Trường nhập mật khẩu mới */}
                 <InputField
                     label="New Password"
                     icon="lock-closed"
                     placeholder="Enter new password"
                     value={newPassword}
                     onChangeText={setNewPassword}
-                    secureTextEntry={false} // Luôn hiển thị mật khẩu
+                    secureTextEntry={!isPasswordVisible} // Ẩn/hiện mật khẩu
+                    rightIcon={
+                        <Ionicons
+                            name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                            size={24}
+                            color="gray"
+                            onPress={() => setPasswordVisible(!isPasswordVisible)} // Toggle trạng thái
+                        />
+                    }
                 />
 
+                {/* Trường xác nhận mật khẩu */}
                 <InputField
                     label="Confirm Password"
                     icon="lock-closed"
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
-                    secureTextEntry={false} // Luôn hiển thị mật khẩu
+                    secureTextEntry={!isConfirmPasswordVisible} // Ẩn/hiện mật khẩu xác nhận
+                    rightIcon={
+                        <Ionicons
+                            name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                            size={24}
+                            color="gray"
+                            onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)} // Toggle trạng thái
+                        />
+                    }
                 />
 
                 {/* Nút xác nhận */}
