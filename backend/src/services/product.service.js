@@ -7,46 +7,166 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} productData - Product data to create
  * @returns {Promise<Product>}
  */
-const addNewProduct = async (productData) => {
+const createNewProduct = async (productData) => {
     const existingProduct = await Product.findOne({ name: productData.name });
     if (existingProduct) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Product name already exists');
     }
-    const newProduct = await Product.create(productData);
-    return newProduct;
+    return Product.create(productData);
 };
 
 /**
- * Get multiple products with pagination and filtering
- * @param {Object} filter - Filter criteria (e.g., { brand: 'Nike' })
- * @param {Object} pagination - Pagination options (e.g., { page: 1, limit: 10, sortBy: 'created_at', order: 'desc' })
+ * Get multiple products with filtering, pagination, and sorting
+ * @param {Object} filter - Filter criteria
+ * @param {Object} options - Pagination and sorting options
  * @returns {Promise<Object>}
  */
-const getProducts = async (filter, pagination) => {
-    const { page = 1, limit = 10, sortBy = 'created_at', order = 'desc' } = pagination;
-
+const getProducts = async (filter = {}, options = {}) => {
+    const {
+        page = 1,
+        limit = 10,
+        sortBy = 'createdAt',
+        order = 'desc'
+    } = options;
     const query = {};
+
+    // Brand filtering (case-insensitive)
     if (filter.brand) {
         query.brand = { $regex: new RegExp(filter.brand, 'i') };
+    }
+
+    // Price filtering
+    if (filter.minPrice || filter.maxPrice) {
+        query.price = {};
+        if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
+        if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
+    }
+
+    // Color filtering (case-insensitive)
+    if (filter.color) {
+        query['colors.color_name'] = { $regex: new RegExp(filter.color, 'i') };
+    }
+
+    // Size filtering
+    if (filter.size) {
+        query['colors.sizes.size'] = Number(filter.size);
+    }
+
+    // In-stock filtering (check if quantity > 0)
+    if (filter.inStock) {
+        query['colors.sizes.quantity'] = { $gt: 0 };
     }
 
     const total = await Product.countDocuments(query);
     const products = await Product.find(query)
         .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .lean();
 
     return {
         results: products,
-        page,
-        limit,
+        page: Number(page),
+        limit: Number(limit),
         totalPages: Math.ceil(total / limit),
         totalResults: total,
     };
 };
 
 /**
- * Get a single product by ID
+ * Filter products by specific fields (brand, price, color, size, quantity)
+ * @param {Object} filter - Filter criteria
+ * @param {Object} options - Pagination and sorting options
+ * @returns {Promise<Object>}
+ */
+const filterProducts = async (filter = {}, options = {}) => {
+    const {
+        page = 1,
+        limit = 10,
+        sortBy = 'createdAt',
+        order = 'desc'
+    } = options;
+    const query = {};
+
+    // Brand filtering (case-insensitive)
+    if (filter.brand) {
+        query.brand = { $regex: new RegExp(filter.brand, 'i') };
+    }
+
+    // Price filtering
+    if (filter.minPrice || filter.maxPrice) {
+        query.price = {};
+        if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
+        if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
+    }
+
+    // Color filtering (case-insensitive)
+    if (filter.color) {
+        query['colors.color_name'] = { $regex: new RegExp(filter.color, 'i') };
+    }
+
+    // Size filtering
+    if (filter.size) {
+        query['colors.sizes.size'] = Number(filter.size);
+    }
+
+    // Quantity filtering (hasQuantity: true means quantity > 0)
+    if (filter.hasQuantity) {
+        query['colors.sizes.quantity'] = { $gt: 0 };
+    }
+
+    const total = await Product.countDocuments(query);
+    const products = await Product.find(query)
+        .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean();
+
+    return {
+        results: products,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit),
+        totalResults: total,
+    };
+};
+
+/**
+ * Search products by name with pagination
+ * @param {string} name - Product name to search
+ * @param {Object} options - Pagination options
+ * @param {boolean} exact - Whether to perform an exact search
+ * @returns {Promise<Object>}
+ */
+const searchProductsByName = async (name, options = {}, exact = false) => {
+    const { page = 1, limit = 10 } = options;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Name is required and must be a non-empty string');
+    }
+
+    const query = exact
+        ? { name: name.trim() }
+        : { name: { $regex: new RegExp(name.trim(), 'i') } };
+
+    const total = await Product.countDocuments(query);
+    const products = await Product.find(query)
+        .select('name brand price colors')
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean();
+
+    return {
+        results: products,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit),
+        totalResults: total,
+    };
+};
+
+/**
+ * Get a product by ID
  * @param {string} productId - Product ID
  * @returns {Promise<Product>}
  */
@@ -59,34 +179,7 @@ const getProductById = async (productId) => {
 };
 
 /**
- * Search products by name (partial match) with pagination
- * @param {string} name - Product name to search
- * @param {Object} pagination - Pagination options (e.g., { page: 1, limit: 10 })
- * @returns {Promise<Object>}
- */
-const searchProductsByName = async (name, pagination) => {
-    const { page = 1, limit = 10 } = pagination;
-
-    const query = { name: { $regex: new RegExp(name, 'i') } };
-    const total = await Product.countDocuments(query);
-    const products = await Product.find(query)
-        .skip((page - 1) * limit)
-        .limit(limit);
-
-    if (!products.length) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'No products found with this name');
-    }
-
-    return {
-        results: products,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-        totalResults: total,
-    };
-};
-/**
- * Modify a product
+ * Update product details
  * @param {string} productId - Product ID
  * @param {Object} productData - Data to update
  * @returns {Promise<Product>}
@@ -96,19 +189,21 @@ const updateProduct = async (productId, productData) => {
     if (!product) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
     }
+
     if (productData.name && productData.name !== product.name) {
         const existingProduct = await Product.findOne({ name: productData.name });
         if (existingProduct) {
             throw new ApiError(httpStatus.BAD_REQUEST, 'Product name already exists');
         }
     }
+
     Object.assign(product, productData);
     await product.save();
     return product;
 };
 
 /**
- * Remove a product
+ * Delete a product
  * @param {string} productId - Product ID
  * @returns {Promise<void>}
  */
@@ -120,44 +215,30 @@ const deleteProduct = async (productId) => {
     await product.deleteOne();
 };
 
-const updateProductQuantities = async (productId, purchaseUpdates) => {
-    // Kiểm tra purchaseUpdates có rỗng không
-    if (!purchaseUpdates || purchaseUpdates.length === 0) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Purchase updates array cannot be empty.');
+/**
+ * Update product quantities
+ * @param {string} productId - Product ID
+ * @param {Array} updates - List of { color_name, size, quantity }
+ * @returns {Promise<Product>}
+ */
+const updateProductQuantities = async (productId, updates) => {
+    if (!updates || !Array.isArray(updates) || updates.length === 0) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Updates must be a non-empty array');
     }
 
-    // Kiểm tra trùng lặp color_name và size trong purchaseUpdates
-    const seen = new Set();
-    for (const update of purchaseUpdates) {
-        const { color_name, size, quantity } = update;
-
-        // Kiểm tra quantity phải là số dương (vì đây là số lượng cần mua)
-        if (quantity <= 0) {
-            throw new ApiError(httpStatus.BAD_REQUEST, `Quantity for color ${color_name} and size ${size} must be a positive number.`);
-        }
-
-        const key = `${color_name}:${size}`;
-        if (seen.has(key)) {
-            throw new ApiError(httpStatus.BAD_REQUEST, `Duplicate update for color ${color_name} and size ${size}.`);
-        }
-        seen.add(key);
-    }
-
-    // Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
     const session = await Product.startSession();
     session.startTransaction();
 
     try {
         const product = await Product.findById(productId).session(session);
         if (!product) {
-            throw new ApiError(httpStatus.NOT_FOUND, `Product with ID ${productId} not found`);
+            throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
         }
 
-        // Cập nhật số lượng (giảm số lượng tồn kho)
-        purchaseUpdates.forEach(({ color_name, size, quantity }) => {
+        for (const { color_name, size, quantity } of updates) {
             const color = product.colors.find((c) => c.color_name === color_name);
             if (!color) {
-                throw new ApiError(httpStatus.BAD_REQUEST, `Color ${color_name} not found in product`);
+                throw new ApiError(httpStatus.BAD_REQUEST, `Color ${color_name} not found`);
             }
 
             const sizeEntry = color.sizes.find((s) => s.size === size);
@@ -165,14 +246,9 @@ const updateProductQuantities = async (productId, purchaseUpdates) => {
                 throw new ApiError(httpStatus.BAD_REQUEST, `Size ${size} not found in color ${color_name}`);
             }
 
-            // Kiểm tra số lượng tồn kho có đủ để đáp ứng đơn hàng không
-            if (sizeEntry.quantity < quantity) {
-                throw new ApiError(httpStatus.BAD_REQUEST, `Insufficient quantity for size ${size} in color ${color_name}. Available: ${sizeEntry.quantity}, Requested: ${quantity}`);
-            }
-
-            // Giảm số lượng tồn kho
-            sizeEntry.quantity -= quantity;
-        });
+            // Cập nhật số lượng (cho phép tăng hoặc giảm)
+            sizeEntry.quantity = quantity;
+        }
 
         await product.save({ session });
         await session.commitTransaction();
@@ -186,10 +262,11 @@ const updateProductQuantities = async (productId, purchaseUpdates) => {
 };
 
 module.exports = {
-    addNewProduct,
+    createNewProduct,
     getProducts,
-    getProductById,
+    filterProducts,
     searchProductsByName,
+    getProductById,
     updateProduct,
     deleteProduct,
     updateProductQuantities,
