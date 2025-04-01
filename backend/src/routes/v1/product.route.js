@@ -1,4 +1,3 @@
-// src/routes/v1/product.route.js
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
@@ -7,20 +6,37 @@ const productController = require('../../controllers/product.controller');
 
 const router = express.Router();
 
-router.post('/', /**auth('manageProducts'),*/ validate(productValidation.addNewProduct), productController.addNewProduct);
-router.get('/', validate(productValidation.getProducts), productController.getProducts);
-router.get('/:productId', validate(productValidation.getProductById), productController.getProductById);
-router.patch('/:productId', auth('manageProducts'), validate(productValidation.updateProduct), productController.updateProduct);
-router.delete('/:productId', auth('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
-router.get('/search', validate(productValidation.searchProductsByName), productController.searchProductsByName);
-router.patch('/quantities', auth('manageProducts'), validate(productValidation.updateProductQuantities), productController.updateProductQuantities);
-
 /**
  * @swagger
  * tags:
  *   - name: Products
  *     description: Product management endpoints
  */
+
+router
+    .route('/create')
+    .post(/**auth('manageProducts'),*/ validate(productValidation.createProduct), productController.createProduct)
+
+router
+    .route('/').get(validate(productValidation.getProducts), productController.getProducts);
+
+router
+    .route('/filter')
+    .get(validate(productValidation.filterProducts), productController.filterProducts);
+
+router
+    .route('/search')
+    .get(validate(productValidation.searchProductsByName), productController.searchProductsByName);
+
+router
+    .route('/:productId')
+    .get(validate(productValidation.getProductById), productController.getProductById)
+    .patch(/**auth('manageProducts'),*/ validate(productValidation.updateProduct), productController.updateProduct)
+    .delete(auth('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
+
+router
+    .route('/quantities')
+    .patch(/**auth('manageProducts'),*/ validate(productValidation.updateProductQuantities), productController.updateProductQuantities);
 
 /**
  * @swagger
@@ -108,6 +124,31 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
  *           type: string
  *         description: Filter by brand (partial match, case-insensitive)
  *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter
+ *       - in: query
+ *         name: color
+ *         schema:
+ *           type: string
+ *         description: Filter by color (partial match, case-insensitive)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: number
+ *         description: Filter by size
+ *       - in: query
+ *         name: inStock
+ *         schema:
+ *           type: boolean
+ *         description: Filter products with quantity > 0
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
@@ -123,7 +164,8 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
  *         name: sortBy
  *         schema:
  *           type: string
- *           default: "created_at"
+ *           enum: [name, brand, price, createdAt]
+ *           default: "createdAt"
  *         description: Field to sort by
  *       - in: query
  *         name: order
@@ -139,6 +181,120 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ProductList'
+ */
+
+/**
+ * @swagger
+ * /products/filter:
+ *   get:
+ *     summary: Filter products by specific fields
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: brand
+ *         schema:
+ *           type: string
+ *         description: Filter by brand (partial match, case-insensitive)
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter
+ *       - in: query
+ *         name: color
+ *         schema:
+ *           type: string
+ *         description: Filter by color (partial match, case-insensitive)
+ *       - in: query
+ *         name: size
+ *         schema:
+ *           type: number
+ *         description: Filter by size
+ *       - in: query
+ *         name: hasQuantity
+ *         schema:
+ *           type: boolean
+ *         description: Filter products with quantity > 0
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of products per page
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [name, brand, price, createdAt]
+ *           default: "createdAt"
+ *         description: Field to sort by
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "desc"
+ *         description: Sort order
+ *     responses:
+ *       200:
+ *         description: List of filtered products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProductList'
+ */
+
+/**
+ * @swagger
+ * /products/search:
+ *   get:
+ *     summary: Search products by name
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product name to search (partial match, case-insensitive)
+ *       - in: query
+ *         name: exact
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *         description: Perform exact match search
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of products per page
+ *     responses:
+ *       200:
+ *         description: List of matching products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProductList'
+ *       400:
+ *         description: Bad request
  */
 
 /**
@@ -270,45 +426,9 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
 
 /**
  * @swagger
- * /products/search:
- *   get:
- *     summary: Search products by name
- *     tags: [Products]
- *     parameters:
- *       - in: query
- *         name: name
- *         required: true
- *         schema:
- *           type: string
- *         description: Product name to search (partial match, case-insensitive)
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Number of products per page
- *     responses:
- *       200:
- *         description: List of matching products
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ProductList'
- *       404:
- *         description: No products found
- */
-
-/**
- * @swagger
  * /products/quantities:
  *   patch:
- *     summary: Update quantities of a product after a purchase
+ *     summary: Update quantities of a product
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -324,6 +444,7 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
  *                 example: "507f1f77bcf86cd799439011"
  *               updates:
  *                 type: array
+ *                 minItems: 1
  *                 items:
  *                   type: object
  *                   properties:
@@ -340,7 +461,6 @@ router.patch('/quantities', auth('manageProducts'), validate(productValidation.u
  *                     - color_name
  *                     - size
  *                     - quantity
- *                 minItems: 1
  *             required:
  *               - productId
  *               - updates

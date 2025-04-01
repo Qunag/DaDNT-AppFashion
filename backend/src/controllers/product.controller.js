@@ -1,62 +1,74 @@
-
 const httpStatus = require('http-status');
+const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { productService } = require('../services');
+const productService = require('../services/product.service');
 
-const addNewProduct = catchAsync(async (req, res) => {
-    const product = await productService.addNewProduct(req.body);
-    res.status(httpStatus.CREATED).send(product);
+
+const createProduct = catchAsync(async (req, res) => {
+    const productData = req.body;
+    const product = await productService.createNewProduct(productData);
+    res.status(httpStatus.CREATED).json(product);
 });
+
 
 const getProducts = catchAsync(async (req, res) => {
-    const { brand, page, limit, sortBy, order } = req.query;
-    const filter = { brand };
-    const pagination = {
-        page: parseInt(page) || 1,
-        limit: parseInt(limit) || 10,
-        sortBy: sortBy || 'created_at',
-        order: order || 'desc',
-    };
-    const result = await productService.getProducts(filter, pagination);
-    res.send(result);
+    const filter = pick(req.query, ['brand', 'minPrice', 'maxPrice', 'color', 'size', 'inStock']);
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'order']);
+    const result = await productService.getProducts(filter, options);
+    res.status(httpStatus.OK).json(result);
 });
 
-const getProductById = catchAsync(async (req, res) => {
-    const product = await productService.getProductById(req.params.productId);
-    res.send(product);
+
+const filterProducts = catchAsync(async (req, res) => {
+    const filter = pick(req.query, ['brand', 'minPrice', 'maxPrice', 'color', 'size', 'hasQuantity']);
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'order']);
+    const result = await productService.filterProducts(filter, options);
+    res.status(httpStatus.OK).json(result);
 });
+
 
 const searchProductsByName = catchAsync(async (req, res) => {
-    const { name, page, limit } = req.query;
-    const pagination = {
-        page: parseInt(page) || 1,
-        limit: parseInt(limit) || 10,
-    };
-    const result = await productService.searchProductsByName(name, pagination);
-    res.send(result);
+    const { name, exact } = req.query;
+    const options = pick(req.query, ['page', 'limit']);
+    const result = await productService.searchProductsByName(name, options, exact === 'true');
+    res.status(httpStatus.OK).json(result);
 });
+
+
+const getProductById = catchAsync(async (req, res) => {
+    const { productId } = req.params;
+    const product = await productService.getProductById(productId);
+    res.status(httpStatus.OK).json(product);
+});
+
 
 const updateProduct = catchAsync(async (req, res) => {
-    const product = await productService.updateProduct(req.params.productId, req.body);
-    res.send(product);
+    const { productId } = req.params;
+    const productData = req.body;
+    const updatedProduct = await productService.updateProduct(productId, productData);
+    res.status(httpStatus.OK).json(updatedProduct);
 });
 
+
 const deleteProduct = catchAsync(async (req, res) => {
-    await productService.deleteProduct(req.params.productId);
+    const { productId } = req.params;
+    await productService.deleteProduct(productId);
     res.status(httpStatus.NO_CONTENT).send();
 });
+
 
 const updateProductQuantities = catchAsync(async (req, res) => {
     const { productId, updates } = req.body;
     const updatedProduct = await productService.updateProductQuantities(productId, updates);
-    res.send(updatedProduct);
+    res.status(httpStatus.OK).json(updatedProduct);
 });
 
 module.exports = {
-    addNewProduct,
+    createProduct,
     getProducts,
-    getProductById,
+    filterProducts,
     searchProductsByName,
+    getProductById,
     updateProduct,
     deleteProduct,
     updateProductQuantities,
