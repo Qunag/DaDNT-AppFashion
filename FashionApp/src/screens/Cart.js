@@ -1,14 +1,30 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import QuantitySelector from "../components/QuantitySelector";
-import CheckoutScreen from "./CheckoutScreen";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
+import CheckboxField from "../components/CheckBoxField";
 
 export default function Cart() {
     const navigation = useNavigation();
-    const [checkoutVisible, setCheckoutVisible] = useState(false); // Trạng thái hiển thị Checkout
+    const [isChecked, setIsChecked] = useState(false); // State để theo dõi checkbox
+    const [quantity, setQuantity] = useState(1); // State để theo dõi số lượng
+
+    const product = {
+        name: "Air Jordan 1 Low",
+        collection: "Nike",
+        price: 3600000,
+        imageUri: "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739805514/AirJordan1Low_Black.jpg",
+        quantity: quantity,
+    };
+
+    const handleCheckout = () => {
+        if (isChecked) {
+            navigation.navigate("Checkout", { selectedProduct: product });
+        } else {
+            alert("Vui lòng chọn sản phẩm trước khi thanh toán!");
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -17,20 +33,23 @@ export default function Cart() {
             </TouchableOpacity>
             <Text style={styles.header}>My Cart</Text>
             <View style={styles.itemBox}>
-                {/* Hình ảnh sản phẩm */}
-                <Image
-                    source={{
-                        uri: "https://res.cloudinary.com/dgmy6mekk/image/upload/v1739805514/AirJordan1Low_Black.jpg",
-                    }}
-                    style={styles.image}
+                <CheckboxField
+                    label=" " 
+                    value={isChecked}
+                    onValueChange={(value) => setIsChecked(value)}
                 />
 
+                <Image source={{ uri: product.imageUri }} style={styles.image} />
+
                 <View style={styles.content}>
-                    <Text style={styles.productName}>Air Jordan 1 Low</Text>
-                    <Text style={styles.collection}>Nike</Text>
-                    <Text style={styles.price}>3600000<Text style={styles.currency}>VND</Text></Text>
+                    <Text style={styles.productName}>{product.name}</Text>
+                    <Text style={styles.collection}>{product.collection}</Text>
+                    <Text style={styles.price}>
+                        {product.price}
+                        <Text style={styles.currency}>VND</Text>
+                    </Text>
                     <View style={styles.quantityContainer}>
-                        <QuantitySelector onChange={(value) => console.log("Số lượng:", value)} />
+                        <QuantitySelector onChange={(value) => setQuantity(value)} />
                     </View>
                 </View>
 
@@ -39,23 +58,16 @@ export default function Cart() {
                 </TouchableOpacity>
             </View>
 
-            {/* Nút chuyển sang Checkout */}
-            <TouchableOpacity style={styles.checkoutButton} onPress={() => setCheckoutVisible(true)}>
+            {/* Nút Checkout có chữ "GO TO CHECKOUT" */}
+            <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
                 <Text style={styles.checkoutText}>GO TO CHECKOUT</Text>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.checkoutPrice}>3600000</Text>
+                    <Text style={styles.checkoutPrice}>{product.price * quantity}</Text>
                 </View>
             </TouchableOpacity>
-
-            {/* Màn hình Checkout */}
-            <CheckoutScreen visible={checkoutVisible} onClose={() => {
-                setCheckoutVisible(false);
-            }} />
         </View>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     container: {
@@ -67,22 +79,18 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         marginTop: 50,
-        marginBottom: 20
+        marginBottom: 20,
     },
     itemBox: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "white",
-        padding: 15,
+        padding: 10,
         borderRadius: 8,
         borderWidth: 2,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        width: "90%",
+        width: "95%",
         position: "relative",
-        marginTop: 30
+        marginTop: 30,
     },
     image: {
         width: 60,
@@ -105,7 +113,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     price: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: "bold",
     },
     currency: {
@@ -121,7 +129,7 @@ const styles = StyleSheet.create({
     quantityContainer: {
         position: "absolute",
         bottom: 10,
-        right: 10,
+        right: 5,
     },
     checkoutButton: {
         flexDirection: "row",
@@ -136,21 +144,18 @@ const styles = StyleSheet.create({
         width: "90%",
         alignSelf: "center",
     },
-
     checkoutText: {
         color: "white",
         fontSize: 18,
         fontWeight: "bold",
         marginRight: 10,
     },
-
     priceContainer: {
         backgroundColor: "#4b0082",
         paddingVertical: 5,
         paddingHorizontal: 15,
         borderRadius: 20,
     },
-
     checkoutPrice: {
         color: "white",
         fontSize: 16,
@@ -162,5 +167,3 @@ const styles = StyleSheet.create({
         top: 40,
     },
 });
-
-
