@@ -12,10 +12,12 @@ import HomeScreen from './src/screens/Home/HomeScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
 import EditProfileScreen from './src/screens/EditProfileScreen';
+import EditProfileFormScreen from './src/screens/EditProfileFormScreen';
 import CodeScreen from './src/screens/auth/CodeScreen';
 import ResetPasswordScreen from './src/screens/auth/ResetPasswordScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 
+import Watch from './src/components/Watch';
 
 
 
@@ -25,7 +27,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Cart"
+        initialRouteName="Home"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Splash" component={SplashScreen} />
@@ -41,6 +43,8 @@ export default function App() {
         <Stack.Screen name="Cart" component={Cart} />
         <Stack.Screen name="Checkout" component={CheckoutScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="EditProfileForm" component={EditProfileFormScreen} />
+        <Stack.Screen name="Watch" component={Watch} />
       </Stack.Navigator>
     </NavigationContainer>
   );
