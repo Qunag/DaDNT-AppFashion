@@ -5,7 +5,7 @@ import Toolbar from "../../components/Toolbar";
 import Brand from "../../components/Brand";
 import Watch from "../../components/Watch";
 import Profile from "../Profile";
-import { useNavigation } from "@react-navigation/native";
+
 
 const HomeScreen = () => {
   const [isProfileVisible, setProfileVisible] = useState(false);
@@ -14,7 +14,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get()
+    axios.get("http://192.168.1.242:3000/v1/products")
       .then(response => {
         setProducts(response.data);
         setLoading(false);
@@ -43,7 +43,7 @@ const HomeScreen = () => {
 
       <Watch products={products} loading={loading} />
 
-
+     
     </View>
   );
 };
