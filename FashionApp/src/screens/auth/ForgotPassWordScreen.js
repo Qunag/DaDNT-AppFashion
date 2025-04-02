@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ImageBackground, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import InputField from '../../components/InputField';
@@ -8,6 +8,7 @@ import { forgotPassword } from '../../services/authService';
 // import styles from '../../styles/ForgotPasswordStyles';
 import { StyleSheet } from 'react-native';
 import { COLORS, SIZES, FONTS } from '../../constants/theme';
+import BackButton from '../../components/BackButton';
 
 export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState('');
@@ -29,11 +30,10 @@ export default function ForgotPasswordScreen() {
     };
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
             <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
-                <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
+                <BackButton/>
                 <View style={styles.overlay} />
                 <Text style={styles.welcomeText}>Forgot Password</Text>
             </ImageBackground>
@@ -57,6 +57,7 @@ export default function ForgotPasswordScreen() {
                 </TouchableOpacity>
             </View>
         </View>
+        </TouchableWithoutFeedback>
     );
 }
 
