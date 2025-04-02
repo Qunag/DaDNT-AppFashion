@@ -69,11 +69,12 @@ import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import Cart from './src/screens/Cart';
 
 import EditProfileScreen from './src/screens/EditProfileScreen';
+import EditProfileFormScreen from './src/screens/EditProfileFormScreen';
 
 import CodeScreen from './src/screens/CodeScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 
-
+import Watch from './src/components/Watch';
 
 const Stack = createStackNavigator();
 
@@ -81,7 +82,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Loading"
+        initialRouteName="Watch"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Splash" component={SplashScreen} />
@@ -96,6 +97,8 @@ export default function App() {
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
         <Stack.Screen name="Cart" component={Cart} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="EditProfileForm" component={EditProfileFormScreen} />
+        <Stack.Screen name="Watch" component={Watch} />
       </Stack.Navigator>
     </NavigationContainer>
   );

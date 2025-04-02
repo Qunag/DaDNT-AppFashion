@@ -26,7 +26,7 @@ export default function LoginScreen() {
 
 
 
-      await axios.post('http://192.168.1.100:3000/v1/auth/login', { email, password });
+      await axios.post('http://localhost:3000/v1/auth/login', { email, password });
 
 
       Alert.alert('Login Successful', 'You have successfully logged in.');
@@ -41,7 +41,7 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         <ImageBackground source={require('../assets/anh2.png')} style={styles.topSection}>
-          <BackButton /> {/* Nút Back */}
+          <BackButton /> 
           <View style={styles.overlay} />
           <Text style={styles.welcomeText}>Welcome Back!</Text>
         </ImageBackground>
