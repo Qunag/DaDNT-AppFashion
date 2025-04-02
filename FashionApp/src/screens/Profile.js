@@ -45,7 +45,7 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           <Text style={styles.buttonText}>About</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Login")}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Loading")}>
           <Ionicons name="log-out-outline" size={24} color="white" />
           <Text style={styles.buttonText}>LogOut</Text>
         </TouchableOpacity>

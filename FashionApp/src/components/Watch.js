@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const API_URL = "http://192.168.1.242:3000/v1/products"; // Địa chỉ API backend của bạn
+const API_URL = "http://192.168.0.103:3000/v1/products"; // Địa chỉ API backend của bạn
 
 const Watch = () => {
   const navigation = useNavigation();

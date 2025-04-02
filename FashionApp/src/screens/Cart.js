@@ -58,7 +58,6 @@ export default function Cart() {
                 </TouchableOpacity>
             </View>
 
-            {/* Nút Checkout có chữ "GO TO CHECKOUT" */}
             <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
                 <Text style={styles.checkoutText}>GO TO CHECKOUT</Text>
                 <View style={styles.priceContainer}>

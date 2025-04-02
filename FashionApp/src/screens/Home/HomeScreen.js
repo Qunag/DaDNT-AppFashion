@@ -14,7 +14,7 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://192.168.1.242:3000/v1/products")
+    axios.get("http://192.168.0.103:3000/v1/products")
       .then(response => {
         setProducts(response.data);
         setLoading(false);
