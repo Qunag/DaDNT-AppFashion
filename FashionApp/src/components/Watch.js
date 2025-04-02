@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-const API_URL = "http://192.168.1.242:3000/v1/products"; // Địa chỉ API backend của bạn
+import { getProducts } from "../services/productService"; // Import hàm getProducts từ service
 
 const Watch = () => {
   const navigation = useNavigation();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);  // Lưu trữ sản phẩm
+  const [loading, setLoading] = useState(true);  // Trạng thái loading
+  const [page, setPage] = useState(1);  // Quản lý phân trang
+  const [limit, setLimit] = useState(10);  // Giới hạn số lượng sản phẩm trên mỗi trang
+  const [totalPages, setTotalPages] = useState(0);  // Tổng số trang
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        console.log("Dữ liệu sản phẩm từ API:", data); // Debug để kiểm tra dữ liệu
-        setProducts(data.results); // ✅ Chỉ lấy danh sách sản phẩm
+        const response = await getProducts(page, limit); // Gọi API với trang và giới hạn
+        setProducts(response.results);  // Lưu sản phẩm vào state
+        setTotalPages(response.totalPages);  // Lưu tổng số trang
       } catch (error) {
         console.error("Lỗi tải sản phẩm từ API:", error);
       } finally {
@@ -23,26 +25,31 @@ const Watch = () => {
       }
     };
 
-    fetchProducts();
-  }, []);
+    fetchProducts(); // Gọi hàm khi trang đầu tiên được tải
+  }, [page, limit]);  // Tải lại khi `page` thay đổi
+
+  // Hàm để xử lý khi người dùng chọn một trang
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);  // Cập nhật trang hiện tại
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Danh sách sản phẩm</Text>
-      
+
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
-          data={products}
-          keyExtractor={(item) => item._id.toString()} // Dùng _id thay vì id để tránh lỗi
-          numColumns={2}
+          data={products}  // Hiển thị các sản phẩm
+          keyExtractor={(item) => item._id.toString()} // Sử dụng _id nếu có
+          numColumns={2} // Hiển thị 2 cột
           renderItem={({ item }) => {
             const firstColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
             return (
               <TouchableOpacity
                 style={styles.productItem}
-                onPress={() => navigation.navigate("ProductDetail", { productId: item._id })} // Sử dụng _id thay vì id
+                onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
               >
                 {firstColor?.image_url ? (
                   <Image
@@ -66,6 +73,19 @@ const Watch = () => {
           }}
         />
       )}
+
+      {/* Danh sách các trang */}
+      <View style={styles.paginationContainer}>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.pageButton, page === index + 1 && styles.activePageButton]}
+            onPress={() => handlePageChange(index + 1)} // Chuyển sang trang được chọn
+          >
+            <Text style={styles.pageButtonText}>{index + 1}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 };
@@ -75,11 +95,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     backgroundColor: "#f8f8f8",
-    borderWidth: 3,  
-    borderColor: "#6342E8",  
-    borderTopLeftRadius: 30,  
-    borderTopRightRadius: 30, 
-    borderBottomWidth: 0,  
+    borderWidth: 3,
+    borderColor: "#6342E8",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomWidth: 0,
     borderRightWidth: 0.5,
     borderLeftWidth: 0.5,
   },
@@ -99,20 +119,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     elevation: 3,
-    borderWidth: 2, 
+    borderWidth: 2,
     borderColor: "black",
     height: 230, // Cố định chiều cao cho từng item
   },
   productImage: {
-    width: '100%',      // Đảm bảo ảnh sẽ fill hết chiều rộng
-    height: '70%',      // Tạo chiều cao nhất định để ảnh không tràn ra ngoài
+    width: '100%',
+    height: '70%',
     borderRadius: 8,
   },
   productInfo: {
     alignItems: "center",
-    marginTop: 10,  
+    marginTop: 10,
     flex: 1,
-    justifyContent: "flex-end",  
+    justifyContent: "flex-end",
   },
   productName: {
     fontSize: 16,
@@ -128,6 +148,24 @@ const styles = StyleSheet.create({
   productBrand: {
     fontSize: 12,
     color: "#666",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  pageButton: {
+    marginHorizontal: 5,
+    padding: 10,
+    backgroundColor: "#6342E8",
+    borderRadius: 5,
+  },
+  pageButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  activePageButton: {
+    backgroundColor: "#4a29e3",  // Màu nền khi trang được chọn
   },
 });
 

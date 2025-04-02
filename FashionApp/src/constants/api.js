@@ -15,5 +15,30 @@ export const API_ENDPOINTS = {
     USERS: {
         BASE: `${API_URL}/users`,
         DETAIL: (userId) => `${API_URL}/users/${userId}`,
+        UPDATE: (userId) => `${API_URL}/users/${userId}`,
+        DELETE: (userId) => `${API_URL}/users/${userId}`,
+    },
+    PRODUCTS: {
+        BASE: `${API_URL}/products`,
+        DETAIL: (productId) => `${API_URL}/products/${productId}`,
+        SEARCH: `${API_URL}/products/search`,
+        FILTER: `${API_URL}/products/filter`,
+        CREATE: `${API_URL}/products/create`,
+        UPDATE: (productId) => `${API_URL}/products/update/${productId}`,
+        DELETE: (productId) => `${API_URL}/products/delete/${productId}`,
+        UPDATE_STOCK: (productId) => `${API_URL}/products/update-stock/${productId}`,
+
+    },
+    CART: {
+        // BASE: `${API_URL}/cart`,
+        // ADD: `${API_URL}/cart/add`,
+        // REMOVE: `${API_URL}/cart/remove`,
+        // UPDATE: `${API_URL}/cart/update`,
+        // CLEAR: `${API_URL}/cart/clear`,
+    },
+    ORDERS: {
+        BASE: `${API_URL}/orders`,
+        DETAIL: (orderId) => `${API_URL}/orders/${orderId}`,
+        TRACKING: (trackingId) => `${API_URL}/orders/quantities/${trackingId}`,
     },
 };
