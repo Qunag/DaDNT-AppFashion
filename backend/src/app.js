@@ -22,10 +22,12 @@ if (config.env !== 'test') {
 }
 
 
+// app.disable('etag'); // Tắt ETag
 
 
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
+
 
 
 // set security HTTP headers

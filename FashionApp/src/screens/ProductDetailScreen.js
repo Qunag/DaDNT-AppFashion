@@ -16,7 +16,7 @@ const ProductDetailScreen = () => {
   // Lấy thông tin sản phẩm từ backend khi component load
   useEffect(() => {
     axios
-      .get(`http://192.168.1.242:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
+      .get(`http://192.168.1.100:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
       .then((response) => {
         setProduct(response.data);
         setSelectedColor(response.data.colors[0]); // Đặt mặc định là màu đầu tiên
@@ -26,6 +26,9 @@ const ProductDetailScreen = () => {
         console.error("Lỗi khi tải sản phẩm:", error);
       });
   }, [productId]);
+
+
+
 
   if (!product) {
     return <Text>Đang tải sản phẩm...</Text>;
@@ -43,7 +46,7 @@ const ProductDetailScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        {/* Ảnh sản phẩm */}
+
         <View style={styles.imageContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="black" />
@@ -54,14 +57,14 @@ const ProductDetailScreen = () => {
               style={styles.productImage}
               resizeMode="contain" // Hoặc "cover" nếu bạn muốn ảnh phủ hết khung
             />
-          
+
           )}
           <TouchableOpacity style={styles.wishlistButton}>
             <Ionicons name="heart-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
-        {/* Chi tiết sản phẩm */}
+
         <View style={styles.detailsContainer}>
           <Text style={styles.brand}>{product.brand}</Text>
           <Text style={styles.productName}>{product.name}</Text>
@@ -77,7 +80,7 @@ const ProductDetailScreen = () => {
             </View>
           </View>
 
-          {/* Chọn số lượng */}
+
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
@@ -94,13 +97,13 @@ const ProductDetailScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Mô tả sản phẩm */}
+
           <Text style={styles.sectionTitle}>DESCRIPTION</Text>
           <Text style={styles.description}>{product.description}</Text>
         </View>
       </ScrollView>
 
-      {/* Chọn màu và size */}
+
       <View style={styles.footer}>
         <Text style={styles.sectionTitle}>Chọn màu:</Text>
         <View style={styles.colorContainer}>
@@ -140,7 +143,7 @@ const ProductDetailScreen = () => {
           ))}
         </View>
 
-        {/* Nút thêm vào giỏ hàng */}
+
         <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate("Home")}>
           <Ionicons name="cart-outline" size={24} color="white" />
           <Text style={styles.addToCartText}>ADD TO CART</Text>
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
     height: 220, // Đảm bảo chiều cao phù hợp
     resizeMode: "contain", // Hoặc "cover" tùy vào yêu cầu
   },
-  
+
   backButton: {
     position: "absolute",
     left: 20,

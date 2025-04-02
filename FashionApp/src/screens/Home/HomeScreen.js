@@ -13,17 +13,7 @@ const HomeScreen = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios.get("http://192.168.1.242:3000/v1/products")
-      .then(response => {
-        setProducts(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Lỗi khi tải sản phẩm:", error);
-        setLoading(false);
-      });
-  }, []);
+
 
   const toggleProfile = () => {
     const toValue = isProfileVisible ? -250 : 0;
@@ -43,7 +33,7 @@ const HomeScreen = () => {
 
       <Watch products={products} loading={loading} />
 
-     
+
     </View>
   );
 };
