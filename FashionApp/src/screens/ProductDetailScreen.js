@@ -55,7 +55,7 @@ const ProductDetailScreen = () => {
             <Image
               source={{ uri: selectedColor.image_url }}
               style={styles.productImage}
-              resizeMode="contain" // Hoặc "cover" nếu bạn muốn ảnh phủ hết khung
+              resizeMode="contain"
             />
 
           )}
@@ -119,7 +119,7 @@ const ProductDetailScreen = () => {
               <View
                 style={[
                   styles.colorCircle,
-                  { backgroundColor: color.color_name === "Đen" ? "black" : color.color_name === "Trắng" ? "white" : "gray" },
+                  { backgroundColor: color.color_name }, // Sử dụng màu từ color_name
                 ]}
               />
             </TouchableOpacity>

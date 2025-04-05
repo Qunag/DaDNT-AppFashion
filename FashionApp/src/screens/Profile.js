@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, Animated, StyleSheet, Image } from "react
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
 
