@@ -18,10 +18,14 @@ const ProductCard = ({ product, onPress }) => {
 
       <View style={styles.info}>
         <Text style={styles.name}>{product.name}</Text>
+
         <Text style={styles.price}>
-          Giá: {product.price ? product.price.toLocaleString("vi-VN") + " VNĐ" : "Đang cập nhật..."}
+          {`Giá: ${product.price ? product.price.toLocaleString("vi-VN") + " VNĐ" : "Đang cập nhật..."}`}
         </Text>
-        <Text style={styles.brand}>Thương hiệu: {product.brand}</Text>
+
+        <Text style={styles.brand}>
+          {`Thương hiệu: ${product.brand}`}
+        </Text>
       </View>
     </TouchableOpacity>
   );

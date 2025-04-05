@@ -2,10 +2,15 @@ import React from "react";
 import { View, TouchableOpacity, TextInput, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const SearchBar = ({ onClose, onFilterPress }) => {
+const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
   return (
     <View style={styles.searchContainer}>
-      <TextInput placeholder="Search..." style={styles.input} />
+      <TextInput
+        placeholder="Tìm kiếm sản phẩm..."
+        style={styles.input}
+        value={inputText} // Tạo giá trị từ parent component
+        onChangeText={onChangeText} // Gọi hàm onChangeText khi thay đổi
+      />
 
       <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
         <Ionicons name="filter-outline" size={24} color="black" />

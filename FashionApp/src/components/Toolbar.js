@@ -1,38 +1,34 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet, TextInput } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import SearchBar from "./SearchBar"; // Import SearchBar component
 
 export default function Toolbar({ toggleProfile, onSearch }) {
   const navigation = useNavigation();
-  const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false); // State to show/hide search bar
   const [inputText, setInputText] = useState("");
 
   const handleSearch = (text) => {
     setInputText(text);
-    onSearch(text); // Gọi về HomeScreen để cập nhật tìm kiếm
+    onSearch(text); // Callback to update search in parent (HomeScreen)
+  };
+
+  const handleCloseSearch = () => {
+    setShowSearch(false);
+    setInputText(""); // Reset search input
+    onSearch(""); // Clear search results
   };
 
   return (
     <View style={styles.container}>
       {showSearch ? (
-        <View style={styles.searchBox}>
-          <TextInput
-            placeholder="Tìm kiếm sản phẩm..."
-            value={inputText}
-            onChangeText={handleSearch}
-            style={styles.searchInput}
-            autoFocus
-            maxLength={50} // Giới hạn ký tự tìm kiếm
-          />
-          <TouchableOpacity onPress={() => {
-            setShowSearch(false);
-            setInputText("");
-            onSearch(""); // Reset tìm kiếm
-          }}>
-            <Ionicons name="close-outline" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
+        <SearchBar
+          onClose={handleCloseSearch} // Close search bar
+          onFilterPress={() => {}}
+          inputText={inputText}
+          onChangeText={handleSearch} // Passing the search text handler
+        />
       ) : (
         <>
           <View style={styles.box1}>
@@ -54,7 +50,7 @@ export default function Toolbar({ toggleProfile, onSearch }) {
               <Ionicons name="search-outline" size={24} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <TouchableOpacity onPress={toggleProfile}>
               <Ionicons name="menu-outline" size={24} color="black" />
             </TouchableOpacity>
           </View>
@@ -68,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 15,
-    backgroundColor: "#f0f0",
+    backgroundColor: "#f0f0f0",
     borderWidth: 3,
     borderColor: "#6342E8",
     borderBottomLeftRadius: 30,
@@ -94,18 +90,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     flex: 0.7,
-  },
-  searchBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    flex: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
   },
 });
