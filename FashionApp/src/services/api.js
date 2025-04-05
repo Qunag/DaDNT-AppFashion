@@ -16,4 +16,13 @@ api.interceptors.response.use(
     }
 );
 
+api.interceptors.request.use(
+    (config) => {
+        // Add any custom headers or authentication tokens here
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 export default api;

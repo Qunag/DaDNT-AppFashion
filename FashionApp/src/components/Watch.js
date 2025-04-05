@@ -1,10 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 import ProductCard from "./ProductCard"; // 👈 import component mới
 
 const Watch = ({ products, loading }) => {
   const navigation = useNavigation();
+
 
   return (
     <View style={styles.container}>
@@ -14,6 +16,7 @@ const Watch = ({ products, loading }) => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
+
           data={products}
           keyExtractor={(item) => item._id?.toString()}
           numColumns={2}
@@ -23,8 +26,22 @@ const Watch = ({ products, loading }) => {
               onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
             />
           )}
+
         />
       )}
+
+      {/* Danh sách các trang */}
+      <View style={styles.paginationContainer}>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.pageButton, page === index + 1 && styles.activePageButton]}
+            onPress={() => handlePageChange(index + 1)} // Chuyển sang trang được chọn
+          >
+            <Text style={styles.pageButtonText}>{index + 1}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 };
@@ -50,6 +67,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textDecorationLine: "underline",
   },
+
 });
 
 export default Watch;

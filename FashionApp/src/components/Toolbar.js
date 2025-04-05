@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import SearchBar from "./SearchBar"; // Import SearchBar component
 
+
 export default function Toolbar({ toggleProfile, onSearch }) {
   const navigation = useNavigation();
+
   const [showSearch, setShowSearch] = useState(false); // State to show/hide search bar
   const [inputText, setInputText] = useState("");
 
@@ -18,16 +20,19 @@ export default function Toolbar({ toggleProfile, onSearch }) {
     setShowSearch(false);
     setInputText(""); // Reset search input
     onSearch(""); // Clear search results
+
   };
 
   return (
     <View style={styles.container}>
       {showSearch ? (
         <SearchBar
+
           onClose={handleCloseSearch} // Close search bar
           onFilterPress={() => {}}
           inputText={inputText}
           onChangeText={handleSearch} // Passing the search text handler
+
         />
       ) : (
         <>
@@ -64,7 +69,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 15,
+
     backgroundColor: "#f0f0f0",
+
     borderWidth: 3,
     borderColor: "#6342E8",
     borderBottomLeftRadius: 30,

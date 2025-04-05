@@ -23,7 +23,7 @@ router
 
 router
     .route('/:userId/item/:productId')
-    .delete(auth('manageCart'), validate(cartValidation.deleteCartItem), cartController.deleteCartItem);
+    .delete(auth('manageUser'), validate(cartValidation.deleteCartItem), cartController.deleteCartItem);
 
 router
     .route('/validate/:userId/:productId')
