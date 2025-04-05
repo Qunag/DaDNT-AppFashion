@@ -2,11 +2,16 @@ import React from "react";
 import { View, TouchableOpacity, TextInput, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const SearchBar = ({ onClose }) => {
+const SearchBar = ({ onClose, onFilterPress }) => {
   return (
     <View style={styles.searchContainer}>
       <TextInput placeholder="Search..." style={styles.input} />
-      <TouchableOpacity onPress={onClose}>
+
+      <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
+        <Ionicons name="filter-outline" size={24} color="black" />
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onClose} style={styles.icon}>
         <Ionicons name="close-outline" size={24} color="black" />
       </TouchableOpacity>
     </View>
@@ -28,6 +33,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 8,
+  },
+  icon: {
+    marginLeft: 10,
   },
 });
 

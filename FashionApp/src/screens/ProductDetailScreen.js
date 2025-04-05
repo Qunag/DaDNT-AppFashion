@@ -52,9 +52,8 @@ const ProductDetailScreen = () => {
             <Image
               source={{ uri: selectedColor.image_url }}
               style={styles.productImage}
-              resizeMode="contain" // Hoặc "cover" nếu bạn muốn ảnh phủ hết khung
+              resizeMode="contain"
             />
-          
           )}
           <TouchableOpacity style={styles.wishlistButton}>
             <Ionicons name="heart-outline" size={24} color="black" />
@@ -116,7 +115,7 @@ const ProductDetailScreen = () => {
               <View
                 style={[
                   styles.colorCircle,
-                  { backgroundColor: color.color_name === "Đen" ? "black" : color.color_name === "Trắng" ? "white" : "gray" },
+                  { backgroundColor: color.color_name }, // Sử dụng màu từ color_name
                 ]}
               />
             </TouchableOpacity>
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     height: 220, // Đảm bảo chiều cao phù hợp
     resizeMode: "contain", // Hoặc "cover" tùy vào yêu cầu
   },
-  
+
   backButton: {
     position: "absolute",
     left: 20,

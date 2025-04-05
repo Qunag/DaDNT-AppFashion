@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-const EditProfileForm = () => {
+const EditProfileFormScreen = () => {
   const navigation = useNavigation();
   const [name, setName] = useState("Trần Phạm Nhật Quân");
   const [email, setEmail] = useState("quan@gmail.com");
@@ -20,81 +20,93 @@ const EditProfileForm = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-      </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={28} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Chỉnh sửa hồ sơ</Text>
+          <Image source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} style={styles.avatar} />
+        </View>
 
-      <View style={styles.profileContainer}>
-        <Image source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} style={styles.image} />
+        <View style={styles.content}>
+          <Text style={styles.label}>Tên</Text>
+          <TextInput style={styles.input} value={name} onChangeText={setName} />
+
+          <Text style={styles.label}>Email</Text>
+          <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
+
+          <Text style={styles.label}>Số điện thoại</Text>
+          <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+
+          <Text style={styles.label}>Địa chỉ</Text>
+          <TextInput style={styles.input} value={address} onChangeText={setAddress} />
+
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.buttonText}>Lưu thông tin</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>Tên:</Text>
-        <TextInput style={styles.input} value={name} onChangeText={setName} />
-
-        <Text style={styles.label}>Email:</Text>
-        <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
-
-        <Text style={styles.label}>Số điện thoại:</Text>
-        <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
-
-        <Text style={styles.label}>Địa chỉ:</Text>
-        <TextInput style={styles.input} value={address} onChangeText={setAddress} />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Lưu</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#fff",
+  },
+  header: {
+    backgroundColor: "#6342E8",
+    height: 250,
+    justifyContent: "center",
     alignItems: "center",
+    position: "relative",
   },
   backButton: {
     position: "absolute",
     left: 20,
-    top: 40,
+    top: 50,
+    padding: 10,
   },
-  profileContainer: {
-    marginTop: 80,
-    alignItems: "center",
+  headerTitle: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 50,
   },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: "#fff",
   },
-  formContainer: {
-    width: "100%",
-    marginTop: 20,
+  content: {
+    padding: 20,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-    marginTop: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 5,
+    marginTop: 15,
   },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 10,
-    borderRadius: 5,
-    marginTop: 5,
+    borderRadius: 8,
     backgroundColor: "#f2f2f2",
   },
   button: {
     backgroundColor: "#6342E8",
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 8,
-    marginTop: 20,
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 30,
   },
   buttonText: {
     color: "#fff",
@@ -103,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfileForm;
+export default EditProfileFormScreen;
