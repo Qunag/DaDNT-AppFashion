@@ -16,7 +16,7 @@ const ProductDetailScreen = () => {
   // Lấy thông tin sản phẩm từ backend khi component load
   useEffect(() => {
     axios
-      .get(`http://192.168.1.100:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
+      .get(`http://192.168.0.103:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
       .then((response) => {
         setProduct(response.data);
         setSelectedColor(response.data.colors[0]); // Đặt mặc định là màu đầu tiên
