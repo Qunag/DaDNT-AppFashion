@@ -2,10 +2,20 @@ import React from "react";
 import { View, Text, TouchableOpacity, Animated, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
+import { logoutUser } from '../services/authService';  // Import logoutUser từ authService
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
+
+  // Hàm xử lý logout
+  const handleLogout = async () => {
+    try {
+      await logoutUser();  // Gọi API logout
+      navigation.navigate("Login");  // Chuyển hướng đến màn hình đăng nhập
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
 
   return (
     <>
@@ -45,7 +55,8 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           <Text style={styles.buttonText}>About</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Login")}>
+        {/* Nút LogOut gọi hàm handleLogout */}
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="white" />
           <Text style={styles.buttonText}>LogOut</Text>
         </TouchableOpacity>

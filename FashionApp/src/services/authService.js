@@ -3,54 +3,63 @@ import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 export const loginUser = async (email, password) => {
     try {
-        console.log('Login URL:', API_ENDPOINTS.AUTH.LOGIN);
         const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
-
-        console.log('Login response:', response.data); // Log để kiểm tra
-
         const { access, refresh, user } = response.data;
         const accessToken = access?.token;
         const refreshToken = refresh?.token;
 
-        if (accessToken) {
-            await AsyncStorage.setItem('accessToken', accessToken);
-            console.log('Stored accessToken:', accessToken);
-        }
-        if (refreshToken) {
-            await AsyncStorage.setItem('refreshToken', refreshToken);
-            console.log('Stored refreshToken:', refreshToken);
-        } else {
-            console.warn('No refreshToken in response');
-        }
+        if (accessToken) await AsyncStorage.setItem('accessToken', accessToken);
+        if (refreshToken) await AsyncStorage.setItem('refreshToken', refreshToken); // Lưu refresh token vào AsyncStorage
+        if (user?.id) await AsyncStorage.setItem('userId', user.id.toString());
 
         return response.data;
     } catch (error) {
         const message = error.response?.data?.message || 'Invalid email or password.';
-        console.error('Login error:', message);
+        throw new Error(message);
+    }
+};
+
+
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Registration failed.';
         throw new Error(message);
     }
 };
 
 export const logoutUser = async () => {
     try {
+        // Retrieve refreshToken from AsyncStorage
         const refreshToken = await AsyncStorage.getItem('refreshToken');
-        console.log('Retrieved refreshToken:', refreshToken); // Log để kiểm tra
 
-        if (!refreshToken) {
-            throw new Error('No refresh token found. Please log in again.');
+        if (!refreshToken) throw new Error('No refresh token found.');
+
+        // Call the logout API with the refreshToken
+        const response = await api.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
+
+        // Check the response status and handle success
+        if (response.status === 200) {
+            // Remove tokens from AsyncStorage after successful logout
+            await AsyncStorage.removeItem('accessToken');
+            await AsyncStorage.removeItem('refreshToken');
+            console.log('Logged out successfully');
+            return { message: 'Logged out successfully' };
+        } else {
+            throw new Error('Logout failed with unexpected status');
         }
-
-        await api.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
-
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('refreshToken');
-
-        return { message: 'Logged out successfully' };
     } catch (error) {
-        const message = error.response?.data?.message || 'Logout failed.';
-        console.error('Logout error:', error.response || error);
+        // Improved error handling to log more details
+        console.error('Logout error:', error);
+
+        // Capture the error message, whether it is from the response or generic error
+        const message = error.response?.data?.message || error.message || 'Logout failed.';
         throw new Error(message);
     }
 };
@@ -110,8 +119,61 @@ export const refreshTokens = async (refreshToken) => {
     }
 };
 
+const refreshAccessToken = async () => {
+    try {
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('No refresh token found.');
+
+        const response = await axios.post(API_ENDPOINTS.AUTH.REFRESH, { refreshToken });
+        const { access } = response.data;
+        await AsyncStorage.setItem('accessToken', access.token); // Cập nhật access token mới
+    } catch (error) {
+        throw new Error('Error refreshing access token: ' + error.message);
+    }
+};
 
 
+
+export const getUserID = async () => {
+    try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+            throw new Error('User ID not found');
+        }
+        return userId;
+    } catch (error) {
+        console.error('Error getting user ID:', error.message || error);
+        throw error;
+    }
+};
+
+
+
+const checkIfLoggedIn = async () => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (!accessToken) {
+        throw new Error('No access token found. Please log in again.');
+    }
+    return accessToken;
+};
+
+
+export const saveRefreshToken = async (token) => {
+    try {
+        await AsyncStorage.setItem('refreshToken', token);
+    } catch (e) {
+        console.error("Error saving refresh token: ", e);
+    }
+};
+
+export const getRefreshToken = async () => {
+    try {
+        const token = await AsyncStorage.getItem('refreshToken');
+        return token;
+    } catch (e) {
+        console.error("Error retrieving refresh token: ", e);
+    }
+};
 
 
 

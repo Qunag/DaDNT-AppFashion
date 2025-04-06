@@ -3,6 +3,10 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "rea
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import axios from "axios"; // Thêm axios để lấy dữ liệu từ API
+import { addToCart } from "../services/cartService";
+import { getUserID } from "../services/authService";
+
+
 
 const ProductDetailScreen = () => {
   const route = useRoute();
@@ -13,7 +17,7 @@ const ProductDetailScreen = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  // Lấy thông tin sản phẩm từ backend khi component load
+
   useEffect(() => {
     axios
       .get(`http://192.168.1.100:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
@@ -144,7 +148,26 @@ const ProductDetailScreen = () => {
         </View>
 
 
-        <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={async () => {
+            try {
+              const userId = await getUserID();
+              await addToCart(
+                userId,
+                product._id,
+                quantity,
+                selectedColor.color_name,
+                selectedSize.size
+              );
+              alert("Đã thêm sản phẩm vào giỏ hàng!");
+              navigation.navigate("Cart"); // hoặc "Home"
+            } catch (error) {
+              console.error("Lỗi khi thêm vào giỏ hàng:", error);
+              alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại!");
+            }
+          }}
+        >
           <Ionicons name="cart-outline" size={24} color="white" />
           <Text style={styles.addToCartText}>ADD TO CART</Text>
         </TouchableOpacity>

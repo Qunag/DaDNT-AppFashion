@@ -9,24 +9,25 @@ const router = express.Router();
 router
     .route('/')
     .post(auth(), validate(cartValidation.createCart), cartController.createCart)
-    .get(auth(), validate(cartValidation.getCart), cartController.getCart)
-    .delete(auth(), validate(cartValidation.deleteCart), cartController.deleteCart);
+
+    .delete(auth(), cartController.deleteCart);
 
 router
     .route('/:userId')
-    .patch(auth('manageCart'), validate(cartValidation.updateCart), cartController.updateCart);
+    .patch(auth('manageCart'), validate(cartValidation.updateCart), cartController.updateCart)
+    .get(auth(), cartController.getCart);
 
 router
     .route('/item/:productId')
-    .get(auth(), validate(cartValidation.getCartItem), cartController.getCartItem)
+    .get(auth(), cartController.getCartItem)
     .patch(auth(), validate(cartValidation.updateCartItem), cartController.updateCartItem);
 
 router
     .route('/:userId/item/:productId')
-    .delete(auth('manageUser'), validate(cartValidation.deleteCartItem), cartController.deleteCartItem);
+    .delete(auth('manageCart'), cartController.deleteCartItem);
 
 router
     .route('/validate/:userId/:productId')
-    .get(auth(), validate(cartValidation.validateCartItem), cartController.validateCartItem);
+    .get(auth(), cartController.validateCartItem);
 
 module.exports = router;
