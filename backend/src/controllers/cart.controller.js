@@ -1,3 +1,4 @@
+// controllers/cart.controller.js
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const cartService = require('../services/cart.service');
@@ -13,7 +14,7 @@ const getCart = catchAsync(async (req, res) => {
 });
 
 const updateCart = catchAsync(async (req, res) => {
-    const cart = await cartService.updateCart(req.params.userId, req.body);
+    const cart = await cartService.updateCart(req.user.id, req.body);
     res.send(cart);
 });
 
@@ -23,7 +24,7 @@ const deleteCart = catchAsync(async (req, res) => {
 });
 
 const deleteCartItem = catchAsync(async (req, res) => {
-    const cart = await cartService.deleteCartItem(req.params.userId, req.params.productId);
+    const cart = await cartService.deleteCartItem(req.user.id, req.params.productId);
     res.send(cart);
 });
 
@@ -38,7 +39,7 @@ const updateCartItem = catchAsync(async (req, res) => {
 });
 
 const validateCartItem = catchAsync(async (req, res) => {
-    const isValid = await cartService.validateCartItem(req.params.userId, req.params.productId);
+    const isValid = await cartService.validateCartItem(req.user.id, req.params.productId);
     res.send({ exists: isValid });
 });
 

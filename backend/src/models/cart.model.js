@@ -3,7 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const cartItemSchema = mongoose.Schema(
     {
-        product: {
+        productId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product',
             required: true,
@@ -31,7 +31,6 @@ const cartSchema = mongoose.Schema(
         timestamps: true,
     }
 );
-
 
 cartSchema.plugin(toJSON);
 cartSchema.plugin(paginate);

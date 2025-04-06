@@ -10,10 +10,12 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   // Hàm xử lý logout
   const handleLogout = async () => {
     try {
-      await logoutUser();  // Gọi API logout
-      navigation.navigate("Login");  // Chuyển hướng đến màn hình đăng nhập
+      await logoutUser();
+      navigation.navigate("Login");
     } catch (error) {
       console.error("Logout error:", error.message);
+
+
     }
   };
 
