@@ -20,15 +20,15 @@ export default function SearchBar({ onClose, onSearch, results }) {
         onChangeText={setQuery}
         onSubmitEditing={handleSearch}
       />
-      <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+      {/* <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
         <Ionicons name="search-outline" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity onPress={onClose} style={styles.closeButton}>
         <Ionicons name="close-outline" size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Hiển thị kết quả tìm kiếm */}
-      <FlatList
+      {/* <FlatList
         data={results}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
@@ -36,7 +36,7 @@ export default function SearchBar({ onClose, onSearch, results }) {
             <Text style={styles.resultText}>{item.name}</Text>
           </View>
         )}
-      />
+      /> */}
     </View>
   );
 }

@@ -31,9 +31,10 @@ export const API_ENDPOINTS = {
         BASE: `${API_URL}/carts`,
         DETAIL: (userId) => `${API_URL}/carts/${userId}`,
         CREATE: `${API_URL}/carts`,
-        ADD_ITEM: (userId) => `${API_URL}/carts/${userId}/add-item`,
-        UPDATE_ITEM: (userId) => `${API_URL}/carts/${userId}/update-item`,
-        DELETE_ITEM: (userId) => `${API_URL}/carts/${userId}/delete-item`,
+        ADD_ITEM: `${API_URL}/carts/add`,
+        UPDATE_ITEM: (userId, productId) => `${API_URL}/carts/${userId}/item/${productId}`,
+        DELETE_ITEM: (userId, productId) => `${API_URL}/carts/${userId}/item/${productId}`,
+        VALIDATE_ITEM: (productId) => `${API_URL}/carts/validate/${productId}`,
     },
     ORDERS: {
         BASE: `${API_URL}/orders`,

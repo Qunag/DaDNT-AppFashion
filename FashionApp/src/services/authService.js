@@ -106,10 +106,15 @@ export const verifyEmail = async (token) => {
 
 
 
-
-
-
-
+export const getUserID = async () => {
+    try {
+        const userID = await AsyncStorage.getItem('userID'); // Giả sử bạn đã lưu userID vào AsyncStorage
+        return userID; // Trả về userID
+    } catch (error) {
+        console.error('Lỗi khi lấy userID', error);
+        throw error;
+    }
+};
 
 
 

@@ -1,3 +1,4 @@
+// cart.model.js
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
@@ -12,6 +13,14 @@ const cartItemSchema = mongoose.Schema(
             type: Number,
             required: true,
             min: 1,
+        },
+        color: {
+            type: String,
+            required: true,
+        },
+        size: {
+            type: String,
+            required: true,
         },
     },
     { _id: false }
