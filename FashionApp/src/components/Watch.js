@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ProductCard from "./ProductCard"; // 👈 import component mới
+import ProductCard from "./ProductCard"; 
 
 const Watch = ({ products, loading }) => {
   const navigation = useNavigation();

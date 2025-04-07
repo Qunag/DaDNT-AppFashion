@@ -23,8 +23,8 @@ const createNewProduct = async (productData) => {
  */
 const getProducts = async (filter = {}, options = {}) => {
     const {
-        page = 1,
-        limit = 10,
+        page = 100,
+        limit = 1000,
         sortBy = 'createdAt',
         order = 'desc'
     } = options;

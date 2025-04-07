@@ -8,8 +8,8 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
       <TextInput
         placeholder="Tìm kiếm sản phẩm..."
         style={styles.input}
-        value={inputText} // Tạo giá trị từ parent component
-        onChangeText={onChangeText} // Gọi hàm onChangeText khi thay đổi
+        value={inputText} 
+        onChangeText={onChangeText} 
       />
 
       <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
