@@ -16,7 +16,7 @@ import EditProfileFormScreen from './src/screens/EditProfileFormScreen';
 import CodeScreen from './src/screens/auth/CodeScreen';
 import ResetPasswordScreen from './src/screens/auth/ResetPasswordScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
-
+import SearchResultsScreen from "./src/screens/SearchResultsScreen";
 import Watch from './src/components/Watch';
 
 
@@ -39,6 +39,7 @@ export default function App() {
         <Stack.Screen name="Success" component={SuccessScreen} />
         <Stack.Screen name="Failed" component={FailedScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="SearchResults" component={SearchResultsScreen} />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
         <Stack.Screen name="Cart" component={Cart} />
         <Stack.Screen name="Checkout" component={CheckoutScreen} />

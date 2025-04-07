@@ -14,6 +14,7 @@ const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Tìm kiếm
   const [selectedBrand, setSelectedBrand] = useState(null); // Thương hiệu đã chọn
 
+
   useEffect(() => {
     axios
       .get("http://192.168.1.242:3000/v1/products")
@@ -26,6 +27,7 @@ const HomeScreen = () => {
         setLoading(false);
       });
   }, []);
+
 
   const toggleProfile = () => {
     const toValue = isProfileVisible ? -250 : 0;
@@ -50,6 +52,7 @@ const HomeScreen = () => {
     const matchesBrand = selectedBrand ? item.brand.toLowerCase() === selectedBrand.toLowerCase() : true;
     return matchesSearch && matchesBrand;
   });
+
 
   return (
     <View style={styles.container}>

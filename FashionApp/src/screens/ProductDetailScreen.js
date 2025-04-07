@@ -43,7 +43,7 @@ const ProductDetailScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        {/* Ảnh sản phẩm */}
+
         <View style={styles.imageContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="black" />
@@ -54,13 +54,14 @@ const ProductDetailScreen = () => {
               style={styles.productImage}
               resizeMode="contain"
             />
+
           )}
           <TouchableOpacity style={styles.wishlistButton}>
             <Ionicons name="heart-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
-        {/* Chi tiết sản phẩm */}
+
         <View style={styles.detailsContainer}>
           <Text style={styles.brand}>{product.brand}</Text>
           <Text style={styles.productName}>{product.name}</Text>
@@ -76,7 +77,7 @@ const ProductDetailScreen = () => {
             </View>
           </View>
 
-          {/* Chọn số lượng */}
+
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
@@ -93,13 +94,13 @@ const ProductDetailScreen = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Mô tả sản phẩm */}
+
           <Text style={styles.sectionTitle}>DESCRIPTION</Text>
           <Text style={styles.description}>{product.description}</Text>
         </View>
       </ScrollView>
 
-      {/* Chọn màu và size */}
+
       <View style={styles.footer}>
         <Text style={styles.sectionTitle}>Chọn màu:</Text>
         <View style={styles.colorContainer}>
@@ -139,7 +140,7 @@ const ProductDetailScreen = () => {
           ))}
         </View>
 
-        {/* Nút thêm vào giỏ hàng */}
+
         <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate("Home")}>
           <Ionicons name="cart-outline" size={24} color="white" />
           <Text style={styles.addToCartText}>ADD TO CART</Text>

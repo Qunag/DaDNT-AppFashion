@@ -14,13 +14,13 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
       {/* Bảng Profile */}
       <Animated.View style={[styles.profilePanel, { left: profileAnim }]}>
         {/* Thông tin người dùng - Chuyển thành NÚT */}
-        <TouchableOpacity 
-          style={styles.profileHeader} 
+        <TouchableOpacity
+          style={styles.profileHeader}
           onPress={() => navigation.navigate("EditProfile")} // Điều hướng đến EditProfileScreen
         >
-          <Image 
-            source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} 
-            style={styles.avatar} 
+          <Image
+            source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }}
+            style={styles.avatar}
           />
           <View style={styles.userInfo}>
             <Text style={styles.userName}>Trần Phạm Nhật Quân</Text>

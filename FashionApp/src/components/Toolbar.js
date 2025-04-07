@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import SearchBar from "./SearchBar"; // Import SearchBar component
+
+import SearchBar from "./SearchBar";
+// import { searchProducts } from "../services/productService"; // Import API tìm kiếm
+import Notification from "./Notification";
 
 export default function Toolbar({ toggleProfile, onSearch }) {
   const navigation = useNavigation();
@@ -18,6 +21,7 @@ export default function Toolbar({ toggleProfile, onSearch }) {
     setShowSearch(false);
     setInputText(""); // Reset search input
     onSearch(""); // Clear search results
+
   };
 
   return (
@@ -39,12 +43,19 @@ export default function Toolbar({ toggleProfile, onSearch }) {
 
           <View style={styles.box2}>
             <TouchableOpacity>
-              <Ionicons name="notifications-outline" size={24} color="black" />
+              <View style={styles.notification}>
+                <Ionicons name="notifications-outline" size={24} color="black" />
+                <Notification count={3} /> 
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
-              <Ionicons name="bag-outline" size={24} color="black" />
+              <View style={styles.notification}>
+                <Ionicons name="bag-outline" size={24} color="black" />
+                <Notification count={2} /> 
+              </View>
             </TouchableOpacity>
+
 
             <TouchableOpacity onPress={() => setShowSearch(true)}>
               <Ionicons name="search-outline" size={24} color="black" />
@@ -91,4 +102,9 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 0.7,
   },
+  notification: {
+    position: "relative",
+    padding: 4,
+  },
+  
 });

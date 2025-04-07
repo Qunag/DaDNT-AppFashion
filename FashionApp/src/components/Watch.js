@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     color: "black",
     marginTop: 20,
     textAlign: "center",
-    textDecorationLine: "underline",
   },
 });
 

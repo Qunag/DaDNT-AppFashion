@@ -11,8 +11,8 @@ export default function ResetPassword() {
     const navigation = useNavigation();
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [isPasswordVisible, setPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu
-    const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // State để ẩn/hiện mật khẩu xác nhận
+    const [isPasswordVisible, setPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
     const handleResetPassword = () => {
         if (!newPassword || !confirmPassword) {
