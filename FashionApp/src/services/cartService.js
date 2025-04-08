@@ -69,11 +69,15 @@ export const updateCartItem = async (productId, { quantity, color, size }) => {
     }
 };
 // Xóa một sản phẩm khỏi giỏ
-export const removeFromCart = async (productId) => {
+// Trong cartService.js
+export const removeFromCart = async (productId, color, size) => {
     const headers = await getAuthHeaders();
     const response = await api.delete(
         API_ENDPOINTS.CARTS.REMOVE_ITEM(productId),
-        { headers }
+        {
+            headers,
+            data: { color, size }  // Gửi color và size trong body của DELETE request
+        }
     );
     return response.data;
 };

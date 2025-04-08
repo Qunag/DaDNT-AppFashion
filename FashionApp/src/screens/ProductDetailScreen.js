@@ -150,7 +150,14 @@ const ProductDetailScreen = () => {
                 <View
                   style={[
                     styles.colorCircle,
-                    { backgroundColor: color.color_name === "Đen" ? "black" : color.color_name === "Trắng" ? "white" : "gray" },
+                    {
+                      backgroundColor:
+                        color.color_name === "Đen"
+                          ? "black"
+                          : color.color_name === "Trắng"
+                            ? "white"
+                            : color.color_name,
+                    },
                   ]}
                 />
               </TouchableOpacity>
@@ -158,20 +165,32 @@ const ProductDetailScreen = () => {
           </View>
 
           <Text style={styles.sectionTitle}>Chọn kích thước:</Text>
-          <View style={styles.sizeContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.sizeScrollContainer}
+          >
             {selectedColor.sizes.map((size) => (
               <TouchableOpacity
                 key={size._id}
-                style={[styles.sizeButton, selectedSize.size === size.size && styles.selectedSize]}
+                style={[
+                  styles.sizeButtonHorizontal,
+                  selectedSize.size === size.size && styles.selectedSize,
+                ]}
                 onPress={() => handleSizeSelect(size)}
               >
-                <Text style={[styles.sizeText, selectedSize.size === size.size && styles.selectedSizeText]}>
+                <Text
+                  style={[
+                    styles.sizeText,
+                    selectedSize.size === size.size && styles.selectedSizeText,
+                  ]}
+                >
                   {size.size}
                 </Text>
-                <Text style={styles.sizeQuantity}>Còn {size.quantity} sản phẩm</Text>
+                <Text style={styles.sizeQuantity}>Còn {size.quantity}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
 
           <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
             <Ionicons name="cart-outline" size={24} color="white" />
@@ -188,6 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#8A8A8A",
     marginTop: 5,
+    textAlign: "center",
   },
   container: {
     flex: 1,
@@ -209,6 +229,11 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     left: 20,
+    top: 40,
+  },
+  wishlistButton: {
+    position: "absolute",
+    right: 20,
     top: 40,
   },
   detailsContainer: {
@@ -239,6 +264,22 @@ const styles = StyleSheet.create({
     color: "#555",
     marginVertical: 10,
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 20,
+    color: "#333",
+  },
+  rating: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  ratingText: {
+    marginLeft: 5,
+    fontSize: 14,
+    color: "#8A8A8A",
+  },
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -255,6 +296,10 @@ const styles = StyleSheet.create({
   quantityText: {
     fontSize: 20,
     color: "#333",
+  },
+  quantity: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
   colorContainer: {
     flexDirection: "row",
@@ -274,17 +319,19 @@ const styles = StyleSheet.create({
   selectedColor: {
     borderColor: "#6342E8",
   },
-  sizeContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 10,
+  sizeScrollContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    gap: 10,
   },
-  sizeButton: {
+  sizeButtonHorizontal: {
     backgroundColor: "#F0F0F0",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
-    marginHorizontal: 5,
+    marginRight: 10,
+    alignItems: "center",
+    minWidth: 80,
   },
   selectedSize: {
     backgroundColor: "#6342E8",
@@ -304,6 +351,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 20,
   },
   addToCartText: {
     color: "white",

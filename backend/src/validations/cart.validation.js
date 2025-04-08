@@ -47,9 +47,7 @@ const updateCartItem = {
     }),
 };
 
-module.exports = {
-    updateCartItem,
-};
+
 const deleteCartItem = {
     params: Joi.object().keys({
         productId: Joi.string().custom(objectId).required(),

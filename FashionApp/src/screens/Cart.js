@@ -13,7 +13,6 @@ export default function Cart() {
     const [checkedItems, setCheckedItems] = useState({});
     const [loading, setLoading] = useState(true);
 
-
     const fetchCartItems = async () => {
         try {
             const userId = await getUserID();
@@ -34,90 +33,61 @@ export default function Cart() {
         }
     };
 
-
     const handleQuantityChange = async (index, value) => {
         const item = cartItems[index];
-
         if (!item || !item.productId) {
             console.error("Không tìm thấy mục hợp lệ tại vị trí:", index);
             return;
         }
-
-        // Trích xuất ID thực tế từ đối tượng sản phẩm
         const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-
         if (!productId) {
             console.error("Không thể tìm thấy ID sản phẩm trong:", item.productId);
             return;
         }
-
-        console.log("Cập nhật mục với ID:", productId);
-        console.log("Color:", item.color, "Size:", item.size);  // Log ra để kiểm tra
-
         try {
-            // Đảm bảo color và size hợp lệ
             if (!item.color || !item.size) {
                 throw new Error("Thiếu thông tin màu sắc hoặc kích thước");
             }
-
-            // Gọi API để cập nhật số lượng sản phẩm
             await updateCartItem(productId, {
                 quantity: value,
                 color: item.color,
                 size: item.size
             });
-
-            // Cập nhật số lượng trong state
             const updatedItems = [...cartItems];
-            updatedItems[index] = {
-                ...updatedItems[index],
-                quantity: value
-            };
+            updatedItems[index] = { ...updatedItems[index], quantity: value };
             setCartItems(updatedItems);
         } catch (error) {
             console.error("Lỗi khi cập nhật số lượng:", error);
-            Alert.alert(
-                "Cập nhật thất bại",
-                "Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại."
-            );
+            Alert.alert("Cập nhật thất bại", "Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.");
         }
     };
 
-
-
     const handleRemove = async (index) => {
         const item = cartItems[index];
-
         if (!item.productId) {
             console.error("Không tìm thấy productId trong item:", item);
             return;
         }
-
-        // Extract the actual ID from the product object
         const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-
         if (!productId) {
             console.error("Could not find product ID in:", item.productId);
             return;
         }
-
+        if (!item.color || !item.size) {
+            console.error("Missing color or size in item:", item);
+            Alert.alert("Lỗi", "Không thể xóa sản phẩm do thiếu thông tin màu sắc hoặc kích thước.");
+            return;
+        }
         try {
-            // Call API to remove product from cart
-            await removeFromCart(productId);
-
-            // Update cart after removing product
+            await removeFromCart(productId, item.color, item.size);
             const updatedItems = cartItems.filter((_, i) => i !== index);
             setCartItems(updatedItems);
+            Alert.alert("Thành công", "Sản phẩm đã được xóa khỏi giỏ hàng!");
         } catch (error) {
             console.error("Error removing item:", error);
-            Alert.alert(
-                "Remove Failed",
-                "Could not remove product from cart. Please try again."
-            );
+            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
         }
     };
-
-
 
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
@@ -172,12 +142,11 @@ export default function Cart() {
                             <View style={styles.quantityContainer}>
                                 <QuantitySelector
                                     value={item.quantity}
-                                    onChange={(value) => handleQuantityChange(index, value)}  // Gọi API khi thay đổi số lượng
+                                    onChange={(value) => handleQuantityChange(index, value)}
                                 />
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}  // Gọi API khi xóa sản phẩm
-                        >
+                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}>
                             <Text>✕</Text>
                         </TouchableOpacity>
                     </View>
@@ -195,6 +164,8 @@ export default function Cart() {
         </View>
     );
 }
+
+// Styles giữ nguyên như bạn đã cung cấp
 
 const styles = StyleSheet.create({
     container: { flex: 1, alignItems: "center", backgroundColor: "#f8f8f8", padding: 10 },
