@@ -17,25 +17,27 @@ const HomeScreen = () => {
   const [selectedBrand, setSelectedBrand] = useState(null);
 
 
-  const [refreshing, setRefreshing] = useState(false); 
+  const [refreshing, setRefreshing] = useState(false);
 
 
   // Load sản phẩm từ server
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://192.168.0.101:3000/v1/products");
+      const response = await axios.get("http://192.168.1.100:3000/v1/products");
       setProducts(response.data.results);
     } catch (error) {
       console.error("Lỗi khi tải sản phẩm:", error);
     } finally {
       setLoading(false);
-      setRefreshing(false); 
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
 
-   fetchProducts();
+    fetchProducts();
+  }, []);
+
   const toggleProfile = () => {
     const toValue = isProfileVisible ? -250 : 0;
     Animated.timing(profileAnim, {
@@ -45,7 +47,6 @@ const HomeScreen = () => {
     }).start();
     setProfileVisible(!isProfileVisible);
   };
-
   // Khi tìm kiếm
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -73,6 +74,7 @@ const HomeScreen = () => {
     return matchesSearch && matchesBrand;
   });
 
+
   return (
     <View style={styles.container}>
       <Toolbar toggleProfile={toggleProfile} onSearch={handleSearch} />
@@ -92,7 +94,8 @@ const HomeScreen = () => {
 
     </View>
   );
-};
+}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -104,3 +107,4 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+

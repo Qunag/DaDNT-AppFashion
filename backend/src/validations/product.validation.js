@@ -99,6 +99,8 @@ const getProducts = {
             .valid('name', 'brand', 'price', 'createdAt')
             .optional(),
         order: Joi.string().valid('asc', 'desc').optional(),
+    }),
+};
 
 const getProductById = {
     params: Joi.object().keys({
