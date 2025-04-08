@@ -3,32 +3,31 @@ import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 export const loginUser = async (email, password) => {
     try {
-        console.log('Login URL:', API_ENDPOINTS.AUTH.LOGIN);
         const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
+        const { tokens } = response.data;
 
-        console.log('Login response:', response.data); // Log để kiểm tra
+        await AsyncStorage.setItem('accessToken', tokens.access.token);
+        await AsyncStorage.setItem('refreshToken', tokens.refresh.token);
 
-        const { access, refresh, user } = response.data;
-        const accessToken = access?.token;
-        const refreshToken = refresh?.token;
-
-        if (accessToken) {
-            await AsyncStorage.setItem('accessToken', accessToken);
-            console.log('Stored accessToken:', accessToken);
-        }
-        if (refreshToken) {
-            await AsyncStorage.setItem('refreshToken', refreshToken);
-            console.log('Stored refreshToken:', refreshToken);
-        } else {
-            console.warn('No refreshToken in response');
-        }
 
         return response.data;
     } catch (error) {
-        const message = error.response?.data?.message || 'Invalid email or password.';
-        console.error('Login error:', message);
+        console.error('Login failed', error);
+        throw error;
+    }
+};
+
+
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Registration failed.';
         throw new Error(message);
     }
 };
@@ -43,22 +42,28 @@ export const registerUser = async (name, email, password) => {
 };
 export const logoutUser = async () => {
     try {
+
         const refreshToken = await AsyncStorage.getItem('refreshToken');
-        console.log('Retrieved refreshToken:', refreshToken); // Log để kiểm tra
 
-        if (!refreshToken) {
-            throw new Error('No refresh token found. Please log in again.');
+        if (!refreshToken) throw new Error('No refresh token found.');
+
+
+        const response = await api.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
+
+
+        if (response.status === 200 || response.status === 204) {
+
+            await AsyncStorage.removeItem('accessToken');
+            await AsyncStorage.removeItem('refreshToken');
+            console.log('Logged out successfully');
+            return { message: 'Logged out successfully' };
+        } else {
+            throw new Error('Logout failed with unexpected status');
         }
-
-        await api.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
-
-        await AsyncStorage.removeItem('accessToken');
-        await AsyncStorage.removeItem('refreshToken');
-
-        return { message: 'Logged out successfully' };
     } catch (error) {
-        const message = error.response?.data?.message || 'Logout failed.';
-        console.error('Logout error:', error.response || error);
+
+        console.error('Logout error:', error);
+        const message = error.response?.data?.message || error.message || 'Logout failed.';
         throw new Error(message);
     }
 };
@@ -108,17 +113,16 @@ export const verifyEmail = async (token) => {
 }
 
 
-export const refreshTokens = async (refreshToken) => {
+
+export const getUserID = async () => {
     try {
-        const response = await api.post(API_ENDPOINTS.AUTH.REFRESH_TOKENS, { refreshToken });
-        return response.data;
+        const userID = await AsyncStorage.getItem('userID'); // Giả sử bạn đã lưu userID vào AsyncStorage
+        return userID; // Trả về userID
     } catch (error) {
-        const message = error.response?.data?.message || 'Failed to refresh tokens.';
-        throw new Error(message);
+        console.error('Lỗi khi lấy userID', error);
+        throw error;
     }
 };
-
-
 
 
 

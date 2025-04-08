@@ -1,7 +1,6 @@
-const isEmulator = true;
 
+const API_URL = "http://192.168.1.100:3000/v1";
 
-const API_URL = "http://192.168.0.103:3000/v1";
 
 export const API_ENDPOINTS = {
     AUTH: {
@@ -29,14 +28,15 @@ export const API_ENDPOINTS = {
         UPDATE: (productId) => `${API_URL}/products/update/${productId}`,
         DELETE: (productId) => `${API_URL}/products/delete/${productId}`,
         UPDATE_STOCK: (productId) => `${API_URL}/products/update-stock/${productId}`,
-
     },
-    CART: {
-        // BASE: `${API_URL}/cart`,
-        // ADD: `${API_URL}/cart/add`,
-        // REMOVE: `${API_URL}/cart/remove`,
-        // UPDATE: `${API_URL}/cart/update`,
-        // CLEAR: `${API_URL}/cart/clear`,
+    CARTS: {
+        BASE: `${API_URL}/carts`,
+        DETAIL: (userId) => `${API_URL}/carts/${userId}`,
+        CREATE: `${API_URL}/carts`,
+        ADD_ITEM: `${API_URL}/carts/add`,
+        UPDATE_ITEM: (userId, productId) => `${API_URL}/carts/${userId}/item/${productId}`,
+        DELETE_ITEM: (userId, productId) => `${API_URL}/carts/${userId}/item/${productId}`,
+        VALIDATE_ITEM: (productId) => `${API_URL}/carts/validate/${productId}`,
     },
     ORDERS: {
         BASE: `${API_URL}/orders`,

@@ -1,156 +1,132 @@
+// services/cart.service.js
 const httpStatus = require('http-status');
-const { Cart } = require('../models');
 const ApiError = require('../utils/ApiError');
+const Cart = require('../models/cart.model');
+const Product = require('../models/product.model');
+const mongoose = require('mongoose');
 
-/**
- * Create a new cart for a user
- * @param {Object} cartBody - Cart data with products array
- * @param {string} userId - User ID
- * @returns {Promise<Cart>}
- */
-const createCart = async (cartBody, userId) => {
-    const existingCart = await Cart.findOne({ userId });
+const getCartByUserId = async (userId) => {
+    const cart = await Cart.findOne({ user: userId }).populate('items.productId');
+    if (!cart) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
+    }
+    return cart;
+};
+
+const createCart = async (userId, cartBody) => {
+    const existingCart = await Cart.findOne({ user: userId });
     if (existingCart) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Cart already exists for this user');
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Cart already exists');
     }
-
-    const cartData = {
-        userId,
-        products: cartBody.products,
-    };
-    return Cart.create(cartData);
+    return Cart.create({ user: userId, items: cartBody.items });
 };
 
-/**
- * Get user's cart
- * @param {string} userId - User ID
- * @returns {Promise<Cart>}
- */
-const getCart = async (userId) => {
-    const cart = await Cart.findOne({ userId }).populate('products.productId');
+const updateCart = async (userId, cartBody) => {
+    const cart = await Cart.findOneAndUpdate({ user: userId }, { items: cartBody.items }, { new: true });
     if (!cart) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
     }
     return cart;
 };
 
-/**
- * Update user's cart
- * @param {string} userId - User ID
- * @param {Object} updateBody - Updated cart data with products array
- * @returns {Promise<Cart>}
- */
-const updateCart = async (userId, updateBody) => {
-    const cart = await Cart.findOne({ userId });
+
+
+const addToCart = async (userId, { productId, name, image_url, brand, price, quantity, color, size }) => {
+    // Tìm giỏ hàng của người dùng
+    let cart = await Cart.findOne({ user: userId });
+
     if (!cart) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
+        // Nếu giỏ hàng chưa tồn tại, tạo mới
+        cart = new Cart({ user: userId, items: [] });
     }
 
-    cart.products = updateBody.products;
+    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+    const existingProductIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+
+    if (existingProductIndex !== -1) {
+        // Nếu sản phẩm đã có, cập nhật số lượng
+        cart.items[existingProductIndex].quantity += quantity;
+    } else {
+        // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+        cart.items.push({ productId, name, image_url, brand, price, quantity, color, size });
+    }
+
+    // Lưu giỏ hàng
     await cart.save();
-    return cart;
+
+    return cart; // Trả về giỏ hàng đã được cập nhật
 };
 
-/**
- * Delete user's cart
- * @param {string} userId - User ID
- * @returns {Promise<void>}
- */
+
+
 const deleteCart = async (userId) => {
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOneAndDelete({ user: userId });
     if (!cart) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
     }
-    await cart.deleteOne();
+    return cart;
 };
 
-/**
- * Delete a cart item
- * @param {string} userId - User ID
- * @param {string} productId - Product ID to remove
- * @returns {Promise<Cart>}
- */
-const deleteCartItem = async (userId, productId) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
-    }
+const deleteCartItem = async (userId, productId, color, size) => {
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
-    const itemIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
-    if (itemIndex === -1) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found in cart');
-    }
+    cart.items = cart.items.filter(
+        (item) => !(item.productId.toString() === productId && item.color === color && item.size === size)
+    );
 
-    cart.products.splice(itemIndex, 1);
     await cart.save();
     return cart;
 };
 
-/**
- * Get a specific cart item
- * @param {string} userId - User ID
- * @param {string} productId - Product ID
- * @returns {Promise<Object>}
- */
-const getCartItem = async (userId, productId) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
-    }
 
-    const cartItem = cart.products.find((item) => item.productId.toString() === productId);
-    if (!cartItem) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found in cart');
-    }
+const getCartItem = async (userId, productId, color, size) => {
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
-    return cartItem;
+    const item = cart.items.find(
+        (item) => item.productId.toString() === productId && item.color === color && item.size === size
+    );
+
+    if (!item) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found in cart');
+    return item;
 };
 
-/**
- * Update a cart item's quantity
- * @param {string} userId - User ID
- * @param {string} productId - Product ID
- * @param {number} quantity - New quantity
- * @returns {Promise<Cart>}
- */
-const updateCartItem = async (userId, productId, quantity) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
-    }
 
-    const cartItem = cart.products.find((item) => item.productId.toString() === productId);
-    if (!cartItem) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found in cart');
-    }
+const updateCartItem = async (userId, productId, quantity, color, size) => {
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
-    cartItem.quantity = quantity;
+    const item = cart.items.find(
+        (item) => item.productId.toString() === productId && item.color === color && item.size === size
+    );
+
+    if (!item) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found in cart');
+    item.quantity = quantity;
     await cart.save();
     return cart;
 };
 
-/**
- * Validate if a product exists in cart
- * @param {string} userId - User ID
- * @param {string} productId - Product ID
- * @returns {Promise<boolean>}
- */
-const validateCartItem = async (userId, productId) => {
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-        return false;
-    }
 
-    return cart.products.some((item) => item.productId.toString() === productId);
+const validateCartItem = async (userId, productId, color, size) => {
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
+
+    return cart.items.some(
+        (item) => item.productId.toString() === productId && item.color === color && item.size === size
+    );
 };
+
 
 module.exports = {
+
     createCart,
-    getCart,
     updateCart,
     deleteCart,
     deleteCartItem,
     getCartItem,
     updateCartItem,
     validateCartItem,
+    addToCart,
+    getCartByUserId,
 };

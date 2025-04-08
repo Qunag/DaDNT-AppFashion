@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { roleRights } = require('../config/roles');
 
+
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
   if (err || info || !user) {
     return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));

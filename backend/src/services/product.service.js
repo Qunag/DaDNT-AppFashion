@@ -23,6 +23,7 @@ const createNewProduct = async (productData) => {
  */
 const getProducts = async (filter = {}, options = {}) => {
     const {
+
         sortBy = 'createdAt',
         order = 'desc'
     } = options;

@@ -8,9 +8,12 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
       <TextInput
         placeholder="Tìm kiếm sản phẩm..."
         style={styles.input}
+
         value={inputText} 
+
         onChangeText={onChangeText} 
       />
+
 
       <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
         <Ionicons name="filter-outline" size={24} color="black" />
@@ -19,6 +22,7 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
       <TouchableOpacity onPress={onClose} style={styles.icon}>
         <Ionicons name="close-outline" size={24} color="black" />
       </TouchableOpacity>
+
     </View>
   );
 };
