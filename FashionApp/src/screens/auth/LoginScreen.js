@@ -9,6 +9,11 @@ import BackButton from '../../components/BackButton';
 import { loginUser } from '../../services/authService';
 import styles from '../../styles/LoginStyles';
 import { Ionicons } from '@expo/vector-icons'; // Import thêm icon nếu chưa có
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUserID } from '../../services/authService'; // Import hàm lấy user ID nếu cần thiết
+
+
+
 
 export default function LoginScreen() {
     const [credentials, setCredentials] = useState({ email: '', password: '', isRemember: false });
@@ -22,14 +27,29 @@ export default function LoginScreen() {
     const handleLogin = async () => {
         const { email, password } = credentials;
         try {
-            await loginUser(email, password);
-            Alert.alert('Login Successful', 'You have successfully logged in.');
-            navigation.navigate('Home');
+            // Gọi API đăng nhập và nhận response
+            const response = await loginUser(email, password);
+
+            // Kiểm tra xem response có chứa tokens không
+            if (response && response.tokens) {
+                // Lưu token vào AsyncStorage
+                await AsyncStorage.setItem('accessToken', response.tokens.access.token);
+                await AsyncStorage.setItem('user', JSON.stringify(response.user));
+
+                // Hiển thị thông báo thành công
+                Alert.alert('Login Successful', 'You have successfully logged in.');
+
+                // Chuyển đến màn hình Home
+                navigation.navigate('Home');
+            } else {
+                throw new Error('No tokens returned from login');
+            }
         } catch (error) {
             console.error('Login error:', error);
             Alert.alert('Login Failed', error.message || 'Invalid email or password. Please try again.');
         }
     };
+
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

@@ -9,9 +9,10 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
       <TextInput
         placeholder="Tìm kiếm sản phẩm..."
         style={styles.input}
-        value={inputText} // Tạo giá trị từ parent component
-        onChangeText={onChangeText} // Gọi hàm onChangeText khi thay đổi
+        value={inputText}
+        onChangeText={onChangeText} 
       />
+
 
       <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
         <Ionicons name="filter-outline" size={24} color="black" />
@@ -22,8 +23,9 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
 
       </TouchableOpacity>
 
+
       {/* Hiển thị kết quả tìm kiếm */}
-      <FlatList
+      {/* <FlatList
         data={results}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
@@ -31,7 +33,7 @@ const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
             <Text style={styles.resultText}>{item.name}</Text>
           </View>
         )}
-      />
+      /> */}
     </View>
   );
 }
