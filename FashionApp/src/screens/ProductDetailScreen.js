@@ -20,7 +20,7 @@ const ProductDetailScreen = () => {
   useEffect(() => {
     axios
 
-      .get(`http://192.168.1.100:3000/v1/products/${productId}`)
+      .get(`http://192.168.1.242:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
       .then((response) => {
         setProduct(response.data);
         const defaultColor = response.data.colors[0];
@@ -33,7 +33,12 @@ const ProductDetailScreen = () => {
       });
   }, [productId]);
 
-  // Xử lý sự kiện chọn màu
+
+  if (!product) {
+    return <Text>Đang tải sản phẩm...</Text>;
+  }
+
+
   const handleColorSelect = (color) => {
     setSelectedColor(color);
     setSelectedSize(color.sizes[0]);

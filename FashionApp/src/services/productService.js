@@ -2,15 +2,16 @@ import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 
 
-export const getProducts = async (page = 1, limit = 10) => {
+export const getProducts = async () => {
     try {
-        const response = await api.get(`${API_ENDPOINTS.PRODUCTS.BASE}?page=${page}&limit=${limit}`);
-        return response.data;
+      const response = await api.get(API_ENDPOINTS.PRODUCTS.BASE); // Không thêm page, limit nữa
+      return response.data;
     } catch (error) {
-        const message = error.response?.data?.message || 'Failed to fetch products.';
-        throw new Error(message);
+      const message = error.response?.data?.message || 'Failed to fetch products.';
+      throw new Error(message);
     }
-}
+  };
+  
 
 
 export const getProductDetail = async (productId) => {

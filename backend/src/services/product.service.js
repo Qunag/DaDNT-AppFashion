@@ -23,36 +23,35 @@ const createNewProduct = async (productData) => {
  */
 const getProducts = async (filter = {}, options = {}) => {
     const {
-        page = 1,
-        limit = 100,
+
         sortBy = 'createdAt',
         order = 'desc'
     } = options;
     const query = {};
 
-    // Brand filtering (case-insensitive)
+    // Lọc theo thương hiệu (không phân biệt chữ hoa chữ thường)
     if (filter.brand) {
         query.brand = { $regex: new RegExp(filter.brand, 'i') };
     }
 
-    // Price filtering
+    // Lọc theo giá
     if (filter.minPrice || filter.maxPrice) {
         query.price = {};
         if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
         if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
     }
 
-    // Color filtering (case-insensitive)
+    // Lọc theo màu sắc (không phân biệt chữ hoa chữ thường)
     if (filter.color) {
         query['colors.color_name'] = { $regex: new RegExp(filter.color, 'i') };
     }
 
-    // Size filtering
+    // Lọc theo kích thước
     if (filter.size) {
         query['colors.sizes.size'] = Number(filter.size);
     }
 
-    // In-stock filtering (check if quantity > 0)
+    // Lọc theo tình trạng còn hàng (kiểm tra nếu số lượng > 0)
     if (filter.inStock) {
         query['colors.sizes.quantity'] = { $gt: 0 };
     }
@@ -60,18 +59,14 @@ const getProducts = async (filter = {}, options = {}) => {
     const total = await Product.countDocuments(query);
     const products = await Product.find(query)
         .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
         .lean();
 
     return {
         results: products,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil(total / limit),
         totalResults: total,
     };
 };
+
 
 /**
  * Filter products by specific fields (brand, price, color, size, quantity)
@@ -81,36 +76,34 @@ const getProducts = async (filter = {}, options = {}) => {
  */
 const filterProducts = async (filter = {}, options = {}) => {
     const {
-        page = 1,
-        limit = 10,
         sortBy = 'createdAt',
         order = 'desc'
     } = options;
     const query = {};
 
-    // Brand filtering (case-insensitive)
+    // Lọc theo thương hiệu (không phân biệt chữ hoa chữ thường)
     if (filter.brand) {
         query.brand = { $regex: new RegExp(filter.brand, 'i') };
     }
 
-    // Price filtering
+    // Lọc theo giá
     if (filter.minPrice || filter.maxPrice) {
         query.price = {};
         if (filter.minPrice) query.price.$gte = Number(filter.minPrice);
         if (filter.maxPrice) query.price.$lte = Number(filter.maxPrice);
     }
 
-    // Color filtering (case-insensitive)
+    // Lọc theo màu sắc (không phân biệt chữ hoa chữ thường)
     if (filter.color) {
         query['colors.color_name'] = { $regex: new RegExp(filter.color, 'i') };
     }
 
-    // Size filtering
+    // Lọc theo kích thước
     if (filter.size) {
         query['colors.sizes.size'] = Number(filter.size);
     }
 
-    // Quantity filtering (hasQuantity: true means quantity > 0)
+    // Lọc theo tình trạng có hàng (quantity > 0)
     if (filter.hasQuantity) {
         query['colors.sizes.quantity'] = { $gt: 0 };
     }
@@ -118,18 +111,14 @@ const filterProducts = async (filter = {}, options = {}) => {
     const total = await Product.countDocuments(query);
     const products = await Product.find(query)
         .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
         .lean();
 
     return {
         results: products,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil(total / limit),
         totalResults: total,
     };
 };
+
 
 /**
  * Search products by name with pagination

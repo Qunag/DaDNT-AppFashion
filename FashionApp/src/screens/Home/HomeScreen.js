@@ -62,9 +62,8 @@ const HomeScreen = () => {
         toggleProfile={toggleProfile}
         profileAnim={profileAnim}
       />
-      <Brand onSelectBrand={setSelectedBrand} /> {/* Chọn thương hiệu */}
-      <Watch products={filteredProducts} loading={loading} /> {/* Hiển thị sản phẩm đã lọc */}
-
+      <Brand onSelectBrand={setSelectedBrand} />
+      <Watch products={filteredProducts} loading={loading} /> 
     </View>
   );
 };
