@@ -9,25 +9,31 @@ import Profile from "../Profile";
 const HomeScreen = () => {
   const [isProfileVisible, setProfileVisible] = useState(false);
   const profileAnim = useRef(new Animated.Value(-250)).current;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState(""); // Tìm kiếm
-  const [selectedBrand, setSelectedBrand] = useState(null); // Thương hiệu đã chọn
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState(null);
+
+  const [refreshing, setRefreshing] = useState(false); // 👈 NEW
+
+  // 📥 Load sản phẩm từ server
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://192.168.0.101:3000/v1/products");
+      setProducts(response.data.results);
+    } catch (error) {
+      console.error("Lỗi khi tải sản phẩm:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false); // 👈 Đảm bảo dừng animation refresh
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get("http://192.168.1.242:3000/v1/products")
-      .then((response) => {
-        setProducts(response.data.results); // Đảm bảo đúng cấu trúc dữ liệu
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi tải sản phẩm:", error);
-        setLoading(false);
-      });
+    fetchProducts();
   }, []);
-
 
   const toggleProfile = () => {
     const toValue = isProfileVisible ? -250 : 0;
@@ -39,20 +45,30 @@ const HomeScreen = () => {
     setProfileVisible(!isProfileVisible);
   };
 
-  // Khi tìm kiếm, xóa bộ lọc thương hiệu
+  // 🔍 Khi tìm kiếm
   const handleSearch = (term) => {
     setSearchTerm(term);
-    setSelectedBrand(null); // Xóa bộ lọc thương hiệu khi tìm kiếm
+    setSelectedBrand(null);
   };
 
-  // Lọc sản phẩm theo từ khóa tìm kiếm và thương hiệu (nếu có)
+  // 🔄 Khi người dùng vuốt để làm mới
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setSearchTerm("");      // Xóa tìm kiếm
+    setSelectedBrand(null); // Xóa thương hiệu
+    fetchProducts();        // Gọi lại API
+  };
+
+  // Lọc sản phẩm theo tìm kiếm và thương hiệu
   const filteredProducts = products.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesBrand = selectedBrand ? item.brand.toLowerCase() === selectedBrand.toLowerCase() : true;
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesBrand = selectedBrand
+      ? item.brand.toLowerCase() === selectedBrand.toLowerCase()
+      : true;
     return matchesSearch && matchesBrand;
   });
-
 
   return (
     <View style={styles.container}>
@@ -63,7 +79,12 @@ const HomeScreen = () => {
         profileAnim={profileAnim}
       />
       <Brand onSelectBrand={setSelectedBrand} />
-      <Watch products={filteredProducts} loading={loading} /> 
+      <Watch
+        products={filteredProducts}
+        loading={loading}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
     </View>
   );
 };

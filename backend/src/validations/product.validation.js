@@ -98,6 +98,12 @@ const getProducts = {
             .valid('name', 'brand', 'price', 'createdAt')
             .optional(),
         order: Joi.string().valid('asc', 'desc').optional(),
+        description: Joi.string()
+            .trim()
+            .optional()
+            .messages({
+                'string.empty': 'Description cannot be empty'
+            }),
     }),
 };
 
