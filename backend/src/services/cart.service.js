@@ -6,7 +6,7 @@ const Product = require('../models/product.model');
 const mongoose = require('mongoose');
 
 const getCartByUserId = async (userId) => {
-    const cart = await Cart.findOne({ user: userId }).populate('items.productId', 'name price images colors sizes');
+    const cart = await Cart.findOne({ user: userId }).populate('items.productId');
     if (!cart) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
     }
@@ -29,51 +29,32 @@ const updateCart = async (userId, cartBody) => {
     return cart;
 };
 
-const addToCart = async (userId, { productId, quantity, color, size }) => {
+
+
+const addToCart = async (userId, { productId, name, image_url, brand, price, quantity, color, size }) => {
+    // Tìm giỏ hàng của người dùng
     let cart = await Cart.findOne({ user: userId });
 
-    // Tìm sản phẩm trong cơ sở dữ liệu
-    const product = await Product.findById(productId);
-    if (!product) {
-        throw new Error("Sản phẩm không tồn tại");
-    }
-
-    // Tìm màu sắc và kích cỡ tương ứng
-    const colorItem = product.colors.find((c) => c.color_name === color);
-    if (!colorItem) {
-        throw new Error("Màu sắc không hợp lệ");
-    }
-
-    const sizeItem = colorItem.sizes.find((s) => s.size.toString() === size.toString());
-    if (!sizeItem) {
-        throw new Error("Kích cỡ không hợp lệ");
-    }
-
-    // Kiểm tra số lượng sản phẩm trong kho
-    if (sizeItem.quantity < quantity) {
-        throw new Error("Số lượng sản phẩm trong kho không đủ");
-    }
-
-    // Nếu giỏ hàng chưa tồn tại, tạo mới giỏ hàng
     if (!cart) {
-        cart = await Cart.create({ user: userId, items: [{ productId, quantity, color, size }] });
-        return cart;
+        // Nếu giỏ hàng chưa tồn tại, tạo mới
+        cart = new Cart({ user: userId, items: [] });
     }
 
-    // Tìm kiếm sản phẩm trong giỏ hàng của người dùng
-    const existingItemIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId && item.color === color && item.size.toString() === size.toString()
-    );
+    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+    const existingProductIndex = cart.items.findIndex(item => item.productId.toString() === productId);
 
-    // Nếu sản phẩm đã tồn tại trong giỏ, cập nhật số lượng
-    if (existingItemIndex > -1) {
-        cart.items[existingItemIndex].quantity += quantity;
+    if (existingProductIndex !== -1) {
+        // Nếu sản phẩm đã có, cập nhật số lượng
+        cart.items[existingProductIndex].quantity += quantity;
     } else {
-        cart.items.push({ productId, quantity, color, size });
+        // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+        cart.items.push({ productId, name, image_url, brand, price, quantity, color, size });
     }
 
+    // Lưu giỏ hàng
     await cart.save();
-    return cart;
+
+    return cart; // Trả về giỏ hàng đã được cập nhật
 };
 
 

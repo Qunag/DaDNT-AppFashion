@@ -1,47 +1,108 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import QuantitySelector from "../components/QuantitySelector";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import CheckboxField from "../components/CheckBoxField";
 import { getUserID } from '../services/authService';
-import { fetchCart, createCart } from '../services/cartService';
+import { fetchCart, createCart, updateCartItem, removeFromCart } from '../services/cartService';
 
 export default function Cart() {
     const navigation = useNavigation();
-    const [isChecked, setIsChecked] = useState(false);
-    const [quantity, setQuantity] = useState(1);
     const [cartItems, setCartItems] = useState([]);
+    const [checkedItems, setCheckedItems] = useState({});
     const [loading, setLoading] = useState(true);
 
     const fetchCartItems = async () => {
         try {
-            const userID = await getUserID();
-            const response = await fetchCart(userID);
-            if (response && response.items && Array.isArray(response.items) && response.items.length === 0) {
-                createCart(userID);
+            const userId = await getUserID();
+            const cart = await fetchCart(userId);
+            if (cart && cart.items) {
+                const validCartItems = cart.items.map(item => ({
+                    ...item
+                }));
+                setCartItems(validCartItems);
             } else {
-                setCartItems(response.items || []);
+                const newCart = await createCart(userId);
+                setCartItems(newCart.items);
             }
         } catch (error) {
-            createCart(await getUserID());
+            console.error("Error fetching cart items:", error);
         } finally {
             setLoading(false);
         }
     };
 
 
+    const handleQuantityChange = async (index, value) => {
+        const item = cartItems[index];
+
+        if (!item.productId) {
+            console.error("Không tìm thấy productId trong item:", item);
+            return;
+        }
+
+        try {
+            await updateCartItem(item.productId, {
+                quantity: value,
+                color: item.color,
+                size: item.size
+            });
+
+            const updatedItems = [...cartItems];
+            updatedItems[index].quantity = value;
+            setCartItems(updatedItems);
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+        }
+    };
+
+
+
+    const handleRemove = async (index) => {
+        const item = cartItems[index];
+
+        if (!item.productId) {
+            console.error("Không tìm thấy productId trong item:", item);
+            return;
+        }
+
+        try {
+            // Gọi API để xóa sản phẩm bằng productId
+            await removeFromCart(item.productId);
+            const updatedItems = cartItems.filter((_, i) => i !== index);
+            setCartItems(updatedItems);
+        } catch (error) {
+            console.error("Error removing item:", error);
+        }
+    };
+
+
+    const handleCheckboxChange = (index, value) => {
+        setCheckedItems(prev => ({ ...prev, [index]: value }));
+    };
+
+    const handleCheckout = () => {
+        const selectedItems = cartItems.filter((_, i) => checkedItems[i]);
+        if (selectedItems.length === 0) {
+            Alert.alert("Thông báo", "Vui lòng chọn sản phẩm để thanh toán!");
+        } else {
+            navigation.navigate("Checkout", { cartItems: selectedItems });
+        }
+    };
+
+    const getTotal = () => {
+        return cartItems.reduce((sum, item, i) => {
+            if (checkedItems[i]) {
+                return sum + item.price * item.quantity;
+            }
+            return sum;
+        }, 0);
+    };
+
     useEffect(() => {
         fetchCartItems();
     }, []);
-
-    const handleCheckout = () => {
-        if (isChecked) {
-            navigation.navigate("Checkout", { cartItems });
-        } else {
-            alert("Please select products before checkout!");
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -49,29 +110,46 @@ export default function Cart() {
                 <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
             <Text style={styles.header}>My Cart</Text>
-            {loading ? <Text>Loading...</Text> : cartItems.length === 0 ? <Text>Your cart is empty!</Text> : cartItems.map((item, index) => (
-                <View style={styles.itemBox} key={index}>
-                    <CheckboxField label=" " value={isChecked} onValueChange={(value) => setIsChecked(value)} />
-                    <Image source={{ uri: item.imageUri }} style={styles.image} />
-                    <View style={styles.content}>
-                        <Text style={styles.productName}>{item.name}</Text>
-                        <Text style={styles.collection}>{item.collection}</Text>
-                        <Text style={styles.price}>{item.price} VND</Text>
-                        <View style={styles.quantityContainer}>
-                            <QuantitySelector onChange={(value) => setQuantity(value)} />
+
+            {loading ? (
+                <Text>Loading...</Text>
+            ) : cartItems.length === 0 ? (
+                <Text>Your cart is empty!</Text>
+            ) : (
+                cartItems.map((item, index) => (
+                    <View style={styles.itemBox} key={index}>
+                        <CheckboxField
+                            label=" "
+                            value={!!checkedItems[index]}
+                            onValueChange={(val) => handleCheckboxChange(index, val)}
+                        />
+                        <Image source={{ uri: item.image_url }} style={styles.image} />
+                        <View style={styles.content}>
+                            <Text style={styles.productName}>{item.name}</Text>
+                            <Text style={styles.collection}>Màu: {item.color} | Size: {item.size}</Text>
+                            <Text style={styles.price}>{item.price} VND</Text>
+                            <View style={styles.quantityContainer}>
+                                <QuantitySelector
+                                    value={item.quantity}
+                                    onChange={(value) => handleQuantityChange(index, value)}
+                                />
+                            </View>
                         </View>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}>
+                            <Text>✕</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.closeButton}>
-                        <Text>✕</Text>
-                    </TouchableOpacity>
-                </View>
-            ))}
-            <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
-                <Text style={styles.checkoutText}>GO TO CHECKOUT</Text>
-                <View style={styles.priceContainer}>
-                    <Text style={styles.checkoutPrice}>{cartItems.reduce((total, item) => total + item.price * item.quantity, 0)}</Text>
-                </View>
-            </TouchableOpacity>
+                ))
+            )}
+
+            {cartItems.length > 0 && (
+                <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
+                    <Text style={styles.checkoutText}>GO TO CHECKOUT</Text>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.checkoutPrice}>{getTotal().toLocaleString()} VND</Text>
+                    </View>
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -91,4 +169,5 @@ const styles = StyleSheet.create({
     priceContainer: { backgroundColor: "#4b0082", paddingVertical: 5, paddingHorizontal: 15, borderRadius: 20 },
     checkoutPrice: { color: "white", fontSize: 16, fontWeight: "bold" },
     backButton: { position: "absolute", left: 20, top: 40 },
+    closeButton: { position: "absolute", top: 5, right: 5 },
 });

@@ -52,7 +52,7 @@ const updateCartItem = catchAsync(async (req, res) => {
 });
 
 const addToCart = catchAsync(async (req, res) => {
-    const { productId, quantity, color, size } = req.body;
+    const { productId, name, image_url, brand, price, quantity, color, size } = req.body;
 
     // Kiểm tra các giá trị đã được gửi lên
     if (!productId || !color || !size) {
@@ -64,7 +64,7 @@ const addToCart = catchAsync(async (req, res) => {
     }
 
     try {
-        const cart = await cartService.addToCart(req.user.id, { productId, quantity, color, size });
+        const cart = await cartService.addToCart(req.user.id, { productId, name, image_url, brand, price, quantity, color, size });
         return res.status(httpStatus.CREATED).send(cart);
     } catch (error) {
         console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);

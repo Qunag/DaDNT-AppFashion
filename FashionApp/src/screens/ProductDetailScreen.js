@@ -16,7 +16,7 @@ const ProductDetailScreen = () => {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [stockQuantity, setStockQuantity] = useState(0);
 
-  // Lấy chi tiết sản phẩm khi màn hình được tải
+
   useEffect(() => {
     axios
       .get(`http://192.168.1.100:3000/v1/products/${productId}`)
@@ -35,8 +35,8 @@ const ProductDetailScreen = () => {
   // Xử lý sự kiện chọn màu
   const handleColorSelect = (color) => {
     setSelectedColor(color);
-    setSelectedSize(color.sizes[0]);  // Mặc định chọn kích cỡ đầu tiên
-    setStockQuantity(color.sizes[0].quantity);  // Cập nhật lại số lượng kho
+    setSelectedSize(color.sizes[0]);
+    setStockQuantity(color.sizes[0].quantity);
   };
 
   // Xử lý sự kiện chọn kích cỡ
@@ -75,9 +75,15 @@ const ProductDetailScreen = () => {
       const size = selectedSize.size ? selectedSize.size.toString() : '';  // Đảm bảo size là chuỗi
       const quantity = parseInt(selectedQuantity) || 1;
 
-      console.log("Thêm vào giỏ hàng:", { productId, quantity, color, size });
+      // Thêm các thông tin khác vào payload
+      const name = product.name;
+      const brand = product.brand;
+      const price = product.price;
+      const image_url = selectedColor.image_url || ''; // Đảm bảo rằng mỗi màu có image_url riêng
 
-      await addToCart(productId, quantity, color, size); // Gọi hàm thêm sản phẩm vào giỏ hàng
+      console.log("Thêm vào giỏ hàng:", { productId, name, price, image_url, quantity, color, size, brand });
+
+      await addToCart(productId, name, image_url, brand, price, quantity, color, size); // Gọi hàm thêm sản phẩm vào giỏ hàng
       alert("Đã thêm sản phẩm vào giỏ hàng!");
       navigation.navigate("Cart"); // Chuyển hướng đến giỏ hàng sau khi thêm thành công
     } catch (error) {
@@ -85,6 +91,7 @@ const ProductDetailScreen = () => {
       alert("Lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
     }
   };
+
 
   // Hiển thị khi dữ liệu sản phẩm chưa tải xong
   if (!product) {

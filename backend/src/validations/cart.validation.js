@@ -29,6 +29,10 @@ const addToCart = {
         quantity: Joi.number().integer().min(1).default(1),
         color: Joi.string().required(),
         size: Joi.string().required(),
+        image_url: Joi.string().uri().required(),
+        name: Joi.string().required(),
+        brand: Joi.string().required(),
+        price: Joi.number().required(),
     }),
 };
 
