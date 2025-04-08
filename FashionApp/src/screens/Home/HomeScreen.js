@@ -16,9 +16,9 @@ const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState(null);
 
-  const [refreshing, setRefreshing] = useState(false); // 👈 NEW
+  const [refreshing, setRefreshing] = useState(false); 
 
-  // 📥 Load sản phẩm từ server
+  // Load sản phẩm từ server
   const fetchProducts = async () => {
     try {
       const response = await axios.get("http://192.168.0.101:3000/v1/products");
@@ -27,14 +27,13 @@ const HomeScreen = () => {
       console.error("Lỗi khi tải sản phẩm:", error);
     } finally {
       setLoading(false);
-      setRefreshing(false); // 👈 Đảm bảo dừng animation refresh
+      setRefreshing(false); 
     }
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
 
+   fetchProducts();
   const toggleProfile = () => {
     const toValue = isProfileVisible ? -250 : 0;
     Animated.timing(profileAnim, {
@@ -45,13 +44,13 @@ const HomeScreen = () => {
     setProfileVisible(!isProfileVisible);
   };
 
-  // 🔍 Khi tìm kiếm
+  // Khi tìm kiếm
   const handleSearch = (term) => {
     setSearchTerm(term);
     setSelectedBrand(null);
   };
 
-  // 🔄 Khi người dùng vuốt để làm mới
+  //  Khi người dùng vuốt để làm mới
   const handleRefresh = () => {
     setRefreshing(true);
     setSearchTerm("");      // Xóa tìm kiếm
@@ -61,12 +60,14 @@ const HomeScreen = () => {
 
   // Lọc sản phẩm theo tìm kiếm và thương hiệu
   const filteredProducts = products.filter((item) => {
+
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesBrand = selectedBrand
       ? item.brand.toLowerCase() === selectedBrand.toLowerCase()
       : true;
+
     return matchesSearch && matchesBrand;
   });
 
@@ -79,12 +80,14 @@ const HomeScreen = () => {
         profileAnim={profileAnim}
       />
       <Brand onSelectBrand={setSelectedBrand} />
+
       <Watch
         products={filteredProducts}
         loading={loading}
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
+
     </View>
   );
 };

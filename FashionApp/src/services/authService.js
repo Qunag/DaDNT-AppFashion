@@ -30,7 +30,9 @@ export const registerUser = async (name, email, password) => {
         const message = error.response?.data?.message || 'Registration failed.';
         throw new Error(message);
     }
+
 };
+
 
 export const logoutUser = async () => {
     try {

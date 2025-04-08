@@ -16,8 +16,8 @@ const ProductDetailScreen = () => {
   const [stockQuantity, setStockQuantity] = useState(0);
 
   useEffect(() => {
-    axios
-      .get(`http://192.168.0.101:3000/v1/products/${productId}`)
+    axios.get(`http://192.168.0.101:3000/v1/products/${productId}`)
+
       .then((response) => {
         const data = response.data;
         setProduct(data);
@@ -167,9 +167,10 @@ const ProductDetailScreen = () => {
                         color.color_name === "Đen"
                           ? "black"
                           : color.color_name === "Trắng"
+
                           ? "white"
                           : color.color_name,
-                    },
+ },
                   ]}
                 />
               </TouchableOpacity>
@@ -316,6 +317,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+
   totalPrice: {
     fontSize: 16,
     fontWeight: "bold",
@@ -328,6 +330,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#555",
   },
+
   colorContainer: {
     flexDirection: "row",
     justifyContent: "center",
