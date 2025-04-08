@@ -8,7 +8,8 @@ const createUser = {
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
     role: Joi.string().required().valid('user', 'admin'),
-
+    phone: Joi.string().regex(/^\d{9,15}$/),
+    address: Joi.string(),
   }),
 };
 

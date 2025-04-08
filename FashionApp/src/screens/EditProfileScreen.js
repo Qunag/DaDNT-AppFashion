@@ -1,44 +1,63 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const EditProfileScreen = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      {/* Nút quay lại */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-      </TouchableOpacity>
+      {/* Header */}
+      <View style={styles.header}>
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={28} color="white" />
+        </TouchableOpacity>
 
-      {/* Hiển thị ảnh cố định */}
-      <View style={styles.profileContainer}>
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} style={styles.image} />
-        </View>
+        <Text style={styles.headerTitle}>Hồ sơ của tôi</Text>
 
-        {/* Hiển thị thông tin cố định */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Tên:</Text>
-          <Text style={styles.infoText}>Trần Phạm Nhật Quân</Text>
-
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.infoText}>quan@gmail.com</Text>
-
-          <Text style={styles.label}>Số điện thoại:</Text>
-          <Text style={styles.infoText}>0123456789</Text>
-
-          <Text style={styles.label}>Địa chỉ:</Text>
-          <Text style={styles.infoText}>123 Đường ABC, Quận XYZ, TP. HCM</Text>
-        </View>
+        {/* Avatar */}
+        <Image
+          source={{ uri: 'https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg' }}
+          style={styles.avatar}
+        />
       </View>
 
-      {/* Nút sửa thông tin */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("EditProfileForm")}>
-        <Text style={styles.buttonText}>Sửa</Text>
-      </TouchableOpacity>
+      <View style={styles.content}>
+        <Text style={styles.sectionTitle}>Tên</Text>
+        <View style={styles.infoRow}>
+          <Ionicons name="person-outline" size={24} color="#6B7280" />
+          <Text style={styles.infoValue}>Trần Phạm Nhật Quân</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>Email</Text>
+        <View style={styles.infoRow}>
+          <Ionicons name="mail-outline" size={24} color="#6B7280" />
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoValue}>quan@gmail.com</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Số điện thoại</Text>
+        <View style={styles.infoRow}>
+          <Ionicons name="call-outline" size={24} color="#6B7280" />
+          <Text style={styles.infoValue}>0123456789</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>Địa chỉ</Text>
+        <View style={styles.infoRow}>
+          <Ionicons name="location-outline" size={24} color="#6B7280" />
+          <Text style={styles.infoValue}>123 Đường ABC, Quận XYZ, TP.HCM</Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => navigation.navigate('EditProfileForm')}
+        >
+          <Text style={styles.editButtonText}>Sửa thông tin</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -46,75 +65,69 @@ const EditProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f9f9f9",
-    alignItems: "center",
+    backgroundColor: '#fff',
   },
-  profileContainer: {
-    marginTop: 80,
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    elevation: 5,
-    width: "90%",
+  header: {
+    backgroundColor: '#6342E8',
+    height: 250,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     left: 20,
-    top: 40,
+    top: 50,
     padding: 10,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
     borderRadius: 50,
-  },
-  imageContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: "hidden",
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: "#ddd",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  infoContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
     marginTop: 10,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
-  infoText: {
+  content: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  infoTextContainer: {
+    marginLeft: 10,
+  },
+  infoValue: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
+    color: '#000',
+    marginLeft: 10,
   },
-  button: {
-    backgroundColor: "#6342E8",
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 8,
+  editButton: {
+    backgroundColor: '#6342E8',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
     marginTop: 30,
-    shadowColor: "#6342E8",
-    shadowOpacity: 0.4,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    elevation: 5,
   },
-  buttonText: {
-    color: "#fff",
+  editButtonText: {
+    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 20,
     fontWeight: "bold",
+    marginTop: 50,
   },
 });
 

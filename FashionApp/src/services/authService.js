@@ -31,7 +31,15 @@ export const registerUser = async (name, email, password) => {
         throw new Error(message);
     }
 };
-
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Registration failed.';
+        throw new Error(message);
+    }
+};
 export const logoutUser = async () => {
     try {
 

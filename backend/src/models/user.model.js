@@ -48,10 +48,12 @@ const userSchema = mongoose.Schema(
           throw new Error('Invalid phone number');
         }
       },
+      default: null,
     },
     address: {
       type: String,
       trim: true,
+      default: null,
     },
     loyalty_points: {
       type: Number,

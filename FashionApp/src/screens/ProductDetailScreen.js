@@ -19,6 +19,7 @@ const ProductDetailScreen = () => {
 
   useEffect(() => {
     axios
+
       .get(`http://192.168.1.100:3000/v1/products/${productId}`)
       .then((response) => {
         setProduct(response.data);

@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { logoutUser } from '../services/authService';
 import { createCartIfNotExists } from '../services/cartService';
 
+
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false); // Trạng thái loading khi đang fetch dữ liệu

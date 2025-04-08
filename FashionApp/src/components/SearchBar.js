@@ -2,30 +2,27 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text, FlatList, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SearchBar({ onClose, onSearch, results }) {
-  const [query, setQuery] = useState("");
 
-  const handleSearch = () => {
-    if (query.trim() !== "") {
-      onSearch(query);
-    }
-  };
-
+const SearchBar = ({ onClose, onFilterPress, inputText, onChangeText }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.searchContainer}>
       <TextInput
-        style={styles.input}
         placeholder="Tìm kiếm sản phẩm..."
-        value={query}
-        onChangeText={setQuery}
-        onSubmitEditing={handleSearch}
+        style={styles.input}
+        value={inputText}
+        onChangeText={onChangeText} 
       />
-      {/* <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-        <Ionicons name="search-outline" size={24} color="white" />
+
+
+      <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
+        <Ionicons name="filter-outline" size={24} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-        <Ionicons name="close-outline" size={24} color="white" />
-      </TouchableOpacity> */}
+
+      <TouchableOpacity onPress={onClose} style={styles.icon}>
+        <Ionicons name="close-outline" size={24} color="black" />
+
+      </TouchableOpacity>
+
 
       {/* Hiển thị kết quả tìm kiếm */}
       {/* <FlatList
@@ -75,5 +72,8 @@ const styles = StyleSheet.create({
   },
   resultText: {
     color: "white",
+  },
+  icon: {
+    marginLeft: 10,
   },
 });
