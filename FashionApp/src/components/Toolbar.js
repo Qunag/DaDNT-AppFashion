@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-
+import { useNavigation } from "@react-navigation/native"; 
 import SearchBar from "./SearchBar";
-// import { searchProducts } from "../services/productService"; // Import API tìm kiếm
 import Notification from "./Notification";
 
 export default function Toolbar({ toggleProfile, onSearch }) {

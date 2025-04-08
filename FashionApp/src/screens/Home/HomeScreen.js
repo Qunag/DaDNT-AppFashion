@@ -17,7 +17,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.242:3000/v1/products")
+      .get("http://192.168.0.103:3000/v1/products")
       .then((response) => {
         setProducts(response.data.results); // Đảm bảo đúng cấu trúc dữ liệu
         setLoading(false);

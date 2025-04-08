@@ -14,7 +14,7 @@ const EditProfileScreen = () => {
     // Hàm lấy dữ liệu người dùng từ API
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://192.168.1.242:3000/v1/users'); // Thay bằng URL API của bạn
+        const response = await axios.get('http://192.168.0.103:3000/v1/users'); // Thay bằng URL API của bạn
         setUserData(response.data); // Cập nhật dữ liệu người dùng
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu người dùng:', error);
