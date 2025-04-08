@@ -1,17 +1,42 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 
 export default function CheckoutScreen() {
     const navigation = useNavigation();
+    const route = useRoute();
+
+    // Lấy danh sách mặt hàng từ màn hình Cart
+    const { cartItems } = route.params || { cartItems: [] };
 
     const [deliveryMethod, setDeliveryMethod] = useState("Mặc định");
-    const [paymentMethod, setPaymentMethod] = useState("MoMo");
+    const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
 
-    const deliveryOptions = ["Mặc định", "Chậm", "Hỏa tốc"];
+    // Danh sách phương thức giao hàng với giá tiền
+    const deliveryOptions = [
+        { name: "Mặc định", cost: 30000 },
+        { name: "Tiết kiệm", cost: 20000 },
+        { name: "Hỏa tốc", cost: 50000 },
+    ];
+
     const paymentOptions = ["MoMo", "Thanh toán khi nhận hàng", "Thẻ tín dụng"];
+
+    // Hàm tính tổng tiền của mặt hàng
+    const getItemsTotal = () => {
+        return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    };
+
+    // Hàm lấy phí giao hàng dựa trên phương thức được chọn
+    const getDeliveryCost = () => {
+        const selectedOption = deliveryOptions.find(option => option.name === deliveryMethod);
+        return selectedOption ? selectedOption.cost : 0;
+    };
+
+    // Tổng tiền cuối cùng = tiền mặt hàng + phí giao hàng
+    const getTotal = () => {
+        return getItemsTotal() + getDeliveryCost();
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -19,27 +44,50 @@ export default function CheckoutScreen() {
                 <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
             <Text style={styles.header}>Checkout</Text>
-            <TouchableOpacity style={styles.view}>
+
+            {/* Phần thông tin nhận hàng */}
+            <View style={styles.view}>
                 <Text style={styles.label}>Thông tin nhận hàng:</Text>
-            </TouchableOpacity>
+                <Text style={styles.placeholderText}>Vui lòng thêm thông tin giao hàng</Text>
+            </View>
+
+            {/* Phần mặt hàng */}
             <View style={styles.view}>
                 <Text style={styles.label}>Mặt hàng:</Text>
+                {cartItems.length === 0 ? (
+                    <Text style={styles.placeholderText}>Không có mặt hàng nào được chọn</Text>
+                ) : (
+                    cartItems.map((item, index) => (
+                        <View style={styles.itemBox} key={index}>
+                            <Image source={{ uri: item.image_url }} style={styles.image} />
+                            <View style={styles.content}>
+                                <Text style={styles.productName}>{item.name}</Text>
+                                <Text style={styles.collection}>Màu: {item.color} | Size: {item.size}</Text>
+                                <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
+                                <Text style={styles.quantity}>Số lượng: {item.quantity}</Text>
+                            </View>
+                        </View>
+                    ))
+                )}
             </View>
+
+            {/* Phần chọn phương thức giao hàng */}
             <View style={styles.view}>
                 <Text style={styles.label}>Chọn phương thức giao hàng:</Text>
                 {deliveryOptions.map((option) => (
                     <TouchableOpacity
-                        key={option}
-                        style={[styles.option, deliveryMethod === option && styles.selectedOption]}
-                        onPress={() => setDeliveryMethod(option)}
+                        key={option.name}
+                        style={[styles.option, deliveryMethod === option.name && styles.selectedOption]}
+                        onPress={() => setDeliveryMethod(option.name)}
                     >
-                        <Text style={styles.optionText}>{option}</Text>
-                        {deliveryMethod === option && <Ionicons name="checkmark" size={20} color="#6342E8" />}
+                        <Text style={styles.optionText}>{option.name}</Text>
+                        <Text style={styles.optionCost}>{option.cost.toLocaleString()} VND</Text>
+                        {deliveryMethod === option.name && <Ionicons name="checkmark" size={20} color="#6342E8" />}
                     </TouchableOpacity>
                 ))}
             </View>
 
-
+            {/* Phần chọn phương thức thanh toán */}
             <View style={styles.view}>
                 <Text style={styles.label}>Chọn phương thức thanh toán:</Text>
                 {paymentOptions.map((option) => (
@@ -54,10 +102,15 @@ export default function CheckoutScreen() {
                 ))}
             </View>
 
+            {/* Phần thanh toán */}
             <View style={styles.view}>
                 <View style={styles.totalCostContainer}>
                     <Text style={styles.label}>Thanh toán</Text>
-                    <Text style={styles.totalCost}>3,600,000₫</Text>
+                    <Text style={styles.totalCost}>{getTotal().toLocaleString()} VND</Text>
+                </View>
+                <View style={styles.costBreakdown}>
+                    <Text style={styles.costDetail}>Tổng tiền hàng: {getItemsTotal().toLocaleString()} VND</Text>
+                    <Text style={styles.costDetail}>Phí giao hàng: {getDeliveryCost().toLocaleString()} VND</Text>
                 </View>
 
                 <Text style={styles.terms}>
@@ -85,7 +138,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 10,
         padding: 10,
-        width: "100%", // Chiều rộng tối đa
+        width: "100%",
         marginBottom: 10,
     },
     header: {
@@ -98,7 +151,45 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: "bold",
-        marginTop: 10,
+        marginBottom: 10,
+    },
+    placeholderText: {
+        fontSize: 14,
+        color: "gray",
+    },
+    itemBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ddd",
+    },
+    image: {
+        width: 60,
+        height: 60,
+        borderRadius: 5,
+        marginRight: 10,
+    },
+    content: {
+        flex: 1,
+    },
+    productName: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#6342E8",
+    },
+    collection: {
+        fontSize: 12,
+        color: "gray",
+        marginVertical: 2,
+    },
+    price: {
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    quantity: {
+        fontSize: 14,
+        color: "gray",
     },
     option: {
         flexDirection: "row",
@@ -117,6 +208,12 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 16,
+        flex: 1, 
+    },
+    optionCost: {
+        fontSize: 14,
+        color: "#6342E8",
+        marginRight: 10, 
     },
     totalCostContainer: {
         flexDirection: "row",
@@ -127,6 +224,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         color: "#6342E8",
+    },
+    costBreakdown: {
+        marginTop: 10,
+    },
+    costDetail: {
+        fontSize: 14,
+        color: "gray",
     },
     terms: {
         fontSize: 12,

@@ -16,7 +16,9 @@ const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState(null);
 
+
   const [refreshing, setRefreshing] = useState(false); 
+
 
   // Load sản phẩm từ server
   const fetchProducts = async () => {

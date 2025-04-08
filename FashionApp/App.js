@@ -29,7 +29,6 @@ export default function App() {
       <Stack.Navigator
 
         initialRouteName="Loading"
-
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Splash" component={SplashScreen} />

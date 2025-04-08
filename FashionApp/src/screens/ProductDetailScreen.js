@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+
 import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView} from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -16,7 +18,9 @@ const ProductDetailScreen = () => {
   const [stockQuantity, setStockQuantity] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://192.168.0.101:3000/v1/products/${productId}`)
+
+    axios
+      .get(`http://192.168.0.103:3000/v1/products/${productId}`)
 
       .then((response) => {
         const data = response.data;
@@ -30,6 +34,12 @@ const ProductDetailScreen = () => {
         console.error("Lỗi khi tải sản phẩm:", error);
       });
   }, [productId]);
+
+
+  if (!product) {
+    return <Text>Đang tải sản phẩm...</Text>;
+  }
+
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -62,6 +72,7 @@ const ProductDetailScreen = () => {
       const size = selectedSize?.size || "";
       const image_url = selectedColor?.image_url || "";
 
+
       await addToCart(
         product._id,
         product.name,
@@ -73,6 +84,7 @@ const ProductDetailScreen = () => {
         size
       );
 
+
       alert("Đã thêm sản phẩm vào giỏ hàng!");
       navigation.navigate("Cart");
     } catch (error) {
@@ -81,9 +93,6 @@ const ProductDetailScreen = () => {
     }
   };
 
-  if (!product) {
-    return <Text>Đang tải sản phẩm...</Text>;
-  }
 
   return (
     <View style={styles.container}>
@@ -121,7 +130,9 @@ const ProductDetailScreen = () => {
             <Text style={styles.ratingText}>(4.5)</Text>
           </View>
 
+
           <Text style={styles.sectionTitle}>Số lượng:</Text>
+
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               onPress={() => handleQuantityChange("decrease")}
@@ -170,7 +181,8 @@ const ProductDetailScreen = () => {
 
                           ? "white"
                           : color.color_name,
- },
+                    },
+
                   ]}
                 />
               </TouchableOpacity>
@@ -318,6 +330,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
+
   totalPrice: {
     fontSize: 16,
     fontWeight: "bold",
@@ -330,6 +343,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#555",
   },
+
 
   colorContainer: {
     flexDirection: "row",
