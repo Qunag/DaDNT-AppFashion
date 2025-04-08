@@ -51,48 +51,31 @@ export const addToCart = async (productId, name, image_url, brand, price, quanti
 };
 
 // Cập nhật số lượng sản phẩm trong giỏ
-export const updateCartItem = async (userId, productId, { quantity, color, size }) => {
+export const updateCartItem = async (productId, { quantity, color, size }) => {
+    const headers = await getAuthHeaders();
+    console.log("Gọi API cập nhật sản phẩm:", productId);
+    console.log("Dữ liệu gửi đi:", { quantity, color, size });
+
     try {
-        const cart = await Cart.findOne({ user: userId });
-
-        // Tìm sản phẩm trong mảng items và cập nhật
-        const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
-
-        if (itemIndex === -1) {
-            throw new Error("Sản phẩm không tồn tại trong giỏ hàng");
-        }
-
-        cart.items[itemIndex].quantity = quantity;
-        cart.items[itemIndex].color = color;
-        cart.items[itemIndex].size = size;
-
-        await cart.save();
-        return cart;
+        const response = await api.patch(
+            API_ENDPOINTS.CARTS.UPDATE_ITEM(productId),
+            { quantity, color, size },
+            { headers }
+        );
+        return response.data;
     } catch (error) {
-        console.error("Error updating item:", error);
+        console.error("Chi tiết lỗi API:", error.response ? error.response.data : error.message);
         throw error;
     }
-
 };
-
-
 // Xóa một sản phẩm khỏi giỏ
-export const removeFromCart = async (userId, productId) => {
-    try {
-        const cart = await Cart.findOne({ user: userId });
-
-        // Tìm và xóa sản phẩm trong mảng items
-        const updatedItems = cart.items.filter(item => item.productId.toString() !== productId.toString());
-
-        // Cập nhật lại giỏ hàng
-        cart.items = updatedItems;
-        await cart.save();
-
-        return cart;
-    } catch (error) {
-        console.error("Error removing item:", error);
-        throw new Error("Not found");
-    }
+export const removeFromCart = async (productId) => {
+    const headers = await getAuthHeaders();
+    const response = await api.delete(
+        API_ENDPOINTS.CARTS.REMOVE_ITEM(productId),
+        { headers }
+    );
+    return response.data;
 };
 
 // Xóa toàn bộ giỏ hàng

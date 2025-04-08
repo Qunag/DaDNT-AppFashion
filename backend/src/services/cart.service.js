@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const Cart = require('../models/cart.model');
 const Product = require('../models/product.model');
+
 const mongoose = require('mongoose');
 
 const getCartByUserId = async (userId) => {
@@ -93,19 +94,34 @@ const getCartItem = async (userId, productId, color, size) => {
 };
 
 
+// services/cart.service.js
 const updateCartItem = async (userId, productId, quantity, color, size) => {
     const cart = await Cart.findOne({ user: userId });
     if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
+    // Sửa từ item.product thành item.productId
     const item = cart.items.find(
-        (item) => item.productId.toString() === productId && item.color === color && item.size === size
+        (item) =>
+            item.productId.toString() === productId &&
+            item.color === color &&
+            item.size === size
     );
 
-    if (!item) throw new ApiError(httpStatus.NOT_FOUND, 'Item not found in cart');
+    if (!item) {
+        console.log('Item not found in cart. Details:', { productId, color, size });
+        console.log('Available items:', cart.items.map(i => ({
+            productId: i.productId.toString(),
+            color: i.color,
+            size: i.size
+        })));
+        throw new ApiError(httpStatus.NOT_FOUND, 'Item not found in cart');
+    }
+
     item.quantity = quantity;
+
     await cart.save();
     return cart;
-};
+};;
 
 
 const validateCartItem = async (userId, productId, color, size) => {
