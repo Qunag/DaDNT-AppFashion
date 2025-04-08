@@ -42,8 +42,11 @@ const updateCartItem = {
     }),
     body: Joi.object().keys({
         quantity: Joi.number().integer().min(1).required(),
+        color: Joi.string().optional(),
+        size: Joi.string().optional(),
     }),
 };
+
 
 const deleteCartItem = {
     params: Joi.object().keys({

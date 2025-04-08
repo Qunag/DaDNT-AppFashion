@@ -89,6 +89,7 @@ const getProducts = {
                 is: Joi.exist(),
                 then: Joi.number().min(Joi.ref('minPrice')),
             }),
+        descripstion: Joi.string().trim().optional(),
         color: Joi.string().trim().optional(),
         size: Joi.number().integer().min(0).optional(),
         inStock: Joi.boolean().optional(),
@@ -98,8 +99,6 @@ const getProducts = {
             .valid('name', 'brand', 'price', 'createdAt')
             .optional(),
         order: Joi.string().valid('asc', 'desc').optional(),
-    }),
-};
 
 const getProductById = {
     params: Joi.object().keys({

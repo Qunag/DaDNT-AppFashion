@@ -1,28 +1,42 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import {View,Text,StyleSheet,FlatList,ActivityIndicator} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ProductCard from "./ProductCard"; 
+import ProductCard from "./ProductCard";
 
-const Watch = ({ products, loading }) => {
+const Watch = ({ products, loading, refreshing, onRefresh }) => {
   const navigation = useNavigation();
+
+  const renderItem = ({ item }) => (
+    <ProductCard
+      product={item}
+      onPress={() =>
+        navigation.navigate("ProductDetail", { productId: item._id })
+      }
+    />
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Danh sách sản phẩm</Text>
 
-      {loading ? (
+      {loading && !refreshing ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
           data={products}
           keyExtractor={(item) => item._id?.toString()}
           numColumns={2}
-          renderItem={({ item }) => (
-            <ProductCard
-              product={item}
-              onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
-            />
-          )}
+          renderItem={renderItem}
+          refreshing={refreshing}     // Cờ để hiện "kéo để làm mới"
+          onRefresh={onRefresh}       // Hàm xử lý khi người dùng vuốt xuống
+          ListEmptyComponent={
+            <Text style={{ textAlign: "center", marginTop: 20 }}>
+              Không có sản phẩm nào.
+            </Text>
+          }
+          contentContainerStyle={{
+            paddingBottom: 100,
+          }}
         />
       )}
     </View>

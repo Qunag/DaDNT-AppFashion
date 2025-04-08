@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {View, Text, Image, TouchableOpacity, StyleSheet, ScrollView,
-} from "react-native";
+
+import {View,Text,Image,TouchableOpacity,StyleSheet,ScrollView} from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -17,11 +18,14 @@ const ProductDetailScreen = () => {
   const [stockQuantity, setStockQuantity] = useState(0);
 
   useEffect(() => {
+
     axios
       .get(`http://192.168.0.103:3000/v1/products/${productId}`)
+
       .then((response) => {
-        setProduct(response.data);
-        const defaultColor = response.data.colors[0];
+        const data = response.data;
+        setProduct(data);
+        const defaultColor = data.colors[0];
         setSelectedColor(defaultColor);
         setSelectedSize(defaultColor.sizes[0]);
         setStockQuantity(defaultColor.sizes[0].quantity);
@@ -31,9 +35,11 @@ const ProductDetailScreen = () => {
       });
   }, [productId]);
 
+
   if (!product) {
     return <Text>Đang tải sản phẩm...</Text>;
   }
+
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -66,7 +72,19 @@ const ProductDetailScreen = () => {
       const size = selectedSize?.size || "";
       const image_url = selectedColor?.image_url || "";
 
-      await addToCart(product._id, product.name, image_url, product.brand, product.price, quantity, color, size);
+
+      await addToCart(
+        product._id,
+        product.name,
+        image_url,
+        product.brand,
+        product.price,
+        quantity,
+        color,
+        size
+      );
+
+
       alert("Đã thêm sản phẩm vào giỏ hàng!");
       navigation.navigate("Cart");
     } catch (error) {
@@ -75,11 +93,15 @@ const ProductDetailScreen = () => {
     }
   };
 
+
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.imageContainer}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
           {selectedColor && (
@@ -108,6 +130,9 @@ const ProductDetailScreen = () => {
             <Text style={styles.ratingText}>(4.5)</Text>
           </View>
 
+
+          <Text style={styles.sectionTitle}>Số lượng:</Text>
+
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               onPress={() => handleQuantityChange("decrease")}
@@ -124,6 +149,15 @@ const ProductDetailScreen = () => {
             </TouchableOpacity>
           </View>
 
+          <Text style={styles.totalPrice}>
+            Tổng: {(product.price * quantity).toLocaleString()} VNĐ
+          </Text>
+
+          <Text style={styles.selectedInfo}>
+            Đã chọn: {selectedColor?.color_name} - Size {selectedSize?.size}
+          </Text>
+          <Text style={styles.selectedInfo}>Số lượng còn lại: {stockQuantity}</Text>
+
           <Text style={styles.sectionTitle}>Chọn màu:</Text>
           <View style={styles.colorContainer}>
             {product.colors.map((color) => (
@@ -131,7 +165,8 @@ const ProductDetailScreen = () => {
                 key={color._id}
                 style={[
                   styles.colorButton,
-                  selectedColor.color_name === color.color_name && styles.selectedColor,
+                  selectedColor.color_name === color.color_name &&
+                    styles.selectedColor,
                 ]}
                 onPress={() => handleColorSelect(color)}
               >
@@ -143,9 +178,11 @@ const ProductDetailScreen = () => {
                         color.color_name === "Đen"
                           ? "black"
                           : color.color_name === "Trắng"
+
                           ? "white"
                           : color.color_name,
                     },
+
                   ]}
                 />
               </TouchableOpacity>
@@ -180,9 +217,12 @@ const ProductDetailScreen = () => {
             ))}
           </ScrollView>
 
-          <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
+          <TouchableOpacity
+            style={styles.addToCartButton}
+            onPress={handleAddToCart}
+          >
             <Ionicons name="cart-outline" size={24} color="white" />
-            <Text style={styles.addToCartText}>ADD TO CART</Text>
+            <Text style={styles.addToCartText}>THÊM VÀO GIỎ</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -272,7 +312,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 15,
+    marginTop: 10,
   },
   quantityButton: {
     backgroundColor: "#F0F0F0",
@@ -289,6 +329,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+
+
+  totalPrice: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
+    color: "#E74C3C",
+  },
+  selectedInfo: {
+    textAlign: "center",
+    marginTop: 5,
+    color: "#555",
+  },
+
+
   colorContainer: {
     flexDirection: "row",
     justifyContent: "center",
