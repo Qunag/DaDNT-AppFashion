@@ -1,68 +1,37 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+// Ví dụ về component QuantitySelector
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const QuantitySelector = ({ initialQuantity = 1, onChange }) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
-
-  const handleIncrease = () => {
-    const newQuantity = quantity + 1;
-    setQuantity(newQuantity);
-    if (onChange) onChange(newQuantity);
-  };
-
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      const newQuantity = quantity - 1;
-      setQuantity(newQuantity);
-      if (onChange) onChange(newQuantity);
+export default function QuantitySelector({ value, onChange }) {
+  const decrement = () => {
+    if (value > 1) {
+      onChange(value - 1);
     }
   };
 
-  const handleChange = (text) => {
-    let value = parseInt(text) || 1;
-    setQuantity(value);
-    if (onChange) onChange(value);
+  const increment = () => {
+    onChange(value + 1);
   };
+
+  // Đảm bảo value luôn là số
+  const displayValue = typeof value === 'number' ? value : 1;
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={handleDecrease}>
-        <Text>−</Text>
+      <TouchableOpacity onPress={decrement} style={styles.button}>
+        <Text style={styles.buttonText}>-</Text>
       </TouchableOpacity>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={String(quantity)}
-        onChangeText={handleChange}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleIncrease}>
-        <Text>+</Text>
+      <Text style={styles.quantity}>{displayValue}</Text>
+      <TouchableOpacity onPress={increment} style={styles.button}>
+        <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 5,
-    paddingHorizontal: 5,
-  },
-  button: {
-    padding: 8,
-    backgroundColor: "white",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  input: {
-    width: 30,
-    textAlign: "center",
-    fontSize: 16,
-    padding: 5,
-    backgroundColor: "white",
-  },
+  container: { flexDirection: "row", alignItems: "center" },
+  button: { width: 30, height: 30, borderRadius: 15, backgroundColor: "#e0e0e0", justifyContent: "center", alignItems: "center" },
+  buttonText: { fontSize: 18, fontWeight: "bold" },
+  quantity: { marginHorizontal: 10, fontSize: 16 },
 });
-
-export default QuantitySelector;
