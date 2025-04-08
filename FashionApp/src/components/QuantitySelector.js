@@ -5,14 +5,16 @@ const QuantitySelector = ({ initialQuantity = 1, onChange }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
   const handleIncrease = () => {
-    setQuantity(prev => prev + 1);
-    if (onChange) onChange(quantity + 1);
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    if (onChange) onChange(newQuantity);
   };
 
   const handleDecrease = () => {
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-      if (onChange) onChange(quantity - 1);
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      if (onChange) onChange(newQuantity);
     }
   };
 

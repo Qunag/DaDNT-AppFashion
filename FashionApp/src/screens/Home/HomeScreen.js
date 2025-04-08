@@ -17,7 +17,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.1.242:3000/v1/products")
+      .get("http://192.168.1.100:3000/v1/products")
       .then((response) => {
         setProducts(response.data.results); // Đảm bảo đúng cấu trúc dữ liệu
         setLoading(false);
@@ -47,8 +47,8 @@ const HomeScreen = () => {
 
   // Lọc sản phẩm theo từ khóa tìm kiếm và thương hiệu (nếu có)
   const filteredProducts = products.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesBrand = selectedBrand ? item.brand.toLowerCase() === selectedBrand.toLowerCase() : true;
     return matchesSearch && matchesBrand;
   });
@@ -63,7 +63,7 @@ const HomeScreen = () => {
         profileAnim={profileAnim}
       />
       <Brand onSelectBrand={setSelectedBrand} />
-      <Watch products={filteredProducts} loading={loading} /> 
+      <Watch products={filteredProducts} loading={loading} />
     </View>
   );
 };

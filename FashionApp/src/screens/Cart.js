@@ -13,6 +13,7 @@ export default function Cart() {
     const [checkedItems, setCheckedItems] = useState({});
     const [loading, setLoading] = useState(true);
 
+
     const fetchCartItems = async () => {
         try {
             const userId = await getUserID();
@@ -37,23 +38,48 @@ export default function Cart() {
     const handleQuantityChange = async (index, value) => {
         const item = cartItems[index];
 
-        if (!item.productId) {
-            console.error("Không tìm thấy productId trong item:", item);
+        if (!item || !item.productId) {
+            console.error("Không tìm thấy mục hợp lệ tại vị trí:", index);
             return;
         }
 
+        // Trích xuất ID thực tế từ đối tượng sản phẩm
+        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+
+        if (!productId) {
+            console.error("Không thể tìm thấy ID sản phẩm trong:", item.productId);
+            return;
+        }
+
+        console.log("Cập nhật mục với ID:", productId);
+        console.log("Color:", item.color, "Size:", item.size);  // Log ra để kiểm tra
+
         try {
-            await updateCartItem(item.productId, {
+            // Đảm bảo color và size hợp lệ
+            if (!item.color || !item.size) {
+                throw new Error("Thiếu thông tin màu sắc hoặc kích thước");
+            }
+
+            // Gọi API để cập nhật số lượng sản phẩm
+            await updateCartItem(productId, {
                 quantity: value,
                 color: item.color,
                 size: item.size
             });
 
+            // Cập nhật số lượng trong state
             const updatedItems = [...cartItems];
-            updatedItems[index].quantity = value;
+            updatedItems[index] = {
+                ...updatedItems[index],
+                quantity: value
+            };
             setCartItems(updatedItems);
         } catch (error) {
-            console.error("Error updating quantity:", error);
+            console.error("Lỗi khi cập nhật số lượng:", error);
+            Alert.alert(
+                "Cập nhật thất bại",
+                "Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại."
+            );
         }
     };
 
@@ -67,15 +93,30 @@ export default function Cart() {
             return;
         }
 
+        // Extract the actual ID from the product object
+        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+
+        if (!productId) {
+            console.error("Could not find product ID in:", item.productId);
+            return;
+        }
+
         try {
-            // Gọi API để xóa sản phẩm bằng productId
-            await removeFromCart(item.productId);
+            // Call API to remove product from cart
+            await removeFromCart(productId);
+
+            // Update cart after removing product
             const updatedItems = cartItems.filter((_, i) => i !== index);
             setCartItems(updatedItems);
         } catch (error) {
             console.error("Error removing item:", error);
+            Alert.alert(
+                "Remove Failed",
+                "Could not remove product from cart. Please try again."
+            );
         }
     };
+
 
 
     const handleCheckboxChange = (index, value) => {
@@ -131,11 +172,12 @@ export default function Cart() {
                             <View style={styles.quantityContainer}>
                                 <QuantitySelector
                                     value={item.quantity}
-                                    onChange={(value) => handleQuantityChange(index, value)}
+                                    onChange={(value) => handleQuantityChange(index, value)}  // Gọi API khi thay đổi số lượng
                                 />
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}  // Gọi API khi xóa sản phẩm
+                        >
                             <Text>✕</Text>
                         </TouchableOpacity>
                     </View>

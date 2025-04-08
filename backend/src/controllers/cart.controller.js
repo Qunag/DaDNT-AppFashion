@@ -45,12 +45,15 @@ const getCartItem = catchAsync(async (req, res) => {
 
 const updateCartItem = catchAsync(async (req, res) => {
     const { productId } = req.params;
-    const { quantity } = req.body;
-    const { color, size } = req.body;
+    const { quantity, color, size } = req.body;
+
     const cart = await cartService.updateCartItem(req.user.id, productId, quantity, color, size);
     res.send(cart);
 });
 
+module.exports = {
+    updateCartItem,
+};
 const addToCart = catchAsync(async (req, res) => {
     const { productId, name, image_url, brand, price, quantity, color, size } = req.body;
 
