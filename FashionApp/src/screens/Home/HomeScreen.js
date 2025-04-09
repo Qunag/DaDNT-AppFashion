@@ -23,7 +23,7 @@ const HomeScreen = () => {
   // Load sản phẩm từ server
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://192.168.1.100:3000/v1/products");
+      const response = await axios.get("http://192.168.1.242:3000/v1/products");
       setProducts(response.data.results);
     } catch (error) {
       console.error("Lỗi khi tải sản phẩm:", error);
@@ -100,7 +100,6 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 45,
     backgroundColor: "#f8f8f8",
     position: "relative",
   },

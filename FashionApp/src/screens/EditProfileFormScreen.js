@@ -1,47 +1,101 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+import { updateUser } from "../services/userService";
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState("Trần Phạm Nhật Quân");
-  const [email, setEmail] = useState("quan@gmail.com");
-  const [phone, setPhone] = useState("0123456789");
-  const [address, setAddress] = useState("123 Đường ABC, Quận XYZ, TP. HCM");
+  const route = useRoute();
+  const passedUserData = route.params?.userData || {};
 
-  const handleSave = () => {
+  const [name, setName] = useState(passedUserData.name || "");
+  const [email, setEmail] = useState(passedUserData.email || "");
+  const [phone, setPhone] = useState(passedUserData.phone || "");
+  const [address, setAddress] = useState(passedUserData.address || "");
+
+  const handleSave = async () => {
     if (!name.trim() || !email.trim() || !phone.trim() || !address.trim()) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
       return;
     }
-    Alert.alert("Thành công", "Thông tin đã được cập nhật!");
-    navigation.goBack();
+
+    try {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      const decodedToken = jwtDecode(accessToken);
+      const userId =
+        decodedToken.sub ||
+        decodedToken.userId ||
+        decodedToken.id ||
+        decodedToken.user;
+
+      const updatedUser = { name, email, phone, address };
+      await updateUser(userId, updatedUser);
+      Alert.alert("Thành công", "Thông tin đã được cập nhật!");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      Alert.alert("Lỗi", "Không thể cập nhật thông tin.");
+    }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={28} color="white" />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={26} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Chỉnh sửa hồ sơ</Text>
-          <Image source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }} style={styles.avatar} />
+          <Image
+            source={{
+              uri:
+                passedUserData.avatarUrl ||
+                "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg",
+            }}
+            style={styles.avatar}
+          />
         </View>
 
-        <View style={styles.content}>
+        <View style={styles.form}>
           <Text style={styles.label}>Tên</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} />
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="Nhập tên"
+          />
 
           <Text style={styles.label}>Email</Text>
-          <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            placeholder="example@email.com"
+            keyboardType="email-address"
+          />
 
           <Text style={styles.label}>Số điện thoại</Text>
-          <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+          <TextInput
+            style={styles.input}
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="0987654321"
+            keyboardType="phone-pad"
+          />
 
           <Text style={styles.label}>Địa chỉ</Text>
-          <TextInput style={styles.input} value={address} onChangeText={setAddress} />
+          <TextInput
+            style={styles.input}
+            value={address}
+            onChangeText={setAddress}
+            placeholder="Số nhà, đường, phường..."
+          />
 
           <TouchableOpacity style={styles.button} onPress={handleSave}>
             <Text style={styles.buttonText}>Lưu thông tin</Text>
@@ -55,7 +109,7 @@ const EditProfileFormScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
   },
   header: {
     backgroundColor: "#6342E8",
@@ -63,50 +117,58 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+    paddingTop: Platform.OS === "ios" ? 60 : 40,
   },
   backButton: {
     position: "absolute",
     left: 20,
-    top: 50,
+    top: Platform.OS === "ios" ? 60 : 40,
     padding: 10,
   },
   headerTitle: {
-    color: "white",
+    color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 50,
+    marginBottom: 10,
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginTop: 10,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: "#fff",
+    backgroundColor: "#eee",
+    marginTop: 10,
   },
-  content: {
-    padding: 20,
+  form: {
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 5,
-    marginTop: 15,
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+    color: "#333",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f2f2f2",
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 15,
+    fontSize: 16,
   },
   button: {
     backgroundColor: "#6342E8",
-    paddingVertical: 15,
-    borderRadius: 10,
+    padding: 15,
+    borderRadius: 12,
     alignItems: "center",
-    marginTop: 30,
+    shadowColor: "#6342E8",
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 3,
+    marginTop: 10,
   },
   buttonText: {
     color: "#fff",

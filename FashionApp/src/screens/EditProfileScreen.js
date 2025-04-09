@@ -2,31 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios'; // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode'; 
+import { getUserById } from '../services/userService';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const EditProfileScreen = () => {
   const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [userData, setUserData] = useState(null); // State để lưu dữ liệu người dùng
-  const [loading, setLoading] = useState(true); // State để kiểm tra trạng thái đang tải
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const accessToken = await AsyncStorage.getItem('accessToken');
+          if (!accessToken) {
+            console.warn('Không tìm thấy accessToken');
+            navigation.replace('LoginScreen');
+            return;
+          }
+  
+          const decodedToken = jwtDecode(accessToken);
+          const userId = decodedToken.sub || decodedToken.userId || decodedToken.id || decodedToken.user;
+  
+          if (!userId) {
+            throw new Error('Không tìm thấy userId trong token');
+          }
+  
+          const response = await getUserById(userId);
+          setUserData(response);
+          setLoading(false);
+        } catch (error) {
+          console.error('Lỗi khi lấy thông tin người dùng:', error.message || error);
+          setLoading(false);
+        }
+      };
+  
+      fetchUserData();
+    }, [])
+  );
+  
 
-  useEffect(() => {
-    // Hàm lấy dữ liệu người dùng từ API
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('http://192.168.0.103:3000/v1/users'); // Thay bằng URL API của bạn
-        setUserData(response.data); // Cập nhật dữ liệu người dùng
-      } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu người dùng:', error);
-      } finally {
-        setLoading(false); // Đã tải xong dữ liệu
-      }
-    };
-
-    fetchUserData(); // Gọi hàm khi component được render
-  }, []);
-
-  // Kiểm tra nếu dữ liệu vẫn đang được tải
   if (loading) {
     return (
       <View style={styles.container}>
@@ -35,7 +53,6 @@ const EditProfileScreen = () => {
     );
   }
 
-  // Nếu không có dữ liệu người dùng, có thể hiển thị thông báo lỗi
   if (!userData) {
     return (
       <View style={styles.container}>
@@ -46,18 +63,13 @@ const EditProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={28} color="white" />
         </TouchableOpacity>
-
         <Text style={styles.headerTitle}>Hồ sơ của tôi</Text>
-
-        {/* Avatar */}
         <Image
-          source={{ uri: userData.avatarUrl || 'https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg' }} // Avatar mặc định nếu không có avatar từ API
+          source={{ uri: userData.avatarUrl || 'https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg' }}
           style={styles.avatar}
         />
       </View>
@@ -91,7 +103,7 @@ const EditProfileScreen = () => {
 
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate('EditProfileForm')}
+          onPress={() => navigation.navigate('EditProfileForm', { userData })}
         >
           <Text style={styles.editButtonText}>Sửa thông tin</Text>
         </TouchableOpacity>

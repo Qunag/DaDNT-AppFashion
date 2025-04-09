@@ -1,13 +1,8 @@
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ENDPOINTS } from '../constants/api';
+import { getAuthHeaders } from './authService';
 
-// Lấy headers có access token
-const getAuthHeaders = async () => {
-    const accessToken = await AsyncStorage.getItem('accessToken');
-    if (!accessToken) throw new Error('No access token found.');
-    return { Authorization: `Bearer ${accessToken}` };
-};
 
 // Lấy giỏ hàng hiện tại
 export const fetchCart = async () => {
