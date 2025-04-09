@@ -1,16 +1,19 @@
 import React from "react";
-import {View,Text,StyleSheet,FlatList,ActivityIndicator} from "react-native";
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ProductCard from "./ProductCard";
 
-const Watch = ({ products, loading, refreshing, onRefresh }) => {
+const Watch = ({ products, loading, refreshing, onRefresh, refreshCartCount }) => {
   const navigation = useNavigation();
 
   const renderItem = ({ item }) => (
     <ProductCard
       product={item}
       onPress={() =>
-        navigation.navigate("ProductDetail", { productId: item._id })
+        navigation.navigate("ProductDetail", {
+          productId: item._id,
+          refreshCartCount: refreshCartCount, // Truyền refreshCartCount vào params
+        })
       }
     />
   );
@@ -27,8 +30,8 @@ const Watch = ({ products, loading, refreshing, onRefresh }) => {
           keyExtractor={(item) => item._id?.toString()}
           numColumns={2}
           renderItem={renderItem}
-          refreshing={refreshing}     // Cờ để hiện "kéo để làm mới"
-          onRefresh={onRefresh}       // Hàm xử lý khi người dùng vuốt xuống
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Text style={{ textAlign: "center", marginTop: 20 }}>

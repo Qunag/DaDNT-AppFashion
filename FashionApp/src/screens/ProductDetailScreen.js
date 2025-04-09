@@ -9,18 +9,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const ProductDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { productId } = route.params;
+  const { productId, refreshCartCount } = route.params; // Nhận refreshCartCount từ params
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [stockQuantity, setStockQuantity] = useState(0);
 
-
   useEffect(() => {
     axios
-
-      .get(`http://192.168.1.242:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
+      .get(`http://192.168.0.101:3000/v1/products/${productId}`)
       .then((response) => {
         setProduct(response.data);
         const defaultColor = response.data.colors[0];
@@ -33,11 +31,9 @@ const ProductDetailScreen = () => {
       });
   }, [productId]);
 
-
   if (!product) {
     return <Text>Đang tải sản phẩm...</Text>;
   }
-
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
@@ -45,13 +41,11 @@ const ProductDetailScreen = () => {
     setStockQuantity(color.sizes[0].quantity);
   };
 
-  // Xử lý sự kiện chọn kích cỡ
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    setStockQuantity(size.quantity);  // Cập nhật lại số lượng kho khi thay đổi kích cỡ
+    setStockQuantity(size.quantity);
   };
 
-  // Thay đổi số lượng sản phẩm
   const handleQuantityChange = (operation) => {
     let newQuantity = selectedQuantity;
     if (operation === "increase") {
@@ -60,14 +54,12 @@ const ProductDetailScreen = () => {
       newQuantity = selectedQuantity - 1;
     }
 
-    // Kiểm tra số lượng không vượt quá số lượng trong kho
     if (newQuantity > 0 && newQuantity <= stockQuantity) {
       setSelectedQuantity(newQuantity);
     } else {
       alert(`Số lượng không hợp lệ. Tối đa là ${stockQuantity} sản phẩm.`);
     }
   };
-
 
   const handleAddToCart = async () => {
     try {
@@ -78,31 +70,30 @@ const ProductDetailScreen = () => {
       }
 
       const color = selectedColor.color_name ? selectedColor.color_name.toString() : '';
-      const size = selectedSize.size ? selectedSize.size.toString() : '';  // Đảm bảo size là chuỗi
+      const size = selectedSize.size ? selectedSize.size.toString() : '';
       const quantity = parseInt(selectedQuantity) || 1;
 
-      // Thêm các thông tin khác vào payload
       const name = product.name;
       const brand = product.brand;
       const price = product.price;
-      const image_url = selectedColor.image_url || ''; // Đảm bảo rằng mỗi màu có image_url riêng
+      const image_url = selectedColor.image_url || '';
 
       console.log("Thêm vào giỏ hàng:", { productId, name, price, image_url, quantity, color, size, brand });
 
-      await addToCart(productId, name, image_url, brand, price, quantity, color, size); // Gọi hàm thêm sản phẩm vào giỏ hàng
+      await addToCart(productId, name, image_url, brand, price, quantity, color, size);
       alert("Đã thêm sản phẩm vào giỏ hàng!");
-      navigation.navigate("Cart"); // Chuyển hướng đến giỏ hàng sau khi thêm thành công
+
+      // Cập nhật cartCount sau khi thêm sản phẩm
+      if (refreshCartCount) {
+        refreshCartCount();
+      }
+
+      navigation.navigate("Cart");
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       alert("Lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
     }
   };
-
-
-  // Hiển thị khi dữ liệu sản phẩm chưa tải xong
-  if (!product) {
-    return <Text>Đang tải sản phẩm...</Text>;
-  }
 
   return (
     <View style={styles.container}>

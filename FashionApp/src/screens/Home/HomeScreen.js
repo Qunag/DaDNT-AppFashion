@@ -12,18 +12,14 @@ const HomeScreen = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState(null);
-
-
   const [refreshing, setRefreshing] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
-
-  // Load sản phẩm từ server
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://192.168.1.242:3000/v1/products");
+      const response = await axios.get("http://192.168.0.101:3000/v1/products");
       setProducts(response.data.results);
     } catch (error) {
       console.error("Lỗi khi tải sản phẩm:", error);
@@ -33,9 +29,23 @@ const HomeScreen = () => {
     }
   };
 
-  useEffect(() => {
+  const fetchCartCount = async () => {
+    try {
+      const response = await axios.get("http://192.168.0.101:3000/v1/carts/item");
+      setCartCount(response.data.length);
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng giỏ hàng:", error);
+    }
+  };
 
+
+  const refreshCartCount = () => {
+    fetchCartCount();
+  };
+
+  useEffect(() => {
     fetchProducts();
+    fetchCartCount();
   }, []);
 
   const toggleProfile = () => {
@@ -47,23 +57,21 @@ const HomeScreen = () => {
     }).start();
     setProfileVisible(!isProfileVisible);
   };
-  // Khi tìm kiếm
+
   const handleSearch = (term) => {
     setSearchTerm(term);
     setSelectedBrand(null);
   };
 
-  //  Khi người dùng vuốt để làm mới
   const handleRefresh = () => {
     setRefreshing(true);
-    setSearchTerm("");      // Xóa tìm kiếm
-    setSelectedBrand(null); // Xóa thương hiệu
-    fetchProducts();        // Gọi lại API
+    setSearchTerm("");
+    setSelectedBrand(null);
+    fetchProducts();
+    fetchCartCount();
   };
 
-  // Lọc sản phẩm theo tìm kiếm và thương hiệu
   const filteredProducts = products.filter((item) => {
-
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.brand && item.brand.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -74,10 +82,15 @@ const HomeScreen = () => {
     return matchesSearch && matchesBrand;
   });
 
-
   return (
     <View style={styles.container}>
-      <Toolbar toggleProfile={toggleProfile} onSearch={handleSearch} />
+      <Toolbar
+        toggleProfile={toggleProfile}
+        onSearch={handleSearch}
+        cartCount={cartCount}
+        refreshCartCount={refreshCartCount} 
+      />
+
       <Profile
         isVisible={isProfileVisible}
         toggleProfile={toggleProfile}
@@ -90,12 +103,11 @@ const HomeScreen = () => {
         loading={loading}
         refreshing={refreshing}
         onRefresh={handleRefresh}
+        refreshCartCount={refreshCartCount} 
       />
-
     </View>
   );
-}
-
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -106,4 +118,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-

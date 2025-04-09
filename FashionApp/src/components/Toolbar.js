@@ -1,35 +1,36 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 import SearchBar from "./SearchBar";
 import Notification from "./Notification";
 
-export default function Toolbar({ toggleProfile, onSearch }) {
+export default function Toolbar({ toggleProfile, onSearch, cartCount }) {
   const navigation = useNavigation();
-  const [showSearch, setShowSearch] = useState(false); // State to show/hide search bar
+  const [showSearch, setShowSearch] = useState(false);
   const [inputText, setInputText] = useState("");
 
+  // Hàm xử lý tìm kiếm
   const handleSearch = (text) => {
     setInputText(text);
-    onSearch(text); // Callback to update search in parent (HomeScreen)
+    onSearch(text);
   };
 
+  // Hàm đóng thanh tìm kiếm
   const handleCloseSearch = () => {
     setShowSearch(false);
-    setInputText(""); // Reset search input
-    onSearch(""); // Clear search results
-
+    setInputText("");
+    onSearch("");
   };
 
   return (
     <View style={styles.container}>
       {showSearch ? (
         <SearchBar
-          onClose={handleCloseSearch} // Close search bar
+          onClose={handleCloseSearch}
           onFilterPress={() => {}}
           inputText={inputText}
-          onChangeText={handleSearch} // Passing the search text handler
+          onChangeText={handleSearch}
         />
       ) : (
         <>
@@ -43,17 +44,16 @@ export default function Toolbar({ toggleProfile, onSearch }) {
             <TouchableOpacity>
               <View style={styles.notification}>
                 <Ionicons name="notifications-outline" size={24} color="black" />
-                <Notification count={3} /> 
+                {cartCount > 0 && <Notification count={cartCount} />}
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
               <View style={styles.notification}>
                 <Ionicons name="bag-outline" size={24} color="black" />
-                <Notification count={2} /> 
+                {cartCount > 0 && <Notification count={cartCount} />}
               </View>
             </TouchableOpacity>
-
 
             <TouchableOpacity onPress={() => setShowSearch(true)}>
               <Ionicons name="search-outline" size={24} color="black" />
@@ -105,5 +105,4 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
   },
-  
 });
