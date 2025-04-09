@@ -1,14 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Animated, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { logoutUser } from '../services/authService';
-import { createCartIfNotExists } from '../services/cartService';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+import { getUserById } from "../services/userService";
+import { logoutUser } from "../services/authService";
+import { createCartIfNotExists } from "../services/cartService";
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false); // Trạng thái loading khi đang fetch dữ liệu
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const accessToken = await AsyncStorage.getItem("accessToken");
+        if (!accessToken) return;
+
+        const decoded = jwtDecode(accessToken);
+        const userId =
+          decoded.sub || decoded.userId || decoded.id || decoded.user;
+
+        if (!userId) return;
+
+        const userData = await getUserById(userId);
+        setUser(userData);
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin user ở Profile:", error.message);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -19,12 +44,10 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
     }
   };
 
-  // Xử lý khi người dùng bấm vào nút Cart
   const handleCart = async () => {
     setLoading(true);
     try {
       const cart = await createCartIfNotExists();
-      console.log("Cart data:", cart);
       navigation.navigate("Cart", { cart });
     } catch (error) {
       console.error("Failed to fetch cart:", error.message);
@@ -35,31 +58,36 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
 
   return (
     <>
-      {/* Nền mờ khi Profile mở */}
-      {isVisible && <TouchableOpacity style={styles.overlay} onPress={toggleProfile} />}
+      {isVisible && (
+        <TouchableOpacity style={styles.overlay} onPress={toggleProfile} />
+      )}
 
-      {/* Bảng Profile */}
       <Animated.View style={[styles.profilePanel, { left: profileAnim }]}>
-        {/* Thông tin người dùng - Chuyển thành NÚT */}
         <TouchableOpacity
           style={styles.profileHeader}
-          onPress={() => navigation.navigate("EditProfile")} // Điều hướng đến EditProfileScreen
+          onPress={() => navigation.navigate("EditProfile")}
         >
           <Image
-            source={{ uri: "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg" }}
+            source={{
+              uri:
+                user?.avatarUrl ||
+                "https://i.pinimg.com/originals/cd/cb/0c/cdcb0cb30bc700c53f12eff840156b29.jpg",
+            }}
             style={styles.avatar}
           />
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>Trần Phạm Nhật Quân</Text>
-            <Text style={styles.userEmail}>quan@gmail.com</Text>
+            <Text style={styles.userName}>{user?.name || "Người dùng"}</Text>
+            <Text style={styles.userEmail}>
+              {user?.email || "email@example.com"}
+            </Text>
           </View>
           <Ionicons name="chevron-forward-outline" size={20} color="white" />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={handleCart} // Gọi hàm handleCart khi bấm vào Cart
-          disabled={loading} // Disable nút khi đang fetch dữ liệu
+          onPress={handleCart}
+          disabled={loading}
         >
           {loading ? (
             <Ionicons name="hourglass" size={24} color="white" />
@@ -79,7 +107,6 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           <Text style={styles.buttonText}>About</Text>
         </TouchableOpacity>
 
-        {/* Nút LogOut gọi hàm handleLogout */}
         <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="white" />
           <Text style={styles.buttonText}>LogOut</Text>
@@ -117,10 +144,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     marginTop: 55,
-    paddingVertical: 10,
+    paddingVertical:10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.1)", // Hiệu ứng nhấn đẹp hơn
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   avatar: {
     width: 50,
@@ -137,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   userEmail: {
-    fontSize: 12,
+    fontSize: 9,
     color: "white",
   },
   button: {

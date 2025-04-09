@@ -3,6 +3,12 @@ import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Lấy headers có access token
+export const getAuthHeaders = async () => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (!accessToken) throw new Error('No access token found.');
+    return { Authorization: `Bearer ${accessToken}` };
+};
 
 
 export const loginUser = async (email, password) => {

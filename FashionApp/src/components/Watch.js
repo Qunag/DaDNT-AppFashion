@@ -29,6 +29,7 @@ const Watch = ({ products, loading, refreshing, onRefresh }) => {
           renderItem={renderItem}
           refreshing={refreshing}     // Cờ để hiện "kéo để làm mới"
           onRefresh={onRefresh}       // Hàm xử lý khi người dùng vuốt xuống
+          showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Text style={{ textAlign: "center", marginTop: 20 }}>
               Không có sản phẩm nào.
