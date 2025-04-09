@@ -41,14 +41,19 @@ const addToCart = async (userId, { productId, name, image_url, brand, price, qua
         cart = new Cart({ user: userId, items: [] });
     }
 
-    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-    const existingProductIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+    // Kiểm tra xem sản phẩm đã có trong giỏ hàng với cùng color và size chưa
+    const existingProductIndex = cart.items.findIndex(
+        item =>
+            item.productId.toString() === productId &&
+            item.color === color &&
+            item.size === size
+    );
 
     if (existingProductIndex !== -1) {
-        // Nếu sản phẩm đã có, cập nhật số lượng
+        // Nếu sản phẩm đã có với cùng color và size, cập nhật số lượng
         cart.items[existingProductIndex].quantity += quantity;
     } else {
-        // Nếu sản phẩm chưa có, thêm mới vào giỏ hàng
+        // Nếu sản phẩm chưa có hoặc khác color/size, thêm mới vào giỏ hàng
         cart.items.push({ productId, name, image_url, brand, price, quantity, color, size });
     }
 
@@ -57,7 +62,6 @@ const addToCart = async (userId, { productId, name, image_url, brand, price, qua
 
     return cart; // Trả về giỏ hàng đã được cập nhật
 };
-
 
 
 const deleteCart = async (userId) => {
