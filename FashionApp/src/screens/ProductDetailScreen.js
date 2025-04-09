@@ -20,7 +20,7 @@ const ProductDetailScreen = () => {
   useEffect(() => {
 
     axios
-      .get(`http://192.168.0.103:3000/v1/products/${productId}`)
+      .get('http://192.168.0.101:3000/v1/products/${productId}')
 
       .then((response) => {
         const data = response.data;
