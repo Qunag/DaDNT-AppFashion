@@ -35,6 +35,7 @@ const EditProfileFormScreen = () => {
       await updateUser(userId, updatedUser);
       Alert.alert("Thành công", "Thông tin đã được cập nhật!");
       navigation.goBack();
+
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
       Alert.alert("Lỗi", "Không thể cập nhật thông tin.");
