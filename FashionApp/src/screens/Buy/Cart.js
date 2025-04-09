@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from "react-native"; // Thêm ScrollView
 import QuantitySelector from "../../components/QuantitySelector";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -127,31 +127,33 @@ export default function Cart() {
             ) : cartItems.length === 0 ? (
                 <Text>Your cart is empty!</Text>
             ) : (
-                cartItems.map((item, index) => (
-                    <View style={styles.itemBox} key={index}>
-                        <CheckboxField
-                            label=" "
-                            value={!!checkedItems[index]}
-                            onValueChange={(val) => handleCheckboxChange(index, val)}
-                        />
-                        <Image source={{ uri: item.image_url }} style={styles.image} />
-                        <View style={styles.content}>
-                            <Text style={styles.productName}>{item.name}</Text>
-                            <Text style={styles.collection}>Màu: {item.color}</Text>
-                            <Text style={styles.collection}>Size: {item.size}</Text>
-                            <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
-                            <View style={styles.quantityContainer}>
-                                <QuantitySelector
-                                    value={item.quantity}
-                                    onChange={(value) => handleQuantityChange(index, value)}
-                                />
+                <ScrollView style={styles.scrollView}>
+                    {cartItems.map((item, index) => (
+                        <View style={styles.itemBox} key={index}>
+                            <CheckboxField
+                                label=" "
+                                value={!!checkedItems[index]}
+                                onValueChange={(val) => handleCheckboxChange(index, val)}
+                            />
+                            <Image source={{ uri: item.image_url }} style={styles.image} />
+                            <View style={styles.content}>
+                                <Text style={styles.productName}>{item.name}</Text>
+                                <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+                                <Text style={styles.collection}>Size: {item.size}</Text>
+                                <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
+                                <View style={styles.quantityContainer}>
+                                    <QuantitySelector
+                                        value={item.quantity}
+                                        onChange={(value) => handleQuantityChange(index, value)}
+                                    />
+                                </View>
                             </View>
+                            <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}>
+                                <Text>✕</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.closeButton} onPress={() => handleRemove(index)}>
-                            <Text>✕</Text>
-                        </TouchableOpacity>
-                    </View>
-                ))
+                    ))}
+                </ScrollView>
             )}
 
             {cartItems.length > 0 && (
@@ -166,19 +168,21 @@ export default function Cart() {
     );
 }
 
-// Styles giữ nguyên như bạn đã cung cấp
-
 const styles = StyleSheet.create({
     container: { 
         flex: 1, 
-        alignItems: "center", 
         backgroundColor: "#f8f8f8", 
         padding: 10 
+    },
+    scrollView: {
+        width: '100%',
+        marginBottom: 80, // Để dành chỗ cho nút Thanh Toán
     },
     header: { 
         fontSize: 20, 
         marginTop: 50, 
-        marginBottom: 20 
+        marginBottom: 20,
+        textAlign: 'center'
     },
     itemBox: { 
         flexDirection: "row", 
@@ -189,7 +193,8 @@ const styles = StyleSheet.create({
         borderWidth: 2, 
         width: "95%", 
         position: "relative", 
-        marginTop: 30 
+        marginTop: 30,
+        alignSelf: 'center'
     },
     image: { 
         width: 60, 
@@ -201,6 +206,14 @@ const styles = StyleSheet.create({
         marginLeft: 15, 
         justifyContent: "space-between" 
     },
+    colorBox: {
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        marginRight: 5,
+        borderWidth: 1,
+        borderColor: "#ccc",
+    },
     productName: { 
         fontSize: 16, 
         fontWeight: "bold", 
@@ -209,7 +222,8 @@ const styles = StyleSheet.create({
     collection: { 
         fontSize: 12, 
         color: "gray", 
-        marginBottom: 8 },
+        marginBottom: 8 
+    },
     price: { 
         fontSize: 15, 
         fontWeight: "bold" 
