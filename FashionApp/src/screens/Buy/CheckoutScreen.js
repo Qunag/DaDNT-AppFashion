@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import { getUserById } from '../../services/userService';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function CheckoutScreen() {
     const navigation = useNavigation();
@@ -12,8 +17,9 @@ export default function CheckoutScreen() {
 
     const [deliveryMethod, setDeliveryMethod] = useState("Mặc định");
     const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Danh sách phương thức giao hàng với giá tiền
     const deliveryOptions = [
         { name: "Mặc định", cost: 30000 },
         { name: "Tiết kiệm", cost: 20000 },
@@ -21,6 +27,38 @@ export default function CheckoutScreen() {
     ];
 
     const paymentOptions = ["MoMo", "Thanh toán khi nhận hàng", "Thẻ tín dụng"];
+
+    // Lấy dữ liệu người dùng khi màn hình được tải
+    useFocusEffect(
+        useCallback(() => {
+            const fetchUserData = async () => {
+                try {
+                    const accessToken = await AsyncStorage.getItem('accessToken');
+                    if (!accessToken) {
+                        console.warn('Không tìm thấy accessToken');
+                        navigation.replace('LoginScreen');
+                        return;
+                    }
+
+                    const decodedToken = jwtDecode(accessToken);
+                    const userId = decodedToken.sub || decodedToken.userId || decodedToken.id || decodedToken.user;
+
+                    if (!userId) {
+                        throw new Error('Không tìm thấy userId trong token');
+                    }
+
+                    const response = await getUserById(userId);
+                    setUserData(response);
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Lỗi khi lấy thông tin người dùng:', error.message || error);
+                    setLoading(false);
+                }
+            };
+
+            fetchUserData();
+        }, [navigation])
+    );
 
     // Hàm tính tổng tiền của mặt hàng
     const getItemsTotal = () => {
@@ -38,20 +76,43 @@ export default function CheckoutScreen() {
         return getItemsTotal() + getDeliveryCost();
     };
 
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Text>Đang tải...</Text>
+            </View>
+        );
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
-            <Text style={styles.header}>Checkout</Text>
+            <Text style={styles.header}>Thanh Toán</Text>
 
-            {/* Phần thông tin nhận hàng */}
             <View style={styles.view}>
                 <Text style={styles.label}>Thông tin nhận hàng:</Text>
-                <Text style={styles.placeholderText}>Vui lòng thêm thông tin giao hàng</Text>
+                {userData ? (
+                    <View>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="person-outline" size={20} color="#6B7280" />
+                            <Text style={styles.infoText}>{userData.name}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="call-outline" size={20} color="#6B7280" />
+                            <Text style={styles.infoText}>{userData.phone}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="location-outline" size={20} color="#6B7280" />
+                            <Text style={styles.infoText}>{userData.address}</Text>
+                        </View>
+                    </View>
+                ) : (
+                    <Text style={styles.placeholderText}>Không thể lấy thông tin người dùng</Text>
+                )}
             </View>
 
-            {/* Phần mặt hàng */}
             <View style={styles.view}>
                 <Text style={styles.label}>Mặt hàng:</Text>
                 {cartItems.length === 0 ? (
@@ -71,7 +132,6 @@ export default function CheckoutScreen() {
                 )}
             </View>
 
-            {/* Phần chọn phương thức giao hàng */}
             <View style={styles.view}>
                 <Text style={styles.label}>Chọn phương thức giao hàng:</Text>
                 {deliveryOptions.map((option) => (
@@ -87,7 +147,6 @@ export default function CheckoutScreen() {
                 ))}
             </View>
 
-            {/* Phần chọn phương thức thanh toán */}
             <View style={styles.view}>
                 <Text style={styles.label}>Chọn phương thức thanh toán:</Text>
                 {paymentOptions.map((option) => (
@@ -102,15 +161,14 @@ export default function CheckoutScreen() {
                 ))}
             </View>
 
-            {/* Phần thanh toán */}
             <View style={styles.view}>
-                <View style={styles.totalCostContainer}>
-                    <Text style={styles.label}>Thanh toán</Text>
-                    <Text style={styles.totalCost}>{getTotal().toLocaleString()} VND</Text>
-                </View>
                 <View style={styles.costBreakdown}>
                     <Text style={styles.costDetail}>Tổng tiền hàng: {getItemsTotal().toLocaleString()} VND</Text>
                     <Text style={styles.costDetail}>Phí giao hàng: {getDeliveryCost().toLocaleString()} VND</Text>
+                </View>
+                <View style={styles.totalCostContainer}>
+                    <Text style={styles.label}>Thanh toán</Text>
+                    <Text style={styles.totalCost}>{getTotal().toLocaleString()} VND</Text>
                 </View>
 
                 <Text style={styles.terms}>
@@ -119,16 +177,38 @@ export default function CheckoutScreen() {
 
                 <TouchableOpacity
                     style={styles.placeOrderButton}
-                    onPress={() => navigation.navigate("Success")}
+                    onPress={() => {
+                        navigation.navigate("Success", {
+                            cartItems,
+                            deliveryMethod,
+                            paymentMethod,
+                            deliveryCost: getDeliveryCost(),
+                            itemsTotal: getItemsTotal(),
+                            total: getTotal(),
+                            userData,
+                        });
+                    }}
                 >
                     <Text style={styles.placeOrderText}>ĐẶT HÀNG</Text>
                 </TouchableOpacity>
+
             </View>
         </ScrollView>
     );
 }
 
+
 const styles = StyleSheet.create({
+    infoRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginVertical: 5,
+    },
+    infoText: {
+        fontSize: 14,
+        color: "#000",
+        marginLeft: 10,
+    },
     container: {
         flexGrow: 1,
         padding: 10,
@@ -208,12 +288,12 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 16,
-        flex: 1, 
+        flex: 1,
     },
     optionCost: {
         fontSize: 14,
         color: "#6342E8",
-        marginRight: 10, 
+        marginRight: 10,
     },
     totalCostContainer: {
         flexDirection: "row",
