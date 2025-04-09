@@ -20,7 +20,7 @@ const ProductDetailScreen = () => {
   useEffect(() => {
     axios
 
-      .get(`http://192.168.1.242:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
+      .get(`http://192.168.1.100:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
       .then((response) => {
         setProduct(response.data);
         const defaultColor = response.data.colors[0];
@@ -124,7 +124,8 @@ const ProductDetailScreen = () => {
           <Text style={styles.brand}>{product.brand}</Text>
           <Text style={styles.productName}>{product.name}</Text>
           <Text style={styles.price}>{product.price.toLocaleString()} VNĐ</Text>
-          <Text style={styles.description}>{product.description}</Text>
+          <Text style={styles.description}>Mô tả : </Text>
+          <Text style={styles.description}>{product.discription}</Text>
 
           <View style={styles.quantityContainer}>
             <TouchableOpacity onPress={() => handleQuantityChange("decrease")} style={styles.quantityButton}>
