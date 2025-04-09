@@ -89,7 +89,7 @@ const getProducts = {
                 is: Joi.exist(),
                 then: Joi.number().min(Joi.ref('minPrice')),
             }),
-        descripstion: Joi.string().trim().optional(),
+        dicription: Joi.string().trim().optional(),
         color: Joi.string().trim().optional(),
         size: Joi.number().integer().min(0).optional(),
         inStock: Joi.boolean().optional(),
