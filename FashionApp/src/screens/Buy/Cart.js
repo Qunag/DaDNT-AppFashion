@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from "react-native"; // Thêm ScrollView
+import { Text, View, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from "react-native";
 import QuantitySelector from "../../components/QuantitySelector";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,7 +19,8 @@ export default function Cart() {
             const cart = await fetchCart(userId);
             if (cart && cart.items) {
                 const validCartItems = cart.items.map(item => ({
-                    ...item
+                    ...item,
+                    productId: typeof item.productId === 'object' ? item.productId : { id: item.productId },
                 }));
                 setCartItems(validCartItems);
             } else {
@@ -27,7 +28,9 @@ export default function Cart() {
                 setCartItems(newCart.items);
             }
         } catch (error) {
-            console.error("Error fetching cart items:", error);
+
+            const newCart = await createCart(userId);
+            setCartItems(newCart.items);
         } finally {
             setLoading(false);
         }
@@ -51,7 +54,7 @@ export default function Cart() {
             await updateCartItem(productId, {
                 quantity: value,
                 color: item.color,
-                size: item.size
+                size: item.size,
             });
             const updatedItems = [...cartItems];
             updatedItems[index] = { ...updatedItems[index], quantity: value };
@@ -82,6 +85,11 @@ export default function Cart() {
             await removeFromCart(productId, item.color, item.size);
             const updatedItems = cartItems.filter((_, i) => i !== index);
             setCartItems(updatedItems);
+            setCheckedItems(prev => {
+                const newChecked = { ...prev };
+                delete newChecked[index];
+                return newChecked;
+            });
             Alert.alert("Thành công", "Sản phẩm đã được xóa khỏi giỏ hàng!");
         } catch (error) {
             console.error("Error removing item:", error);
@@ -95,6 +103,7 @@ export default function Cart() {
 
     const handleCheckout = () => {
         const selectedItems = cartItems.filter((_, i) => checkedItems[i]);
+        console.log('Selected Items for Checkout:', selectedItems);
         if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Vui lòng chọn sản phẩm để thanh toán!");
         } else {
@@ -129,7 +138,7 @@ export default function Cart() {
             ) : (
                 <ScrollView style={styles.scrollView}>
                     {cartItems.map((item, index) => (
-                        <View style={styles.itemBox} key={index}>
+                        <View style={styles.itemBox} key={`${item.productId.id}_${item.color}_${item.size}`}>
                             <CheckboxField
                                 label=" "
                                 value={!!checkedItems[index]}
@@ -169,42 +178,42 @@ export default function Cart() {
 }
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        backgroundColor: "#f8f8f8", 
-        padding: 10 
+    container: {
+        flex: 1,
+        backgroundColor: "#f8f8f8",
+        padding: 10,
     },
     scrollView: {
         width: '100%',
-        marginBottom: 80, // Để dành chỗ cho nút Thanh Toán
+        marginBottom: 80,
     },
-    header: { 
-        fontSize: 20, 
-        marginTop: 50, 
+    header: {
+        fontSize: 20,
+        marginTop: 50,
         marginBottom: 20,
-        textAlign: 'center'
+        textAlign: 'center',
     },
-    itemBox: { 
-        flexDirection: "row", 
-        alignItems: "center", 
-        backgroundColor: "white", 
-        padding: 10, 
-        borderRadius: 8, 
-        borderWidth: 2, 
-        width: "95%", 
-        position: "relative", 
+    itemBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "white",
+        padding: 10,
+        borderRadius: 8,
+        borderWidth: 2,
+        width: "95%",
+        position: "relative",
         marginTop: 30,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
-    image: { 
-        width: 60, 
-        height: 60, 
-        borderRadius: 5 
+    image: {
+        width: 60,
+        height: 60,
+        borderRadius: 5,
     },
-    content: { 
-        flex: 1, 
-        marginLeft: 15, 
-        justifyContent: "space-between" 
+    content: {
+        flex: 1,
+        marginLeft: 15,
+        justifyContent: "space-between",
     },
     colorBox: {
         width: 16,
@@ -214,63 +223,63 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ccc",
     },
-    productName: { 
-        fontSize: 16, 
-        fontWeight: "bold", 
-        color: "#6342E8" 
+    productName: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#6342E8",
     },
-    collection: { 
-        fontSize: 12, 
-        color: "gray", 
-        marginBottom: 8 
+    collection: {
+        fontSize: 12,
+        color: "gray",
+        marginBottom: 8,
     },
-    price: { 
-        fontSize: 15, 
-        fontWeight: "bold" 
+    price: {
+        fontSize: 15,
+        fontWeight: "bold",
     },
-    quantityContainer: { 
-        position: "absolute", 
-        bottom: 10, 
-        right: 5 
+    quantityContainer: {
+        position: "absolute",
+        bottom: 10,
+        right: 5,
     },
-    checkoutButton: { 
-        flexDirection: "row", 
-        justifyContent: "center", 
-        alignItems: "center", 
-        backgroundColor: "#6342E8", 
-        paddingVertical: 15, 
-        paddingHorizontal: 20, 
-        borderRadius: 50, 
-        position: "absolute", 
-        bottom: 20, 
-        width: "90%", 
-        alignSelf: "center" 
+    checkoutButton: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#6342E8",
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 50,
+        position: "absolute",
+        bottom: 20,
+        width: "90%",
+        alignSelf: "center",
     },
-    checkoutText: { 
-        color: "white", 
-        fontSize: 18, 
-        fontWeight: "bold", 
-        marginRight: 10 
+    checkoutText: {
+        color: "white",
+        fontSize: 18,
+        fontWeight: "bold",
+        marginRight: 10,
     },
-    priceContainer: { 
-        backgroundColor: "#4b0082", 
-        paddingVertical: 5, 
-        paddingHorizontal: 15, 
-        borderRadius: 20 
+    priceContainer: {
+        backgroundColor: "#4b0082",
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        borderRadius: 20,
     },
-    checkoutPrice: { 
-        color: "white", 
-        fontSize: 16, 
-        fontWeight: "bold" 
+    checkoutPrice: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
     },
-    backButton: { 
-        position: "absolute", 
-        left: 20, 
-        top: 40 
+    backButton: {
+        position: "absolute",
+        left: 20,
+        top: 40,
     },
-    closeButton: { 
-        position: "absolute", 
-        top: 5, 
-        right: 5 
+    closeButton: {
+        position: "absolute",
+        top: 5,
+        right: 5,
     },
 });

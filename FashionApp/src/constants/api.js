@@ -1,6 +1,6 @@
 
 
-const API_URL = "http://192.168.0.103:3000/v1";
+const API_URL = "http://192.168.1.101:3000/v1";
 
 
 
@@ -43,6 +43,8 @@ export const API_ENDPOINTS = {
     ORDERS: {
         BASE: `${API_URL}/orders`,
         DETAIL: (orderId) => `${API_URL}/orders/${orderId}`,
-        TRACKING: (trackingId) => `${API_URL}/orders/quantities/${trackingId}`,
+        CREATE: `${API_URL}/orders/create`,
+        UPDATE_STATUS: (orderId) => `${API_URL}/orders/update-status/${orderId}`,
+        CANCEL: (orderId) => `${API_URL}/orders/cancel/${orderId}`,
     },
 };

@@ -64,18 +64,21 @@ export const updateCartItem = async (productId, { quantity, color, size }) => {
     }
 };
 // Xóa một sản phẩm khỏi giỏ
-// Trong cartService.js
-export const removeFromCart = async (productId, color, size) => {
+export const remove = async (productId) => {
     const headers = await getAuthHeaders();
-    const response = await api.delete(
-        API_ENDPOINTS.CARTS.REMOVE_ITEM(productId),
-        {
-            headers,
-            data: { color, size }  // Gửi color và size trong body của DELETE request
-        }
-    );
+    const response = await api.delete(API_ENDPOINTS.CARTS.REMOVE_ITEM(productId), { headers });
     return response.data;
 };
+
+export const removeFromCart = async (productId, color, size) => {
+    const headers = await getAuthHeaders();
+    const response = await api.delete(API_ENDPOINTS.CARTS.REMOVE_ITEM(productId), {
+        headers,
+        data: { color, size },
+    });
+    return response.data;
+}
+
 
 // Xóa toàn bộ giỏ hàng
 export const clearCart = async () => {
@@ -89,4 +92,17 @@ export const validateCartItem = async (productId) => {
     const headers = await getAuthHeaders();
     const response = await api.get(API_ENDPOINTS.CARTS.VALIDATE_ITEM(productId), { headers });
     return response.data;
+};
+
+// Cập nhật toàn bộ giỏ hàng
+export const updateCart = async (items) => {
+    try {
+        const headers = await getAuthHeaders();
+        const response = await api.put(API_ENDPOINTS.CARTS.BASE, { items }, { headers });
+        console.log('Updated Cart:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating cart:', error.response ? error.response.data : error.message);
+        throw error;
+    }
 };

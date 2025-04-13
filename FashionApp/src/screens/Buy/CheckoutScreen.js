@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,18 +7,25 @@ import { jwtDecode } from 'jwt-decode';
 import { getUserById } from '../../services/userService';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { createOrder } from '../../services/orderService';
+import { deleteCartItem } from '../../services/cartService';
 
 export default function CheckoutScreen() {
     const navigation = useNavigation();
     const route = useRoute();
 
-    // Lấy danh sách mặt hàng từ màn hình Cart
     const { cartItems } = route.params || { cartItems: [] };
 
     const [deliveryMethod, setDeliveryMethod] = useState("Mặc định");
     const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const colorMap = {
+        '#CC0000': 'Đỏ',
+        '#000000': 'Đen',
+        '#FFFFFF': 'Trắng',
+    };
 
     const deliveryOptions = [
         { name: "Mặc định", cost: 30000 },
@@ -28,7 +35,6 @@ export default function CheckoutScreen() {
 
     const paymentOptions = ["MoMo", "Thanh toán khi nhận hàng", "Thẻ tín dụng"];
 
-    // Lấy dữ liệu người dùng khi màn hình được tải
     useFocusEffect(
         useCallback(() => {
             const fetchUserData = async () => {
@@ -60,20 +66,79 @@ export default function CheckoutScreen() {
         }, [navigation])
     );
 
-    // Hàm tính tổng tiền của mặt hàng
     const getItemsTotal = () => {
         return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     };
 
-    // Hàm lấy phí giao hàng dựa trên phương thức được chọn
     const getDeliveryCost = () => {
         const selectedOption = deliveryOptions.find(option => option.name === deliveryMethod);
         return selectedOption ? selectedOption.cost : 0;
     };
 
-    // Tổng tiền cuối cùng = tiền mặt hàng + phí giao hàng
     const getTotal = () => {
         return getItemsTotal() + getDeliveryCost();
+    };
+
+    const handlePlaceOrder = async () => {
+        if (!userData) {
+            Alert.alert("Lỗi", "Không thể lấy thông tin người dùng. Vui lòng đăng nhập lại.");
+            return;
+        }
+
+        if (cartItems.length === 0) {
+            Alert.alert("Lỗi", "Không có sản phẩm nào được chọn để đặt hàng.");
+            return;
+        }
+
+        try {
+            const orderItems = cartItems.map(item => {
+                const colorObj = item.productId.colors ? item.productId.colors.find(c => c.code === item.color) : null;
+                const colorName = colorObj ? colorObj.name : colorMap[item.color] || item.color;
+
+                return {
+                    productId: typeof item.productId === 'object' ? item.productId.id : item.productId,
+                    name: item.name,
+
+                    price: item.price,
+                    quantity: item.quantity,
+                    color_name: colorName,
+                    image_url: item.image_url,
+                    size: item.size,
+                };
+            });
+
+            console.log('Order Items:', JSON.stringify(orderItems, null, 2));
+
+            const response = await createOrder(orderItems);
+            console.log('Order created successfully:', response._id);
+
+            // Xóa các sản phẩm đã thanh toán khỏi giỏ hàng
+            for (const item of cartItems) {
+                try {
+                    const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+                    console.log(`Xóa sản phẩm: productId=${productId}, color=${item.color}, size=${item.size}, name=${item.name}`);
+                    await deleteCartItem(productId, item.color, item.size);
+                    console.log(`Đã xóa sản phẩm ${item.name} khỏi giỏ hàng`);
+                } catch (error) {
+                    console.warn(`Không thể xóa sản phẩm ${item.name} khỏi giỏ hàng: ${error.message}`);
+                    // Tiếp tục với sản phẩm tiếp theo
+                }
+            }
+
+            navigation.navigate("Success", {
+                cartItems: orderItems,
+                deliveryMethod,
+                paymentMethod,
+                deliveryCost: getDeliveryCost(),
+                itemsTotal: getItemsTotal(),
+                total: getTotal(),
+                userData,
+                orderId: response._id,
+            });
+        } catch (error) {
+            console.error("Error creating order:", error.response ? error.response.data : error.message);
+            Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
+        }
     };
 
     if (loading) {
@@ -119,11 +184,13 @@ export default function CheckoutScreen() {
                     <Text style={styles.placeholderText}>Không có mặt hàng nào được chọn</Text>
                 ) : (
                     cartItems.map((item, index) => (
-                        <View style={styles.itemBox} key={index}>
+                        <View style={styles.itemBox} key={`${item.productId.id}_${item.color}_${item.size}`}>
                             <Image source={{ uri: item.image_url }} style={styles.image} />
                             <View style={styles.content}>
                                 <Text style={styles.productName}>{item.name}</Text>
-                                <Text style={styles.collection}>Màu: {item.color} | Size: {item.size}</Text>
+                                <Text style={styles.collection}>
+                                    Màu: {item.productId.colors?.find(c => c.code === item.color)?.name || colorMap[item.color] || item.color} | Size: {item.size}
+                                </Text>
                                 <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
                                 <Text style={styles.quantity}>Số lượng: {item.quantity}</Text>
                             </View>
@@ -177,26 +244,14 @@ export default function CheckoutScreen() {
 
                 <TouchableOpacity
                     style={styles.placeOrderButton}
-                    onPress={() => {
-                        navigation.navigate("Success", {
-                            cartItems,
-                            deliveryMethod,
-                            paymentMethod,
-                            deliveryCost: getDeliveryCost(),
-                            itemsTotal: getItemsTotal(),
-                            total: getTotal(),
-                            userData,
-                        });
-                    }}
+                    onPress={handlePlaceOrder}
                 >
                     <Text style={styles.placeOrderText}>ĐẶT HÀNG</Text>
                 </TouchableOpacity>
-
             </View>
         </ScrollView>
     );
 }
-
 
 const styles = StyleSheet.create({
     infoRow: {

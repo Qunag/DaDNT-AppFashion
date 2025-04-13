@@ -28,11 +28,32 @@ const deleteCart = catchAsync(async (req, res) => {
 
 
 const deleteCartItem = catchAsync(async (req, res) => {
-    const { productId } = req.params;
-    const { color, size } = req.body;
-    const cart = await cartService.deleteCartItem(req.user.id, productId, color, size);
-    res.send(cart);
+    const { productId } = req.params;  // Lấy productId từ params
+    const { color, size } = req.body;  // Lấy color và size từ body
+
+    try {
+        // Gọi service để xóa sản phẩm khỏi giỏ hàng
+        const cart = await cartService.deleteCartItem(req.user.id, productId, color, size);
+
+        // Nếu không tìm thấy giỏ hàng hoặc sản phẩm, trả về lỗi
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart or product not found' });
+        }
+
+        // Trả về giỏ hàng đã được cập nhật sau khi xóa sản phẩm
+        return res.status(200).json({
+            message: 'Item removed successfully',
+            cart
+        });
+    } catch (error) {
+        // Xử lý lỗi nếu có trong quá trình xóa
+        console.error('Error deleting cart item:', error);
+        return res.status(400).json({
+            message: error.message || 'An error occurred while deleting the cart item'
+        });
+    }
 });
+
 
 
 const getCartItem = catchAsync(async (req, res) => {
