@@ -103,7 +103,7 @@ export default function Cart() {
 
     const handleCheckout = () => {
         const selectedItems = cartItems.filter((_, i) => checkedItems[i]);
-        console.log('Selected Items for Checkout:', selectedItems);
+
         if (selectedItems.length === 0) {
             Alert.alert("Thông báo", "Vui lòng chọn sản phẩm để thanh toán!");
         } else {

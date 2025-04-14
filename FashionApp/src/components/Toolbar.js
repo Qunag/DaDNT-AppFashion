@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 import SearchBar from "./SearchBar";
 import Notification from "./Notification";
 
@@ -27,7 +27,7 @@ export default function Toolbar({ toggleProfile, onSearch }) {
       {showSearch ? (
         <SearchBar
           onClose={handleCloseSearch} // Close search bar
-          onFilterPress={() => {}}
+          onFilterPress={() => { }}
           inputText={inputText}
           onChangeText={handleSearch} // Passing the search text handler
         />
@@ -40,17 +40,17 @@ export default function Toolbar({ toggleProfile, onSearch }) {
           </View>
 
           <View style={styles.box2}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("NoticeOrder")}>
               <View style={styles.notification}>
                 <Ionicons name="notifications-outline" size={24} color="black" />
-                <Notification count={3} /> 
+                <Notification count={3} />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
               <View style={styles.notification}>
                 <Ionicons name="bag-outline" size={24} color="black" />
-                <Notification count={2} /> 
+                <Notification count={2} />
               </View>
             </TouchableOpacity>
 
@@ -105,5 +105,5 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
   },
-  
+
 });

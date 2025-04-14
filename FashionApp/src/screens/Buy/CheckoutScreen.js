@@ -8,14 +8,13 @@ import { getUserById } from '../../services/userService';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { createOrder } from '../../services/orderService';
-import { deleteCartItem } from '../../services/cartService';
+import { removeFromCart } from '../../services/cartService';
 
 export default function CheckoutScreen() {
     const navigation = useNavigation();
     const route = useRoute();
 
     const { cartItems } = route.params || { cartItems: [] };
-
     const [deliveryMethod, setDeliveryMethod] = useState("Mặc định");
     const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
     const [userData, setUserData] = useState(null);
@@ -85,6 +84,7 @@ export default function CheckoutScreen() {
             return;
         }
 
+
         if (cartItems.length === 0) {
             Alert.alert("Lỗi", "Không có sản phẩm nào được chọn để đặt hàng.");
             return;
@@ -107,21 +107,19 @@ export default function CheckoutScreen() {
                 };
             });
 
-            console.log('Order Items:', JSON.stringify(orderItems, null, 2));
+
 
             const response = await createOrder(orderItems);
-            console.log('Order created successfully:', response._id);
 
-            // Xóa các sản phẩm đã thanh toán khỏi giỏ hàng
+
+
             for (const item of cartItems) {
                 try {
                     const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-                    console.log(`Xóa sản phẩm: productId=${productId}, color=${item.color}, size=${item.size}, name=${item.name}`);
-                    await deleteCartItem(productId, item.color, item.size);
+                    await removeFromCart(productId, item.color, item.size);
                     console.log(`Đã xóa sản phẩm ${item.name} khỏi giỏ hàng`);
                 } catch (error) {
                     console.warn(`Không thể xóa sản phẩm ${item.name} khỏi giỏ hàng: ${error.message}`);
-                    // Tiếp tục với sản phẩm tiếp theo
                 }
             }
 
@@ -135,10 +133,12 @@ export default function CheckoutScreen() {
                 userData,
                 orderId: response._id,
             });
+
         } catch (error) {
             console.error("Error creating order:", error.response ? error.response.data : error.message);
             Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
         }
+
     };
 
     if (loading) {

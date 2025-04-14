@@ -79,25 +79,10 @@ const deleteCartItem = async (userId, productId, color, size) => {
     if (!cart) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
     }
-
-    // Lọc và xóa sản phẩm khỏi giỏ hàng
-    const productIndex = cart.items.findIndex(
-        (item) =>
-            item.product._id.toString() === productId.toString() && // So sánh _id của product
-            item.color === color &&
-            item.size === size
+    cart.items = cart.items.filter(
+        (item) => !(item.productId.toString() === productId && item.color === color && item.size === size)
     );
-
-    if (productIndex === -1) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found in cart');
-    }
-
-    // Xóa sản phẩm khỏi giỏ hàng
-    cart.items.splice(productIndex, 1);
-
-    // Lưu lại giỏ hàng sau khi xóa
     await cart.save();
-
     return cart;
 };
 

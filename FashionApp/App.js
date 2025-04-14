@@ -19,6 +19,7 @@ import CheckoutScreen from './src/screens/Buy/CheckoutScreen';
 import SearchResultsScreen from "./src/screens/SearchResultsScreen";
 import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
+import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 
 
 
@@ -49,6 +50,7 @@ export default function App() {
         <Stack.Screen name="EditProfileForm" component={EditProfileFormScreen} />
         <Stack.Screen name="Watch" component={Watch} />
         <Stack.Screen name="Order" component={OrderScreen} />
+        <Stack.Screen name="NoticeOrder" component={NoticeOrderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

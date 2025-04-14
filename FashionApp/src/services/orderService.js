@@ -1,4 +1,4 @@
-import api from './api'; // Axios instance
+import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 import { getAuthHeaders } from './authService';
 
@@ -15,12 +15,23 @@ export const createOrder = async (items) => {
 };
 
 // Lấy danh sách đơn hàng của người dùng
-export const fetchOrders = async () => {
+export const fetchOrders = async (userId) => {
     try {
         const headers = await getAuthHeaders();
-        const response = await api.get(API_ENDPOINTS.ORDERS.BASE, { headers });
+        console.log('Fetching orders with headers:', headers);
+        // Nếu API yêu cầu userId, thêm vào query hoặc endpoint
+        const endpoint = userId
+            ? `${API_ENDPOINTS.ORDERS.BASE}?userId=${userId}` // Hoặc `${API_URL}/users/${userId}/orders`
+            : API_ENDPOINTS.ORDERS.BASE;
+        const response = await api.get(endpoint, { headers });
         return response.data;
     } catch (error) {
+        if (error.response?.status === 403) {
+            throw new Error('Bạn không có quyền truy cập danh sách đơn hàng.');
+        }
+        if (error.message.includes('token')) {
+            throw new Error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        }
         console.error('Error fetching orders:', error.response ? error.response.data : error.message);
         throw error;
     }

@@ -45,7 +45,7 @@ export default function LoginScreen() {
                 throw new Error('No tokens returned from login');
             }
         } catch (error) {
-            console.error('Login error:', error);
+
             Alert.alert('Login Failed', error.message || 'Invalid email or password. Please try again.');
         }
     };
