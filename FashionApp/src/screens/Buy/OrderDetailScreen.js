@@ -10,6 +10,7 @@ import {
     RefreshControl,
     Image
 } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { fetchOrderDetail } from '../../services/orderService';
 
@@ -71,7 +72,6 @@ const OrderDetailScreen = () => {
             <Text style={styles.itemText}>
                 Giá: {item.price?.toLocaleString('vi-VN')} VND
             </Text>
-            <Text style={styles.itemText}>Màu: {item.color_name}</Text>
             <Text style={styles.itemText}>Kích cỡ: {item.size}</Text>
             <Image source={{ uri: item.image_url }} style={styles.image} />
         </View>
@@ -106,6 +106,9 @@ const OrderDetailScreen = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
             <Text style={styles.title}>Chi tiết đơn hàng</Text>
             <View style={styles.orderInfo}>
                 <Text style={styles.infoText}>Mã đơn: {order._id}</Text>
@@ -142,11 +145,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    backButton: {
+        position: "absolute",
+        left: 20,
+        top: 40,
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
+        marginTop: 50,
     },
     orderInfo: {
         backgroundColor: '#fff',
@@ -205,7 +214,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
+    }
 });
 
 export default OrderDetailScreen;

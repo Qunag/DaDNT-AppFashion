@@ -147,7 +147,10 @@ export default function Cart() {
                             <Image source={{ uri: item.image_url }} style={styles.image} />
                             <View style={styles.content}>
                                 <Text style={styles.productName}>{item.name}</Text>
-                                <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+                                <View style={styles.colorContainer}>
+                                    <Text style={styles.collection}>Màu: </Text>
+                                    <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+                                </View>
                                 <Text style={styles.collection}>Size: {item.size}</Text>
                                 <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
                                 <View style={styles.quantityContainer}>
@@ -219,10 +222,11 @@ const styles = StyleSheet.create({
         width: 16,
         height: 16,
         borderRadius: 8,
-        marginRight: 5,
+        marginLeft: 5,
         borderWidth: 1,
         borderColor: "#ccc",
-    },
+        marginBottom: 8,
+    },    
     productName: {
         fontSize: 16,
         fontWeight: "bold",
@@ -232,6 +236,11 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "gray",
         marginBottom: 8,
+    },
+    colorContainer: {
+        flexDirection: "row",
+        alignItems: "center", 
+        marginTop: 5,
     },
     price: {
         fontSize: 15,
