@@ -10,6 +10,7 @@ import {
     RefreshControl,
     TouchableOpacity,
 } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
@@ -180,6 +181,9 @@ const NoticeOrderScreen = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
             <Text style={styles.title}>Danh sách đơn hàng</Text>
             {orders.length === 0 ? (
                 <Text style={styles.emptyText}>Chưa có đơn hàng nào!</Text>
@@ -202,6 +206,11 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#f5f5f5',
     },
+    backButton: {
+        position: "absolute",
+        left: 20,
+        top: 40,
+    },
     centered: {
         flex: 1,
         justifyContent: 'center',
@@ -212,6 +221,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
+        marginTop: 50,
     },
     orderItem: {
         backgroundColor: '#fff',
