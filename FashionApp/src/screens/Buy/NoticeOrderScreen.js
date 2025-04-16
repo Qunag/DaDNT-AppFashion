@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     View,
     Text,
@@ -13,11 +13,13 @@ import {
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
-import { fetchOrders, cancelOrder, updateOrderStatus } from '../../services/orderService';
+import { fetchOrders, cancelOrder, confirmOrder, createOrder } from '../../services/orderService';
 
 const NoticeOrderScreen = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [cancelLoading, setCancelLoading] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const [error, setError] = useState(null);
     const [userId, setUserId] = useState(null);
     const navigation = useNavigation();
@@ -27,13 +29,6 @@ const NoticeOrderScreen = () => {
         try {
             setLoading(true);
             const accessToken = await AsyncStorage.getItem('accessToken');
-            if (!accessToken) {
-                setError('Vui lòng đăng nhập để xem đơn hàng.');
-                navigation.replace('LoginScreen');
-                return;
-            }
-
-            // Giải mã token để lấy userId
             const decodedToken = jwtDecode(accessToken);
             const id = decodedToken.sub || decodedToken.userId || decodedToken.id || decodedToken.user;
             if (!id) {
@@ -51,7 +46,7 @@ const NoticeOrderScreen = () => {
             } else if (err.message.includes('đăng nhập') || err.message.includes('token')) {
                 setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
             } else {
-                setError('Không thể tải danh sách đơn hàng. Vui lòng thử lại.');
+                setError(err.message || 'Không thể tải danh sách đơn hàng. Vui lòng thử lại.');
             }
             console.error('Error in loadData:', err);
         } finally {
@@ -77,11 +72,14 @@ const NoticeOrderScreen = () => {
                     text: 'Đồng ý',
                     onPress: async () => {
                         try {
+                            setCancelLoading(true);
                             await cancelOrder(orderId);
                             Alert.alert('Thành công', 'Đơn hàng đã được hủy!');
                             loadData();
                         } catch (err) {
-                            Alert.alert('Lỗi', 'Không thể hủy đơn hàng.');
+                            Alert.alert('Lỗi', err.message || 'Không thể hủy đơn hàng.');
+                        } finally {
+                            setCancelLoading(false);
                         }
                     },
                 },
@@ -100,11 +98,14 @@ const NoticeOrderScreen = () => {
                     text: 'Đồng ý',
                     onPress: async () => {
                         try {
-                            await updateOrderStatus(orderId, 'delivered');
+                            setConfirmLoading(true);
+                            await confirmOrder(orderId);
                             Alert.alert('Thành công', 'Xác nhận nhận hàng thành công!');
                             loadData();
                         } catch (err) {
-                            Alert.alert('Lỗi', 'Không thể xác nhận.');
+                            Alert.alert('Lỗi', err.message || 'Không thể xác nhận.');
+                        } finally {
+                            setConfirmLoading(false);
                         }
                     },
                 },
@@ -116,25 +117,27 @@ const NoticeOrderScreen = () => {
     const renderOrderItem = ({ item }) => (
         <TouchableOpacity
             style={styles.orderItem}
-            onPress={() => navigation.navigate('OrderDetail', { orderId: item.id })}
+            onPress={() => navigation.navigate('OrderDetail', { orderId: item._id })}
         >
-            <Text style={styles.orderText}>Mã đơn: {item.id}</Text>
-            <Text style={styles.orderText}>Ngày đặt: {item.date}</Text>
-            <Text style={styles.orderText}>Tổng tiền: {item.total?.toLocaleString('vi-VN')} VND</Text>
+            <Text style={styles.orderText}>Mã đơn: {item._id}</Text>
+            <Text style={styles.orderText}>Ngày đặt: {new Date(item.createdAt).toLocaleDateString('vi-VN')}</Text>
+            <Text style={styles.orderText}>Tổng tiền: {item.totalAmount?.toLocaleString('vi-VN')} VND</Text>
             <Text style={styles.orderText}>Trạng thái: {getStatusText(item.status)}</Text>
             <View style={styles.buttonContainer}>
                 {item.status === 'pending' && (
                     <Button
                         title="Hủy đơn"
                         color="red"
-                        onPress={() => handleCancelOrder(item.id)}
+                        onPress={() => handleCancelOrder(item._id)}
+                        disabled={cancelLoading}
                     />
                 )}
                 {item.status === 'shipped' && (
                     <Button
                         title="Xác nhận nhận hàng"
                         color="green"
-                        onPress={() => handleConfirmOrder(item.id)}
+                        onPress={() => handleConfirmOrder(item._id)}
+                        disabled={confirmLoading}
                     />
                 )}
             </View>
@@ -184,7 +187,7 @@ const NoticeOrderScreen = () => {
                 <FlatList
                     data={orders}
                     renderItem={renderOrderItem}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item._id.toString()}
                     contentContainerStyle={styles.list}
                     refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}
                 />

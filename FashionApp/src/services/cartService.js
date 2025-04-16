@@ -48,9 +48,6 @@ export const addToCart = async (productId, name, image_url, brand, price, quanti
 // Cập nhật số lượng sản phẩm trong giỏ
 export const updateCartItem = async (productId, { quantity, color, size }) => {
     const headers = await getAuthHeaders();
-    console.log("Gọi API cập nhật sản phẩm:", productId);
-    console.log("Dữ liệu gửi đi:", { quantity, color, size });
-
     try {
         const response = await api.patch(
             API_ENDPOINTS.CARTS.UPDATE_ITEM(productId),
@@ -99,7 +96,6 @@ export const updateCart = async (items) => {
     try {
         const headers = await getAuthHeaders();
         const response = await api.put(API_ENDPOINTS.CARTS.BASE, { items }, { headers });
-        console.log('Updated Cart:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error updating cart:', error.response ? error.response.data : error.message);

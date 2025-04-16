@@ -26,4 +26,8 @@ router
     .route('/cancel/:orderId')
     .patch(auth(''), validate(orderValidation.cancelOrder), orderController.cancelOrder);
 
+
+router
+    .route('/confirm/:orderId')
+    .patch(auth(''), validate(orderValidation.confirmOrder), orderController.confirmOrder);
 module.exports = router;

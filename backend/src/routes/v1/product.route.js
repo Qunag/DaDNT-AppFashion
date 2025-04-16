@@ -38,6 +38,11 @@ router
     .route('/quantities')
     .patch(/**auth('manageProducts'),*/ validate(productValidation.updateProductQuantities), productController.updateProductQuantities);
 
+
+router
+    .route('/decrease-quantities')
+    .patch(validate(productValidation.decreaseProductQuantities), productController.decreaseProductQuantities);
+
 /**
  * @swagger
  * /products:

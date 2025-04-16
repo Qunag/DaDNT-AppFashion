@@ -28,10 +28,18 @@ const cancelOrder = catchAsync(async (req, res) => {
     res.send(order);
 });
 
+const confirmOrder = catchAsync(async (req, res) => {
+    const order = await orderService.confirmOrder(req.params.orderId, req.user.id);
+    res.send(order);
+}
+);
+
 module.exports = {
     createOrder,
     getOrders,
     getOrder,
     updateOrderStatus,
     cancelOrder,
+    confirmOrder,
+
 };

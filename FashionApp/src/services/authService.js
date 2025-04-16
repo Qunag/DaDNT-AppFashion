@@ -2,12 +2,32 @@
 import api from './api';
 import { API_ENDPOINTS } from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 // Lấy headers có access token
 export const getAuthHeaders = async () => {
-    const accessToken = await AsyncStorage.getItem('accessToken');
-    if (!accessToken) throw new Error('No access token found.');
-    return { Authorization: `Bearer ${accessToken}` };
+    let token = await AsyncStorage.getItem('accessToken');
+    if (!token) {
+        throw new Error('No token found');
+    }
+    try {
+        const decoded = jwtDecode(token);
+        const now = Date.now() / 1000;
+        if (decoded.exp < now) {
+            console.log('Token expired, refreshing...');
+            const response = await api.post('/auth/refresh-token', {
+                refreshToken: await AsyncStorage.getItem('refreshToken'),
+            });
+            token = response.data.accessToken;
+            await AsyncStorage.setItem('accessToken', token);
+        }
+    } catch (err) {
+        console.error('Token verification error:', err);
+        throw new Error('Invalid or expired token');
+    }
+    return {
+        Authorization: `Bearer ${token}`,
+    };
 };
 
 
@@ -46,11 +66,7 @@ export const logoutUser = async () => {
         const refreshToken = await AsyncStorage.getItem('refreshToken');
 
         if (!refreshToken) throw new Error('No refresh token found.');
-
-
         const response = await api.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken });
-
-
         if (response.status === 200 || response.status === 204) {
 
             await AsyncStorage.removeItem('accessToken');

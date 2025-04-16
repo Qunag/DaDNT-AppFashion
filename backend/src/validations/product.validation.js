@@ -298,6 +298,38 @@ const updateProductQuantities = {
     }),
 };
 
+const decreaseProductQuantities = {
+    body: Joi.object().keys({
+        productId: Joi.string().custom(objectId).required().messages({
+            'string.empty': 'Product ID is required',
+        }),
+        updates: Joi.array()
+            .items(
+                Joi.object({
+                    color_name: Joi.string().trim().required().messages({
+                        'string.empty': 'Color name is required',
+                    }),
+                    size: Joi.number().integer().min(0).required().messages({
+                        'number.integer': 'Size must be an integer',
+                        'number.min': 'Size must be greater than or equal to 0',
+                    }),
+                    quantity: Joi.number().integer().min(1).required().messages({
+                        'number.integer': 'Quantity must be an integer',
+                        'number.min': 'Quantity must be greater than or equal to 1',
+                    }),
+                })
+            )
+            .min(1)
+            .required()
+            .messages({
+                'array.min': 'At least one update is required',
+            }),
+    }),
+};
+
+
+
+
 module.exports = {
     createProduct,
     getProducts,
@@ -307,4 +339,5 @@ module.exports = {
     updateProduct,
     deleteProduct,
     updateProductQuantities,
+    decreaseProductQuantities,
 };

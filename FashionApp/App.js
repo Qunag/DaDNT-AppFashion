@@ -20,7 +20,7 @@ import SearchResultsScreen from "./src/screens/SearchResultsScreen";
 import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
-
+import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
 
 
 const Stack = createStackNavigator();
@@ -51,6 +51,7 @@ export default function App() {
         <Stack.Screen name="Watch" component={Watch} />
         <Stack.Screen name="Order" component={OrderScreen} />
         <Stack.Screen name="NoticeOrder" component={NoticeOrderScreen} />
+        <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

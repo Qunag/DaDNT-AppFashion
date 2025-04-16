@@ -46,5 +46,6 @@ export const API_ENDPOINTS = {
         CREATE: `${API_URL}/orders/create`,
         UPDATE_STATUS: (orderId) => `${API_URL}/orders/update-status/${orderId}`,
         CANCEL: (orderId) => `${API_URL}/orders/cancel/${orderId}`,
+        CONFIRM: (orderId) => `${API_URL}/orders/confirm/${orderId}`,
     },
 };

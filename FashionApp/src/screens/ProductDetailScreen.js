@@ -87,7 +87,7 @@ const ProductDetailScreen = () => {
       const price = product.price;
       const image_url = selectedColor.image_url || ''; // Đảm bảo rằng mỗi màu có image_url riêng
 
-      console.log("Thêm vào giỏ hàng:", { productId, name, price, image_url, quantity, color, size, brand });
+      console.log("Thêm vào giỏ hàng:", { name });
 
       await addToCart(productId, name, image_url, brand, price, quantity, color, size); // Gọi hàm thêm sản phẩm vào giỏ hàng
       alert("Đã thêm sản phẩm vào giỏ hàng!");

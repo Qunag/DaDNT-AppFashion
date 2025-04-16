@@ -250,6 +250,50 @@ const updateProductQuantities = async (productId, updates) => {
     }
 };
 
+const decreaseProductQuantities = async (productId, updates) => {
+    const session = await Product.startSession();
+    session.startTransaction();
+
+    try {
+        const product = await Product.findById(productId).session(session);
+        if (!product) {
+            throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+        }
+
+        for (const { color_name, size, quantity } of updates) {
+            const color = product.colors.find((c) => c.color_name === color_name);
+            if (!color) {
+                throw new ApiError(httpStatus.BAD_REQUEST, `Color ${color_name} not found`);
+            }
+
+            const sizeEntry = color.sizes.find((s) => s.size === size);
+            if (!sizeEntry) {
+                throw new ApiError(httpStatus.BAD_REQUEST, `Size ${size} not found`);
+            }
+
+            if (sizeEntry.quantity < quantity) {
+                throw new ApiError(
+                    httpStatus.BAD_REQUEST,
+                    `Not enough stock for ${color_name}, size ${size}`
+                );
+            }
+
+            sizeEntry.quantity -= quantity;
+        }
+
+        await product.save({ session });
+        await session.commitTransaction();
+        return product;
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        session.endSession();
+    }
+};
+
+
+
 module.exports = {
     createNewProduct,
     getProducts,
@@ -259,4 +303,5 @@ module.exports = {
     updateProduct,
     deleteProduct,
     updateProductQuantities,
+    decreaseProductQuantities,
 };

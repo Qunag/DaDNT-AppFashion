@@ -18,22 +18,13 @@ export const createOrder = async (items) => {
 export const fetchOrders = async (userId) => {
     try {
         const headers = await getAuthHeaders();
-        console.log('Fetching orders with headers:', headers);
-        // Nếu API yêu cầu userId, thêm vào query hoặc endpoint
-        const endpoint = userId
-            ? `${API_ENDPOINTS.ORDERS.BASE}?userId=${userId}` // Hoặc `${API_URL}/users/${userId}/orders`
-            : API_ENDPOINTS.ORDERS.BASE;
-        const response = await api.get(endpoint, { headers });
+
+        const response = await api.get(API_ENDPOINTS.ORDERS.BASE, { headers });
         return response.data;
     } catch (error) {
-        if (error.response?.status === 403) {
-            throw new Error('Bạn không có quyền truy cập danh sách đơn hàng.');
-        }
-        if (error.message.includes('token')) {
-            throw new Error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-        }
-        console.error('Error fetching orders:', error.response ? error.response.data : error.message);
-        throw error;
+        const message = error.response?.data?.message || error.message;
+        console.error('Fetch orders error:', message);
+        throw new Error(message || 'Không thể tải danh sách đơn hàng.');
     }
 };
 
@@ -44,11 +35,17 @@ export const fetchOrderDetail = async (orderId) => {
         const response = await api.get(API_ENDPOINTS.ORDERS.DETAIL(orderId), { headers });
         return response.data;
     } catch (error) {
-        console.error('Error fetching order detail:', error.response ? error.response.data : error.message);
-        throw error;
+        const message = error.response?.data?.message || error.message;
+        console.error('Fetch order detail error:', { message, status: error.response?.status, data: error.response?.data });
+        if (error.response?.status === 403) {
+            throw new Error('Bạn không có quyền truy cập chi tiết đơn hàng.');
+        }
+        if (error.response?.status === 401 || message.includes('token')) {
+            throw new Error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        }
+        throw new Error(message || 'Không thể tải chi tiết đơn hàng.');
     }
 };
-
 // Cập nhật trạng thái đơn hàng (dành cho admin)
 export const updateOrderStatus = async (orderId, status) => {
     try {
@@ -73,6 +70,17 @@ export const cancelOrder = async (orderId) => {
         return response.data;
     } catch (error) {
         console.error('Error cancelling order:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
+
+export const confirmOrder = async (orderId) => {
+    try {
+        const headers = await getAuthHeaders();
+        const response = await api.patch(API_ENDPOINTS.ORDERS.CONFIRM(orderId), {}, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Error confirming order:', error.response ? error.response.data : error.message);
         throw error;
     }
 };

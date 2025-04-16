@@ -38,9 +38,17 @@ const cancelOrder = {
     }),
 };
 
+
+const confirmOrder = {
+    params: Joi.object().keys({
+        orderId: Joi.string().custom(objectId).required(),
+    }),
+};
+
 module.exports = {
     createOrder,
     getOrder,
     updateOrderStatus,
     cancelOrder,
+    confirmOrder,
 };

@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const Order = require('../models/order.model');
 const Product = require('../models/product.model');
 const Cart = require('../models/cart.model');
+const productService = require('./product.service');
 
 
 
@@ -40,11 +41,13 @@ const createOrder = async (userId, orderBody) => {
 
     // Cập nhật lại số lượng sản phẩm còn lại trong kho
     for (const item of items) {
-        const product = await Product.findById(item.productId);
-        if (product) {
-            product.quantity = Math.max(0, product.quantity - item.quantity);
-            await product.save();
-        }
+        await productService.decreaseProductQuantities(item.productId, [
+            {
+                color_name: item.color_name,
+                size: item.size,
+                quantity: item.quantity,
+            }
+        ]);
     }
 
     return order;
@@ -89,10 +92,27 @@ const cancelOrder = async (orderId, userId) => {
     return order;
 };
 
+
+const confirmOrder = async (orderId, userId) => {
+    const order = await Order.findOne({ _id: orderId, user: userId });
+    if (!order) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Order not found or not authorized');
+    }
+    if (order.status !== 'pending') {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Only pending orders can be confirmed');
+    }
+    order.status = 'delivered';
+    await order.save();
+    return order;
+
+};
+
+
 module.exports = {
     createOrder,
     getOrdersByUserId,
     getOrderById,
     updateOrderStatus,
     cancelOrder,
+    confirmOrder,
 };
