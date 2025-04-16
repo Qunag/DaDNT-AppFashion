@@ -4,7 +4,8 @@ import axios from "axios";
 import Toolbar from "../../components/Toolbar";
 import Brand from "../../components/Brand";
 import Watch from "../../components/Watch";
-import Profile from "../Profile";
+import Profile from "../Profile/Profile";
+import { getProducts } from "../../services/productService";
 
 const HomeScreen = () => {
   const [isProfileVisible, setProfileVisible] = useState(false);
@@ -23,12 +24,15 @@ const HomeScreen = () => {
   // Load sản phẩm từ server
   const fetchProducts = async () => {
     try {
-
-      const response = await axios.get("http://192.168.0.102:3000/v1/products");
-
-      setProducts(response.data.results);
+      const data = await getProducts(); 
+      if (data?.results) {
+        setProducts(data.results);
+      } else {
+        console.warn("Không có 'results' trong dữ liệu:", data);
+        setProducts([]);
+      }
     } catch (error) {
-      console.error("Lỗi khi tải sản phẩm:", error);
+      console.error("Lỗi khi tải sản phẩm:", error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);

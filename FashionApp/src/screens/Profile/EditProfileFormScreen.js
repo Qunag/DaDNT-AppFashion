@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
-import { updateUser } from "../services/userService";
+import { updateUser } from "../../services/userService";
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();

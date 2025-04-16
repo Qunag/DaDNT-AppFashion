@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode'; 
-import { getUserById } from '../services/userService';
+import { getUserById } from '../../services/userService';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 
