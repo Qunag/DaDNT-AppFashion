@@ -57,7 +57,7 @@ export default function OrderScreen() {
                         <Image source={{ uri: item.image_url }} style={styles.image} />
                         <View style={styles.itemDetails}>
                             <Text style={styles.productName}>{item.name}</Text>
-                            <Text style={styles.text}>Màu: {item.color} | Size: {item.size}</Text>
+                            <Text style={styles.text}>Màu: {item.color_name} | Size: {item.size}</Text>
                             <Text style={styles.text}>Số lượng: {item.quantity}</Text>
                             <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
                         </View>

@@ -74,15 +74,18 @@ const deleteCart = async (userId) => {
 
 const deleteCartItem = async (userId, productId, color, size) => {
     const cart = await Cart.findOne({ user: userId });
-    if (!cart) throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
 
+    // Kiểm tra xem giỏ hàng có tồn tại không
+    if (!cart) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Cart not found');
+    }
     cart.items = cart.items.filter(
         (item) => !(item.productId.toString() === productId && item.color === color && item.size === size)
     );
-
     await cart.save();
     return cart;
 };
+
 
 
 const getCartItem = async (userId, productId, color, size) => {

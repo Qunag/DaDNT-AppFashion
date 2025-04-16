@@ -48,9 +48,6 @@ export const addToCart = async (productId, name, image_url, brand, price, quanti
 // Cập nhật số lượng sản phẩm trong giỏ
 export const updateCartItem = async (productId, { quantity, color, size }) => {
     const headers = await getAuthHeaders();
-    console.log("Gọi API cập nhật sản phẩm:", productId);
-    console.log("Dữ liệu gửi đi:", { quantity, color, size });
-
     try {
         const response = await api.patch(
             API_ENDPOINTS.CARTS.UPDATE_ITEM(productId),
@@ -64,18 +61,21 @@ export const updateCartItem = async (productId, { quantity, color, size }) => {
     }
 };
 // Xóa một sản phẩm khỏi giỏ
-// Trong cartService.js
-export const removeFromCart = async (productId, color, size) => {
+export const remove = async (productId) => {
     const headers = await getAuthHeaders();
-    const response = await api.delete(
-        API_ENDPOINTS.CARTS.REMOVE_ITEM(productId),
-        {
-            headers,
-            data: { color, size }  // Gửi color và size trong body của DELETE request
-        }
-    );
+    const response = await api.delete(API_ENDPOINTS.CARTS.REMOVE_ITEM(productId), { headers });
     return response.data;
 };
+
+export const removeFromCart = async (productId, color, size) => {
+    const headers = await getAuthHeaders();
+    const response = await api.delete(API_ENDPOINTS.CARTS.REMOVE_ITEM(productId), {
+        headers,
+        data: { color, size },
+    });
+    return response.data;
+}
+
 
 // Xóa toàn bộ giỏ hàng
 export const clearCart = async () => {
@@ -89,4 +89,16 @@ export const validateCartItem = async (productId) => {
     const headers = await getAuthHeaders();
     const response = await api.get(API_ENDPOINTS.CARTS.VALIDATE_ITEM(productId), { headers });
     return response.data;
+};
+
+// Cập nhật toàn bộ giỏ hàng
+export const updateCart = async (items) => {
+    try {
+        const headers = await getAuthHeaders();
+        const response = await api.put(API_ENDPOINTS.CARTS.BASE, { items }, { headers });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating cart:', error.response ? error.response.data : error.message);
+        throw error;
+    }
 };

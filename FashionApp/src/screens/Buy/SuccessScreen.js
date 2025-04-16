@@ -20,7 +20,7 @@ export default function SuccessScreen() {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
                 <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
             <Image source={require('../../assets/image1.png')} style={styles.image1} />

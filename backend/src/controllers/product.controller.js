@@ -63,6 +63,14 @@ const updateProductQuantities = catchAsync(async (req, res) => {
     res.status(httpStatus.OK).json(updatedProduct);
 });
 
+
+const decreaseProductQuantities = async (req, res) => {
+    const { productId, updates } = req.body;
+    const updated = await productService.decreaseProductQuantities(productId, updates);
+    res.status(httpStatus.OK).send(updated);
+};
+
+
 module.exports = {
     createProduct,
     getProducts,
@@ -72,4 +80,5 @@ module.exports = {
     updateProduct,
     deleteProduct,
     updateProductQuantities,
+    decreaseProductQuantities,
 };

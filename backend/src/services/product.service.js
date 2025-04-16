@@ -250,6 +250,80 @@ const updateProductQuantities = async (productId, updates) => {
     }
 };
 
+const decreaseProductQuantities = async (productId, updates) => {
+    const session = await Product.startSession();
+    session.startTransaction();
+
+    try {
+        const product = await Product.findById(productId).session(session);
+        if (!product) {
+            throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+        }
+
+        for (const { color_name, size, quantity } of updates) {
+            // Chuyển size sang kiểu number nếu cần
+            const sizeToCheck = typeof size === 'string' ? parseInt(size, 10) : size;
+
+            const color = product.colors.find((c) => c.color_name == color_name);
+            if (!color) {
+                throw new ApiError(httpStatus.BAD_REQUEST, `Color ${color_name} not found`);
+            }
+
+            // Tìm size trong mảng sizes của color
+            const sizeEntry = color.sizes.find((s) => s.size === sizeToCheck);
+
+            if (!sizeEntry) {
+                throw new ApiError(httpStatus.BAD_REQUEST, `Size ${sizeToCheck} not found for color ${color_name}`);
+            }
+
+            if (sizeEntry.quantity < quantity) {
+                throw new ApiError(
+                    httpStatus.BAD_REQUEST,
+                    `Not enough stock for ${color_name}, size ${sizeToCheck}`
+                );
+            }
+
+            // Giảm số lượng trong kho
+            sizeEntry.quantity -= quantity;
+        }
+
+        await product.save({ session });
+        await session.commitTransaction();
+        return product;
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        session.endSession();
+    }
+};
+
+
+
+const increaseProductQuantity = async (productId, { color_name, size, quantity }) => {
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+    }
+
+    const color = product.colors.find((c) => c.color_name == color_name);
+    if (!color) {
+        throw new ApiError(httpStatus.BAD_REQUEST, `Color ${color_name} not found`);
+    }
+
+    const sizeEntry = color.sizes.find((s) => s.size == size);
+    if (!sizeEntry) {
+        throw new ApiError(httpStatus.BAD_REQUEST, `Size ${size} not found`);
+    }
+
+    sizeEntry.quantity += quantity;
+
+    await product.save();
+};
+
+
+
+
 module.exports = {
     createNewProduct,
     getProducts,
@@ -259,4 +333,6 @@ module.exports = {
     updateProduct,
     deleteProduct,
     updateProductQuantities,
+    decreaseProductQuantities,
+    increaseProductQuantity,
 };
