@@ -24,6 +24,7 @@ const HomeScreen = () => {
   // Lấy sản phẩm từ server
   const fetchProducts = async () => {
     try {
+
       const response = await axios.get("http://192.168.1.101:3000/v1/products");
       setProducts(response.data.results);
     } catch (error) {
