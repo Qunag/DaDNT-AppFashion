@@ -13,6 +13,8 @@ export default function Cart() {
     const [checkedItems, setCheckedItems] = useState({});
     const [loading, setLoading] = useState(true);
 
+
+
     const fetchCartItems = async () => {
         try {
             const userId = await getUserID();

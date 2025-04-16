@@ -5,31 +5,30 @@ import { useNavigation } from "@react-navigation/native";
 import SearchBar from "./SearchBar";
 import Notification from "./Notification";
 
-export default function Toolbar({ toggleProfile, onSearch }) {
+export default function Toolbar({ toggleProfile, onSearch, pendingOrderCount, cartItemCount }) {
   const navigation = useNavigation();
-  const [showSearch, setShowSearch] = useState(false); // State to show/hide search bar
+  const [showSearch, setShowSearch] = useState(false);
   const [inputText, setInputText] = useState("");
 
   const handleSearch = (text) => {
     setInputText(text);
-    onSearch(text); // Callback to update search in parent (HomeScreen)
+    onSearch(text);
   };
 
   const handleCloseSearch = () => {
     setShowSearch(false);
-    setInputText(""); // Reset search input
-    onSearch(""); // Clear search results
-
+    setInputText("");
+    onSearch("");
   };
 
   return (
     <View style={styles.container}>
       {showSearch ? (
         <SearchBar
-          onClose={handleCloseSearch} // Close search bar
+          onClose={handleCloseSearch}
           onFilterPress={() => { }}
           inputText={inputText}
-          onChangeText={handleSearch} // Passing the search text handler
+          onChangeText={handleSearch}
         />
       ) : (
         <>
@@ -43,17 +42,16 @@ export default function Toolbar({ toggleProfile, onSearch }) {
             <TouchableOpacity onPress={() => navigation.navigate("NoticeOrder")}>
               <View style={styles.notification}>
                 <Ionicons name="notifications-outline" size={24} color="black" />
-                <Notification count={3} />
+                <Notification count={pendingOrderCount} />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
               <View style={styles.notification}>
                 <Ionicons name="bag-outline" size={24} color="black" />
-                <Notification count={2} />
+                <Notification count={cartItemCount} />
               </View>
             </TouchableOpacity>
-
 
             <TouchableOpacity onPress={() => setShowSearch(true)}>
               <Ionicons name="search-outline" size={24} color="black" />
@@ -105,5 +103,4 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
   },
-
 });

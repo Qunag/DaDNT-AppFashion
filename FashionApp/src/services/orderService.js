@@ -84,3 +84,17 @@ export const confirmOrder = async (orderId) => {
         throw error;
     }
 };
+
+// Lấy số lượng đơn hàng chưa hoàn thành
+export const getPendingOrderCount = async () => {
+    try {
+        const data = await fetchOrders(); // trả về toàn bộ đơn hàng
+        const orders = data || [];
+
+        const pendingOrders = orders.filter(order => order.status == 'pending');
+        return pendingOrders.length;
+    } catch (error) {
+        console.error('Error fetching pending order count:', error.message);
+        return 0;
+    }
+};
