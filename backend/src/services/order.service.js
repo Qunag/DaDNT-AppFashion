@@ -79,18 +79,27 @@ const updateOrderStatus = async (orderId, status) => {
     return order;
 };
 
-const cancelOrder = async (orderId, userId) => {
-    const order = await Order.findOne({ _id: orderId, user: userId });
+const cancelOrder = async (orderId) => {
+    const order = await Order.findById(orderId);
     if (!order) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Order not found or not authorized');
+        throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
     }
-    if (order.status !== 'pending') {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Only pending orders can be cancelled');
+
+    // Trả lại số lượng sản phẩm vào kho
+    for (const item of order.items) {
+        await productService.increaseProductQuantity(item.productId, {
+            color_name: item.color_name,
+            size: item.size,
+            quantity: item.quantity,
+        });
     }
-    order.status = 'cancelled';
-    await order.save();
-    return order;
+
+    // Xóa đơn hàng
+    await Order.findByIdAndDelete(orderId);
+
+    return { message: 'Order has been cancelled and deleted successfully' };
 };
+
 
 
 const confirmOrder = async (orderId, userId) => {

@@ -24,8 +24,8 @@ const updateOrderStatus = catchAsync(async (req, res) => {
 });
 
 const cancelOrder = catchAsync(async (req, res) => {
-    const order = await orderService.cancelOrder(req.params.orderId, req.user.id);
-    res.send(order);
+    const order = await orderService.cancelOrder(req.params.orderId);
+    res.status(httpStatus.OK).send(order);
 });
 
 const confirmOrder = catchAsync(async (req, res) => {

@@ -93,7 +93,7 @@ export default function CheckoutScreen() {
         try {
             const orderItems = cartItems.map(item => {
                 const colorObj = item.productId.colors ? item.productId.colors.find(c => c.code === item.color) : null;
-                const colorName = colorObj ? colorObj.name : colorMap[item.color] || item.color;
+                const colorName = colorObj ? colorObj.name : item.color;
 
                 return {
                     productId: typeof item.productId === 'object' ? item.productId.id : item.productId,
