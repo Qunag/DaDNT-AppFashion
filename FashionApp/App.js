@@ -7,16 +7,15 @@ import LoginScreen from './src/screens/Auth/LoginScreen';
 import RegisterScreen from './src/screens/Auth/RegisterScreen';
 import ForgotPasswordScreen from './src/screens/Auth/ForgotPassWordScreen';
 import SuccessScreen from "./src/screens/Buy/SuccessScreen";
-import FailedScreen from "./src/screens/FailedScreen";
 import HomeScreen from './src/screens/Home/HomeScreen';
-import ProductDetailScreen from './src/screens/ProductDetailScreen';
+import ProductDetailScreen from './src/screens/Home/ProductDetailScreen';
 import Cart from './src/screens/Buy/Cart';
-import EditProfileScreen from './src/screens/EditProfileScreen';
-import EditProfileFormScreen from './src/screens/EditProfileFormScreen';
+import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
+import EditProfileFormScreen from './src/screens/Profile/EditProfileFormScreen';
 import CodeScreen from './src/screens/Auth/CodeScreen';
 import ResetPasswordScreen from './src/screens/Auth/ResetPasswordScreen';
 import CheckoutScreen from './src/screens/Buy/CheckoutScreen';
-import SearchResultsScreen from "./src/screens/SearchResultsScreen";
+import SearchResultsScreen from "./src/screens/Home/SearchResultsScreen";
 import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
@@ -40,7 +39,6 @@ export default function App() {
         <Stack.Screen name="CodeScreen" component={CodeScreen} />
         <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
         <Stack.Screen name="Success" component={SuccessScreen} />
-        <Stack.Screen name="Failed" component={FailedScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="SearchResults" component={SearchResultsScreen} />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />

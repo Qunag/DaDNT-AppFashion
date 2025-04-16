@@ -4,9 +4,12 @@ import axios from "axios";
 import Toolbar from "../../components/Toolbar";
 import Brand from "../../components/Brand";
 import Watch from "../../components/Watch";
-import Profile from "../Profile";
+import Profile from "../Profile/Profile";
+import { getProducts } from "../../services/productService";
+
 import { getPendingOrderCount } from "../../services/orderService"; // Import hàm getPendingOrderCount
 import { getCartCount } from "../../services/cartService"; // Import hàm getCartCount từ cartService
+
 
 const HomeScreen = () => {
   const [isProfileVisible, setProfileVisible] = useState(false);
@@ -25,10 +28,16 @@ const HomeScreen = () => {
   const fetchProducts = async () => {
     try {
 
-      const response = await axios.get("http://192.168.1.101:3000/v1/products");
-      setProducts(response.data.results);
+      const data = await getProducts(); 
+      if (data?.results) {
+        setProducts(data.results);
+      } else {
+        console.warn("Không có 'results' trong dữ liệu:", data);
+        setProducts([]);
+      }
+
     } catch (error) {
-      console.error("Lỗi khi tải sản phẩm:", error);
+      console.error("Lỗi khi tải sản phẩm:", error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);

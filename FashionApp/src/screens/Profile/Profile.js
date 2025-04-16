@@ -4,9 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
-import { getUserById } from "../services/userService";
-import { logoutUser } from "../services/authService";
-import { createCartIfNotExists } from "../services/cartService";
+import { getUserById } from "../../services/userService";
+import { logoutUser } from "../../services/authService";
+import { createCartIfNotExists } from "../../services/cartService";
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();

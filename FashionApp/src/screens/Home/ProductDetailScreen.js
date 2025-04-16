@@ -3,8 +3,9 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "rea
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { addToCart } from "../services/cartService";
+import { addToCart } from "../../services/cartService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getProductDetail } from "../../services/productService";
 
 const ProductDetailScreen = () => {
   const route = useRoute();
@@ -18,20 +19,29 @@ const ProductDetailScreen = () => {
 
 
   useEffect(() => {
-    axios
-
-      .get(`http://192.168.0.102:3000/v1/products/${productId}`) // Sử dụng API để lấy dữ liệu sản phẩm
-      .then((response) => {
-        setProduct(response.data);
-        const defaultColor = response.data.colors[0]; -99
-        setSelectedColor(defaultColor);
-        setSelectedSize(defaultColor.sizes[0]);
-        setStockQuantity(defaultColor.sizes[0].quantity);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi tải sản phẩm:", error);
-      });
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductDetail(productId);
+        setProduct(data);
+  
+        if (data.colors && data.colors.length > 0) {
+          const defaultColor = data.colors[0];
+          setSelectedColor(defaultColor);
+  
+          if (defaultColor.sizes && defaultColor.sizes.length > 0) {
+            const defaultSize = defaultColor.sizes[0];
+            setSelectedSize(defaultSize);
+            setStockQuantity(defaultSize.quantity);
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy chi tiết sản phẩm:", error.message);
+      }
+    };
+  
+    fetchProduct();
   }, [productId]);
+  
 
 
   if (!product) {
