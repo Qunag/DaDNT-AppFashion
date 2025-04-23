@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -41,28 +41,28 @@ const EditProfileScreen = () => {
       };
   
       fetchUserData();
-    }, [])
+    }, [navigation])
   );
   
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text>Đang tải...</Text>
-      </View>
+      </ScrollView>
     );
   }
 
   if (!userData) {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text>Không thể lấy thông tin người dùng.</Text>
-      </View>
+      </ScrollView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={28} color="white" />
@@ -84,29 +84,27 @@ const EditProfileScreen = () => {
         <Text style={styles.sectionTitle}>Email</Text>
         <View style={styles.infoRow}>
           <Ionicons name="mail-outline" size={24} color="#6B7280" />
-            <Text style={styles.infoValue}>{userData.email}</Text>
+          <Text style={styles.infoValue}>{userData.email}</Text>
         </View>
 
         <Text style={styles.sectionTitle}>Mật khẩu</Text>
         <View style={styles.infoRow}>
           <Ionicons name="lock-closed-outline" size={24} color="#6B7280" />
           <Text style={styles.infoValue}>
-            {'*'.repeat(userData.password?.length || 8)} {/* nếu không có thì hiện 8 dấu sao */}
+            {'*'.repeat(userData.password?.length || 8)}
           </Text>
         </View>
-
-
 
         <Text style={styles.sectionTitle}>Số điện thoại</Text>
         <View style={styles.infoRow}>
           <Ionicons name="call-outline" size={24} color="#6B7280" />
-          <Text style={styles.infoValue}>{userData.phone}</Text>
+          <Text style={styles.infoValue}>{userData.phone || 'Chưa cung cấp'}</Text>
         </View>
 
         <Text style={styles.sectionTitle}>Địa chỉ</Text>
         <View style={styles.infoRow}>
           <Ionicons name="location-outline" size={24} color="#6B7280" />
-          <Text style={styles.infoValue}>{userData.address}</Text>
+          <Text style={styles.infoValue}>{userData.address || 'Chưa cung cấp'}</Text>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -124,15 +122,14 @@ const EditProfileScreen = () => {
             <Text style={styles.secondaryButtonText}>Đổi mật khẩu</Text>
           </TouchableOpacity>
         </View>
-
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
   },
   header: {
@@ -179,21 +176,19 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 30,
     gap: 12,
+    marginBottom: 20, // Thêm marginBottom để đảm bảo nút không bị che khi cuộn
   },
-  
   primaryButton: {
     backgroundColor: '#6342E8',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
   },
-  
   primaryButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
   secondaryButton: {
     backgroundColor: '#fff',
     paddingVertical: 15,
@@ -202,13 +197,11 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#6342E8',
   },
-  
   secondaryButtonText: {
     color: '#6342E8',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  
   headerTitle: {
     color: 'white',
     fontSize: 20,

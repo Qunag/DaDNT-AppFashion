@@ -65,7 +65,7 @@ export default function OTPVerificationScreen() {
         try {
             await verifyOtp(email, fullCode); // gọi API xác minh OTP
             Alert.alert('Thành công', 'Xác minh OTP thành công!', [
-                { text: 'OK', onPress: () => navigation.navigate('Home', { email }) },
+                { text: 'OK', onPress: () => navigation.navigate('Login', { email }) },
             ]);
         } catch (error) {
             Alert.alert('Lỗi', error?.response?.data?.message || 'Xác minh OTP thất bại.');
