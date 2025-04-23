@@ -39,26 +39,33 @@ export default function Toolbar({ toggleProfile, onSearch, pendingOrderCount, ca
           </View>
 
           <View style={styles.box2}>
-            <TouchableOpacity onPress={() => navigation.navigate("NoticeOrder")}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate("NoticeOrder")}>
               <View style={styles.notification}>
                 <Ionicons name="notifications-outline" size={24} color="black" />
                 <Notification count={pendingOrderCount} />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
               <View style={styles.notification}>
                 <Ionicons name="bag-outline" size={24} color="black" />
                 <Notification count={cartItemCount} />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity onPress={() => setShowSearch(true)}>
-              <Ionicons name="search-outline" size={24} color="black" />
+              <Ionicons name="search-outline" size={30} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={toggleProfile}>
+            {/* <TouchableOpacity onPress={toggleProfile}>
               <Ionicons name="menu-outline" size={24} color="black" />
+            </TouchableOpacity> */}
+
+            <TouchableOpacity onPress={() => navigation.navigate("NoticeOrder")}>
+              <View style={styles.notification}>
+                <Ionicons name="notifications-outline" size={30} color="black" />
+                <Notification count={pendingOrderCount} />
+              </View>
             </TouchableOpacity>
           </View>
         </>
@@ -85,19 +92,20 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "black",
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
   },
   box1: {
-    padding: 20,
-    flex: 0.3,
+    padding: 10,
+    flex: 0.5,
   },
   box2: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     padding: 10,
-    flex: 0.7,
+    flex: 1,
+    gap: 30, // Khoảng cách giữa các icon
   },
   notification: {
     position: "relative",

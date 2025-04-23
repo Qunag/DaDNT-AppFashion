@@ -84,10 +84,18 @@ const EditProfileScreen = () => {
         <Text style={styles.sectionTitle}>Email</Text>
         <View style={styles.infoRow}>
           <Ionicons name="mail-outline" size={24} color="#6B7280" />
-          <View style={styles.infoTextContainer}>
             <Text style={styles.infoValue}>{userData.email}</Text>
-          </View>
         </View>
+
+        <Text style={styles.sectionTitle}>Mật khẩu</Text>
+        <View style={styles.infoRow}>
+          <Ionicons name="lock-closed-outline" size={24} color="#6B7280" />
+          <Text style={styles.infoValue}>
+            {'*'.repeat(userData.password?.length || 8)} {/* nếu không có thì hiện 8 dấu sao */}
+          </Text>
+        </View>
+
+
 
         <Text style={styles.sectionTitle}>Số điện thoại</Text>
         <View style={styles.infoRow}>
@@ -101,12 +109,22 @@ const EditProfileScreen = () => {
           <Text style={styles.infoValue}>{userData.address}</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('EditProfileForm', { userData })}
-        >
-          <Text style={styles.editButtonText}>Sửa thông tin</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => navigation.navigate('EditProfileForm', { userData })}
+          >
+            <Text style={styles.primaryButtonText}>Sửa thông tin</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => navigation.navigate('ChangePassword')}
+          >
+            <Text style={styles.secondaryButtonText}>Đổi mật khẩu</Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
     </View>
   );
@@ -153,26 +171,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  infoTextContainer: {
-    marginLeft: 10,
-  },
   infoValue: {
     fontSize: 16,
     color: '#000',
     marginLeft: 10,
   },
-  editButton: {
+  buttonContainer: {
+    marginTop: 30,
+    gap: 12,
+  },
+  
+  primaryButton: {
     backgroundColor: '#6342E8',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 30,
   },
-  editButtonText: {
+  
+  primaryButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  
+  secondaryButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#6342E8',
+  },
+  
+  secondaryButtonText: {
+    color: '#6342E8',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  
   headerTitle: {
     color: 'white',
     fontSize: 20,

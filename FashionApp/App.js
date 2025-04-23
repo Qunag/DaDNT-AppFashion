@@ -3,23 +3,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoadingScreen from './src/screens/Home/LoadingScreen';
 import SplashScreen from './src/screens/Home/SplashScreen';
-import LoginScreen from './src/screens/Auth/LoginScreen';
-import RegisterScreen from './src/screens/Auth/RegisterScreen';
-import ForgotPasswordScreen from './src/screens/Auth/ForgotPassWordScreen';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import RegisterScreen from './src/screens/auth/RegisterScreen';
+import ForgotPasswordScreen from './src/screens/auth/ForgotPassWordScreen';
 import SuccessScreen from "./src/screens/Buy/SuccessScreen";
 import HomeScreen from './src/screens/Home/HomeScreen';
 import ProductDetailScreen from './src/screens/Home/ProductDetailScreen';
 import Cart from './src/screens/Buy/Cart';
 import EditProfileScreen from './src/screens/Profile/EditProfileScreen';
 import EditProfileFormScreen from './src/screens/Profile/EditProfileFormScreen';
-import CodeScreen from './src/screens/Auth/CodeScreen';
-import ResetPasswordScreen from './src/screens/Auth/ResetPasswordScreen';
+import CodeScreen from './src/screens/auth/CodeScreen';
+import ResetPasswordScreen from './src/screens/auth/ResetPasswordScreen';
 import CheckoutScreen from './src/screens/Buy/CheckoutScreen';
 import SearchResultsScreen from "./src/screens/Home/SearchResultsScreen";
 import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
+import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
 
 
 const Stack = createStackNavigator();
@@ -29,7 +30,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
 
-        initialRouteName="Splash"
+        initialRouteName="Loading"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Splash" component={SplashScreen} />
@@ -50,6 +51,7 @@ export default function App() {
         <Stack.Screen name="Order" component={OrderScreen} />
         <Stack.Screen name="NoticeOrder" component={NoticeOrderScreen} />
         <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
