@@ -108,7 +108,7 @@ export const getCartCount = async () => {
         const cart = await fetchCart();
         return cart.items.reduce((total, item) => total + item.quantity, 0);
     } catch (error) {
-        console.error("Lỗi khi lấy số lượng giỏ hàng:", error);
+
         return 0;
     }
 }

@@ -4,6 +4,7 @@ import { API_ENDPOINTS } from '../constants/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 
+
 // Lấy headers có access token
 export const getAuthHeaders = async () => {
     let token = await AsyncStorage.getItem('accessToken');
@@ -141,5 +142,23 @@ export const getUserID = async () => {
 };
 
 
+export const sendOtp = async (email) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.SEND_OTP, { email });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Failed to send OTP.';
+        throw new Error(message);
+    }
+}
 
+export const verifyOtp = async (email, otp) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.VERIFY_OTP, { email, otp });
 
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Failed to verify OTP.';
+        throw new Error(message);
+    }
+}
