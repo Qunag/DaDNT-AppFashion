@@ -113,7 +113,7 @@ const HomeScreen = () => {
       />
 
       {/* Banner Section */}
-      <View style={styles.bannerContainer}>
+      {/* <View style={styles.bannerContainer}>
         <Image
           source={{ uri: "https://example.com/shoe-image.png" }} // Replace with actual image URL
           style={styles.bannerImage}
@@ -125,13 +125,13 @@ const HomeScreen = () => {
             <Text style={styles.shopNowText}>Shop now</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
       {/* Categories Section */}
-      <View style={styles.sectionHeader}>
+      {/* <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Categories</Text>
       </View>
-      <Brand onSelectBrand={setSelectedBrand} selectedBrand={selectedBrand} />
+      <Brand onSelectBrand={setSelectedBrand} selectedBrand={selectedBrand} /> */}
 
       {/* Recommendation Section */}
       <Watch
@@ -139,7 +139,10 @@ const HomeScreen = () => {
         loading={loading}
         refreshing={refreshing}
         onRefresh={handleRefresh}
+        selectedBrand={selectedBrand}
+        onSelectBrand={setSelectedBrand}
       />
+
 
       {/* Sử dụng BottomNavBar component */}
       <BottomNavBar
