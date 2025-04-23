@@ -1,22 +1,39 @@
-import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, FlatList, Animated, RefreshControl, // Thêm RefreshControl
+import React, { useRef, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  FlatList,
+  Animated,
+  RefreshControl,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import ProductCard from "./ProductCard";
 import Brand from "./Brand";
 import Banner from "./Banner";
 
-const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand,}) => {
+const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand }) => {
   const navigation = useNavigation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showStickyBrand, setShowStickyBrand] = useState(false);
 
+  // Reset showStickyBrand khi màn hình không còn focus
+  useFocusEffect(
+    useCallback(() => {
+      // Khi màn hình Watch được focus
+      return () => {
+        // Khi màn hình Watch mất focus (chuyển sang Profile hoặc màn hình khác)
+        setShowStickyBrand(false);
+      };
+    }, [])
+  );
+
   const renderItem = ({ item }) => (
     <ProductCard
       product={item}
-      onPress={() =>
-        navigation.navigate("ProductDetail", { productId: item._id })
-      }
+      onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
     />
   );
 
@@ -47,9 +64,9 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing} 
-              onRefresh={onRefresh} 
-              colors={["#0000ff"]} 
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0000ff"]}
               tintColor="#0000ff"
             />
           }
@@ -58,10 +75,7 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
             <Banner />
             <Text style={styles.sectionTitle}>Categories</Text>
             {!showStickyBrand && (
-              <Brand
-                selectedBrand={selectedBrand}
-                onSelectBrand={onSelectBrand}
-              />
+              <Brand selectedBrand={selectedBrand} onSelectBrand={onSelectBrand} />
             )}
             <Text style={styles.text}>Danh sách sản phẩm</Text>
 
@@ -111,7 +125,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#fff",
     paddingVertical: 10,
-    zIndex: 999,
+    zIndex: 1,
     elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
