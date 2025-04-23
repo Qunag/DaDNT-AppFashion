@@ -20,6 +20,8 @@ export default StyleSheet.create({
     },
     otpContainer: {
         width: '80%',
+        flexDirection: 'row',  // Đặt các ô OTP theo chiều ngang
+        justifyContent: 'space-between',  // Căn đều các ô
         height: 100,
     },
     otpBox: {
@@ -47,5 +49,5 @@ export default StyleSheet.create({
         color: 'gray',
         fontSize: 14,
     }
-})
+});
 

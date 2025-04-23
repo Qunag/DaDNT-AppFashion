@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from '../../styles/CodeScreenStyles';
 import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/Button';
-import { sendVerificationEmail, verifyEmail } from '../../services/authService';
+import { sendOtp, sendVerificationEmail, verifyEmail, verifyOtp } from '../../services/authService';
 
 export default function OTPVerificationScreen() {
     const navigation = useNavigation();
@@ -29,64 +29,55 @@ export default function OTPVerificationScreen() {
 
     const handleResendOTP = async () => {
         if (!email) {
-            Alert.alert('Error', 'Email not provided.');
+            Alert.alert('Lỗi', 'Không có email.');
             return;
         }
         try {
-            await sendVerificationEmail(email);
+            await sendOtp(email);
             Alert.alert('Thông báo', 'Mã OTP đã được gửi lại về email của bạn.');
             setTimer(60);
             setResendDisabled(true);
             setCode(['', '', '', '', '', '']);
             inputRefs.current[0]?.focus();
-            console.log('Gửi lại mã OTP cho email:', email);
         } catch (error) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Lỗi', error?.response?.data?.message || 'Gửi lại mã OTP thất bại.');
         }
     };
 
     const handleCodeChange = (text, index) => {
-        if (text && !/^[0-9]$/.test(text)) {
-            return;
-        }
+        if (text && !/^[0-9]$/.test(text)) return;
 
         const newCode = [...code];
         newCode[index] = text;
         setCode(newCode);
 
-        if (text && index < 5) {
-            inputRefs.current[index + 1].focus();
-        }
-
-        if (!text && index > 0) {
-            inputRefs.current[index - 1].focus();
-        }
+        if (text && index < 5) inputRefs.current[index + 1]?.focus();
+        if (!text && index > 0) inputRefs.current[index - 1]?.focus();
     };
 
     const handleVerify = async () => {
         const fullCode = code.join('');
         if (fullCode.length !== 6) {
-            Alert.alert('Error', 'Vui lòng nhập đủ 6 chữ số OTP.');
+            Alert.alert('Lỗi', 'Vui lòng nhập đủ 6 chữ số OTP.');
             return;
         }
+
         try {
-            await verifyEmail(email, fullCode);
-            Alert.alert('Success', 'Xác minh OTP thành công!', [
-                { text: 'OK', onPress: () => navigation.navigate('ResetPasswordScreen') },
+            await verifyOtp(email, fullCode); // gọi API xác minh OTP
+            Alert.alert('Thành công', 'Xác minh OTP thành công!', [
+                { text: 'OK', onPress: () => navigation.navigate('Home', { email }) },
             ]);
         } catch (error) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Lỗi', error?.response?.data?.message || 'Xác minh OTP thất bại.');
         }
     };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
                 <BackButton />
                 <Text style={styles.title}>Xác thực mã OTP</Text>
-                <Text style={styles.subtitle}>
-                    Nhập mã xác thực được gửi đến {email || 'email của bạn'}.
-                </Text>
+                <Text style={styles.subtitle}>Nhập mã xác thực được gửi đến {email || 'email của bạn'}.</Text>
 
                 <View style={styles.otpContainer}>
                     {code.map((digit, index) => (

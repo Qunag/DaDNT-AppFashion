@@ -32,7 +32,7 @@ export default function RegisterScreen() {
         try {
             await registerUser(name, email, password);
             Alert.alert('Success', 'Registration successful! You can now log in.', [
-                { text: 'OK', onPress: () => navigation.navigate('Login') },
+                { text: 'OK', onPress: () => navigation.navigate('CodeScreen', { email }) },
             ]);
         } catch (error) {
             if (error.message === 'Email already taken') {
