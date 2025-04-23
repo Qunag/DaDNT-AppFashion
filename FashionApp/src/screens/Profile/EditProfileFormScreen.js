@@ -74,12 +74,13 @@ const EditProfileFormScreen = () => {
 
           <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: "#f0f0f0" }]}
             value={email}
-            onChangeText={setEmail}
+            editable={false}
             placeholder="example@email.com"
             keyboardType="email-address"
           />
+
 
           <Text style={styles.label}>Số điện thoại</Text>
           <TextInput
