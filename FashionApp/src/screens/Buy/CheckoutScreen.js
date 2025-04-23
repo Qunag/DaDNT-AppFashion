@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 import { getUserById } from '../../services/userService';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 import { createOrder } from '../../services/orderService';
 import { removeFromCart } from '../../services/cartService';
 
@@ -19,6 +18,7 @@ export default function CheckoutScreen() {
     const [paymentMethod, setPaymentMethod] = useState("Thanh toán khi nhận hàng");
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isUserInfoComplete, setIsUserInfoComplete] = useState(true);
 
     const colorMap = {
         '#CC0000': 'Đỏ',
@@ -54,6 +54,7 @@ export default function CheckoutScreen() {
 
                     const response = await getUserById(userId);
                     setUserData(response);
+                    setIsUserInfoComplete(!!response.phone && !!response.address);
                     setLoading(false);
                 } catch (error) {
                     console.error('Lỗi khi lấy thông tin người dùng:', error.message || error);
@@ -84,6 +85,10 @@ export default function CheckoutScreen() {
             return;
         }
 
+        if (!isUserInfoComplete) {
+            Alert.alert("Lỗi", "Vui lòng nhập đầy đủ số điện thoại và địa chỉ.");
+            return;
+        }
 
         if (cartItems.length === 0) {
             Alert.alert("Lỗi", "Không có sản phẩm nào được chọn để đặt hàng.");
@@ -98,7 +103,6 @@ export default function CheckoutScreen() {
                 return {
                     productId: typeof item.productId === 'object' ? item.productId.id : item.productId,
                     name: item.name,
-
                     price: item.price,
                     quantity: item.quantity,
                     color_name: colorName,
@@ -107,11 +111,7 @@ export default function CheckoutScreen() {
                 };
             });
 
-
-
             const response = await createOrder(orderItems);
-
-
 
             for (const item of cartItems) {
                 try {
@@ -138,7 +138,6 @@ export default function CheckoutScreen() {
             console.error("Error creating order:", error.response ? error.response.data : error.message);
             Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
         }
-
     };
 
     if (loading) {
@@ -166,12 +165,21 @@ export default function CheckoutScreen() {
                         </View>
                         <View style={styles.infoRow}>
                             <Ionicons name="call-outline" size={20} color="#6B7280" />
-                            <Text style={styles.infoText}>{userData.phone}</Text>
+                            <Text style={styles.infoText}>
+                                {userData.phone ? userData.phone : "Vui lòng nhập số điện thoại"}
+                            </Text>
                         </View>
                         <View style={styles.infoRow}>
                             <Ionicons name="location-outline" size={20} color="#6B7280" />
-                            <Text style={styles.infoText}>{userData.address}</Text>
+                            <Text style={styles.infoText}>
+                                {userData.address ? userData.address : "Vui lòng nhập địa chỉ"}
+                            </Text>
                         </View>
+                        {!isUserInfoComplete && (
+                            <Text style={styles.errorText}>
+                                Vui lòng nhập đầy đủ số điện thoại và địa chỉ để tiếp tục thanh toán.
+                            </Text>
+                        )}
                     </View>
                 ) : (
                     <Text style={styles.placeholderText}>Không thể lấy thông tin người dùng</Text>
@@ -243,8 +251,9 @@ export default function CheckoutScreen() {
                 </Text>
 
                 <TouchableOpacity
-                    style={styles.placeOrderButton}
+                    style={[styles.placeOrderButton, !isUserInfoComplete && styles.disabledButton]}
                     onPress={handlePlaceOrder}
+                    disabled={!isUserInfoComplete}
                 >
                     <Text style={styles.placeOrderText}>ĐẶT HÀNG</Text>
                 </TouchableOpacity>
@@ -263,6 +272,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#000",
         marginLeft: 10,
+    },
+    errorText: {
+        fontSize: 14,
+        color: "red",
+        marginTop: 10,
     },
     container: {
         flexGrow: 1,
@@ -379,6 +393,9 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         alignItems: "center",
         marginTop: 20,
+    },
+    disabledButton: {
+        backgroundColor: "#cccccc",
     },
     placeOrderText: {
         color: "white",
