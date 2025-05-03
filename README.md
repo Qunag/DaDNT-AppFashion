@@ -1,8 +1,6 @@
 # Đồ án Đa nền tảng - Cửa hàng bán giày online
 
-[![Build Status](https://travis-ci.org/hagopj13/node-express-boilerplate.svg?branch=master)](https://travis-ci.org/hagopj13/node-express-boilerplate)
-[![Coverage Status](https://coveralls.io/repos/github/hagopj13/node-express-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/hagopj13/node-express-boilerplate?branch=master)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
 # I. Khái quát về đề tài 
 ## 1. Giới thiệu đề tài
 
@@ -21,7 +19,6 @@
 - **Các thư viện hỗ trợ**:
   - React Navigation
   - Axios
-  - Redux Toolkit
   - Mongoose
   - bcryptjs
   - dotenv
@@ -44,11 +41,12 @@
 
 ### 4.1 Kiến trúc tổng thể
 - Ứng dụng theo mô hình **Client-Server**.
-- Backend NodeJS phục vụ API RESTful cho React Native App.
+- **Backend NodeJS** phục vụ **API RESTful** cho **React Native App**.
 
 ### 4.2 Sơ đồ kiến trúc
 
-React Native (Mobile App) ---> API Server (NodeJS + Express) ---> MongoDB (Database)
+```bash React Native (Mobile App) ---> API Server (NodeJS + Express) ---> MongoDB (Database) 
+```
 
 ### 4.3 Thiết kế cơ sở dữ liệu
 Các bảng (collection) chính:
@@ -67,8 +65,7 @@ const sizeSchema = new mongoose.Schema({
 });
 
 const colorSchema = new mongoose.Schema({
-  color_name: String,
-      
+  color_name: String,    
   image_url: String,
   sizes: [sizeSchema],
 });
@@ -95,22 +92,48 @@ const productSchema = new mongoose.Schema({
 - Màn hình đặt hàng
 
 
+## 5. Triển khai hệ thống
+### 5.1 Backend (NodeJS + Express)
+
+- Tạo các API cơ bản :
+  - `/api/auth/` : Đăng ký, đăng nhập , Xác thực , ...
+
+  - `/api/users/` : Chỉnh sửa , cập nhật thông tin người dùng , ...
+
+  - `/api/products/` : Xem danh sách sản phẩm , chi tiết sản phẩm , ...
+
+  - `/api/carts/` : Xem giỏ hàng , thêm sản phẩm vào giỏ hàng , ...
+
+  - `/api/orders/` : Đặt hàng , theo dõi đơn hàng , ...
+
+- Bảo mật **API* bằng **JWT*
+
+- Sử dụng middleware `auth.js` để xác thực
+
+- 
 
 
 
+### 5.2 Frontend (React Native)
 
+- Thiết kế các màn hình với ReactNative
 
+- Gọi API bằng `Axios`
 
+- Lưu token vào `AsyncStorage` để duy trì đăng nhập.
 
+Ví dụ đoạn code gọi API lấy sản phẩm:
+```javascript
+import axios from 'axios';
 
+const fetchProducts = async () => {
+  const res = await axios.get('https://yourserver.com/api/products');
+  return res.data;
+};
 
+```
 
-
-
-
-
-
-
+# II. Triển khai hệ thống FrontEnd
 
 
 
@@ -290,15 +313,15 @@ EMAIL_FROM=mqunagsk1510@gmail.com
 
 ```
 src\
- |--config\         # Environment variables and configuration related things
+ |--config\         # Biến môi trường và những cài liên quan đến cấu hình
  |--controllers\    # Route controllers (controller layer)
- |--docs\           # Swagger files
- |--middlewares\    # Custom express middlewares
+ |--docs\           # Swagger 
+ |--middlewares\    # Các middleware express tùy chỉnh
  |--models\         # Mongoose models (data layer)
  |--routes\         # Routes
  |--services\       # Business logic (service layer)
- |--utils\          # Utility classes and functions
- |--validations\    # Request data validation schemas
+ |--utils\          # Các lớp và hàm tiện ích
+ |--validations\    # Các lược đồ xác thực dữ liệu yêu cầu
  |--app.js          # Express app
  |--index.js        # App entry point
 ```
@@ -312,27 +335,71 @@ src\
 Danh sách các tuyến đường có sẵn:
 
 **Auth routes**:\
-`POST /v1/auth/register` - register\
-`POST /v1/auth/login` - login\
-`POST /v1/auth/refresh-tokens` - refresh auth tokens\
+
+`POST /v1/auth/register` - đăng kí\
+`POST /v1/auth/login` - dăng nhập\
+`POST /v1/auth/refresh-tokens` - refresh tokens xác thực\
 `POST /v1/auth/forgot-password` - send reset password email\
 `POST /v1/auth/reset-password` - reset password\
-`POST /v1/auth/send-verification-email` - send verification email\
-`POST /v1/auth/verify-email` - verify email
-``
+`POST /v1/auth/send-verification-email` - gửi verification email\
+`POST /v1/auth/verify-email` - verify email\
+`POST /v1/auth/send-otp` - gửi otp\
+`POST /v1/auth/verify-otp` - verify otp\
+
 
 **User routes**:\
-`POST /v1/users` - create a user\
-`GET /v1/users` - get all users\
-`GET /v1/users/:userId` - get user\
-`PATCH /v1/users/:userId` - update user\
-`DELETE /v1/users/:userId` - delete user
+
+`POST /v1/users` - tạo user mới\
+`GET /v1/users` - lấy tất cả users\
+`GET /v1/users/:userId` - lấy 1 user\
+`PATCH /v1/users/:userId` - cập nhật user\
+`DELETE /v1/users/:userId` - xóa user
+
+**Product routes**\
+
+- manageProducts\
+`POST /v1/products/create ` - tạo sản phẩm mới\
+`PATCH /v1/products/:productId` - cập nhật thông tin sản phẩm\
+`DELETE /v1/products/:productId` - Xóa sản phẩm\
+
+
+- user\
+`GET /v1/products/` - lấy tất cả sản phẩm\
+`GET /v1/products/filter` - Lọc sản phẩm theo thuộc tính\
+`GET /v1/products/search` - Tìm kiếm theo tên sản phẩm\
+
+**Cart routes**\
+
+`POST /v1/carts/` - tạo giỏ hàng\
+`GET /v1/carts/` - Lấy giỏ hàng của user\
+`PATCH /v1/carts/` - cập nhật giỏ hàng\
+`DELETE /v1/carts/` -Xóa giỏ hàng\
+
+`GET-PATCH-DELETE /v1/carts/item/:productId` - quản lý sản phẩm trong giỏ hàng (lấy , sửa, xóa sản phẩm)\
+
+`POST /v1/carts/ádd` - thêm sản phẩm và giỏ hàng\
+
+
+**Order routes**\
+
+- user
+
+`GET /v1/orders/` - Lấy tất cả orders của người dùng\
+`POST /v1/orders/create` - Tạo orders mới cho từng người dùng\
+`GET /v1/orders/:orderId` - Lấy thông tin của từng orders\
+`PATCH /v1/orders/cancel/:orderId` - Hủy đơn hàng 
+
+- admin
+
+`PATCH v1/orders/update-status/:orderId` - Cập nhật trạng thái orders\
+
+
 
 ## Error Handling
 
-The app has a centralized error handling mechanism.
+Ứng dụng có một cơ chế xử lý lỗi tập trung.
 
-Controllers should try to catch the errors and forward them to the error handling middleware (by calling `next(error)`). For convenience, you can also wrap the controller inside the catchAsync utility wrapper, which forwards the error.
+Các controller cố gắng bắt lỗi và chuyển chúng đến middleware xử lý lỗi (bằng cách gọi next(error)). Để thuận tiện, bạn cũng có thể bọc controller bên trong trình bao bọc tiện ích catchAsync, trình này sẽ chuyển tiếp lỗi.
 
 ```javascript
 const catchAsync = require('../utils/catchAsync');
@@ -343,7 +410,7 @@ const controller = catchAsync(async (req, res) => {
 });
 ```
 
-The error handling middleware sends an error response, which has the following format:
+Middleware xử lý lỗi sẽ gửi một phản hồi lỗi, có định dạng như sau:
 
 ```json
 {
@@ -352,11 +419,11 @@ The error handling middleware sends an error response, which has the following f
 }
 ```
 
-When running in development mode, the error response also contains the error stack.
+Khi chạy ở chế độ phát triển, phản hồi lỗi cũng chứa stack lỗi.
 
-The app has a utility ApiError class to which you can attach a response code and a message, and then throw it from anywhere (catchAsync will catch it).
+Ứng dụng có một lớp tiện ích ApiError mà bạn có thể gắn mã phản hồi và thông báo, sau đó ném nó từ bất cứ đâu (catchAsync sẽ bắt nó).
 
-For example, if you are trying to get a user from the DB who is not found, and you want to send a 404 error, the code should look something like:
+Ví dụ: nếu bạn đang cố gắng lấy một người dùng từ DB không tìm thấy và bạn muốn gửi lỗi 404, mã sẽ trông như sau:
 
 ```javascript
 const httpStatus = require('http-status');
@@ -373,9 +440,9 @@ const getUser = async (userId) => {
 
 ## Validation
 
-Request data is validated using [Joi](https://joi.dev/). Check the [documentation](https://joi.dev/api/) for more details on how to write Joi validation schemas.
+Dữ liệu yêu cầu được xác thực bằng [Joi](https://joi.dev/). Xem [documentation](https://joi.dev/api/) để biết thêm chi tiết về cách viết lược đồ xác thực Joi..
 
-The validation schemas are defined in the `src/validations` directory and are used in the routes by providing them as parameters to the `validate` middleware.
+Các lược đồ xác thực được định nghĩa trong thư mục `src/validations` và được sử dụng trong các tuyến đường bằng cách cung cấp chúng làm tham số cho `validate` middleware.
 
 ```javascript
 const express = require('express');
@@ -390,7 +457,7 @@ router.post('/users', validate(userValidation.createUser), userController.create
 
 ## Authentication
 
-To require authentication for certain routes, you can use the `auth` middleware.
+Để yêu cầu xác thực cho một số tuyến nhất định, bạn có thể sử dụng `auth` middleware.
 
 ```javascript
 const express = require('express');
@@ -402,23 +469,23 @@ const router = express.Router();
 router.post('/users', auth(), userController.createUser);
 ```
 
-These routes require a valid JWT access token in the Authorization request header using the Bearer schema. If the request does not contain a valid access token, an Unauthorized (401) error is thrown.
+Các routes này yêu cầu mã thông báo truy cập JWT hợp lệ trong tiêu đề yêu cầu Authorization bằng lược đồ Bearer. Nếu yêu cầu không chứa mã thông báo truy cập hợp lệ, lỗi Unauthorized (401) sẽ được đưa ra.
 
 **Generating Access Tokens**:
 
-An access token can be generated by making a successful call to the register (`POST /v1/auth/register`) or login (`POST /v1/auth/login`) endpoints. The response of these endpoints also contains refresh tokens (explained below).
+Mã truy cập có thể được tạo bằng cách thực hiện thành công lệnh gọi đến các điểm cuối đăng ký (`POST /v1/auth/register`) hoặc đăng nhập (`POST /v1/auth/login`). Phản hồi của các điểm cuối này cũng chứa mã làm mới (được giải thích bên dưới).
 
-An access token is valid for 30 minutes. You can modify this expiration time by changing the `JWT_ACCESS_EXPIRATION_MINUTES` environment variable in the .env file.
+Mã thông báo truy cập có giá trị trong 30 phút. Bạn có thể sửa đổi thời gian hết hạn này bằng cách thay đổi biến môi trường `JWT_ACCESS_EXPIRATION_MINUTES` trong tệp `.env`.
 
 **Refreshing Access Tokens**:
 
-After the access token expires, a new access token can be generated, by making a call to the refresh token endpoint (`POST /v1/auth/refresh-tokens`) and sending along a valid refresh token in the request body. This call returns a new access token and a new refresh token.
+Sau khi access token hết hạn, một access token mới có thể được tạo bằng cách gọi đến endpoint refresh token (`POST /v1/auth/refresh-tokens`) và gửi kèm một refresh token hợp lệ trong phần body của request. Lệnh gọi này trả về một access token mới và một refresh token mới.
 
-A refresh token is valid for 30 days. You can modify this expiration time by changing the `JWT_REFRESH_EXPIRATION_DAYS` environment variable in the .env file.
+Mã thông báo làm mới có giá trị trong 30 ngày. Bạn có thể sửa đổi thời gian hết hạn này bằng cách thay đổi biến môi trường `JWT_REFRESH_EXPIRATION_DAYS` trong tệp `.env`.
 
 ## Authorization
 
-The `auth` middleware can also be used to require certain rights/permissions to access a route.
+Middleware `auth` cũng có thể được sử dụng để yêu cầu các quyền/giấy phép nhất định để truy cập một `route`.
 
 ```javascript
 const express = require('express');
@@ -430,17 +497,17 @@ const router = express.Router();
 router.post('/users', auth('manageUsers'), userController.createUser);
 ```
 
-In the example above, an authenticated user can access this route only if that user has the `manageUsers` permission.
+Trong ví dụ trên, một người dùng đã được xác thực chỉ có thể truy cập vào đường dẫn này nếu người dùng đó có quyền `manageUsers`.
 
-The permissions are role-based. You can view the permissions/rights of each role in the `src/config/roles.js` file.
+Các quyền được phân theo vai trò. Bạn có thể xem các quyền/quyền hạn của từng vai trò trong tệp `src/config/roles.js`.
 
-If the user making the request does not have the required permissions to access this route, a Forbidden (403) error is thrown.
+Nếu người dùng đưa ra yêu cầu không có đủ quyền cần thiết để truy cập tuyến đường này, Forbidden (403) error sẽ được trả về.
 
 ## Logging
 
-Import the logger from `src/config/logger.js`. It is using the [Winston](https://github.com/winstonjs/winston) logging library.
+Nhập trình ghi nhật ký từ `src/config/logger.js`. Sử dụng thư viện ghi nhật ký  [Winston](https://github.com/winstonjs/winston).
 
-Logging should be done according to the following severity levels (ascending order from most important to least important):
+Việc ghi nhật ký nên được thực hiện theo các mức độ nghiêm trọng sau (thứ tự tăng dần từ quan trọng nhất đến ít quan trọng nhất):
 
 ```javascript
 const logger = require('<path to src>/config/logger');
@@ -453,17 +520,17 @@ logger.verbose('message'); // level 4
 logger.debug('message'); // level 5
 ```
 
-In development mode, log messages of all severity levels will be printed to the console.
+Trong chế độ phát triển, tin nhắn nhật ký của tất cả các mức độ nghiêm trọng sẽ được in ra bảng điều khiển.
 
-In production mode, only `info`, `warn`, and `error` logs will be printed to the console.\
-It is up to the server (or process manager) to actually read them from the console and store them in log files.\
-This app uses pm2 in production mode, which is already configured to store the logs in log files.
+Ở chế độ production, chỉ `info`, `warn`, và `error` mới được in ra bảng điều khiển.\
+Việc đọc chúng từ bảng điều khiển và lưu trữ chúng vào các tập tin nhật ký là tùy thuộc vào máy chủ (hoặc trình quản lý tiến trình).\
+Ứng dụng này sử dụng pm2 ở chế độ production, đã được cấu hình để lưu trữ nhật ký trong các tập tin nhật ký.
 
-Note: API request information (request url, response code, timestamp, etc.) are also automatically logged (using [morgan](https://github.com/expressjs/morgan)).
+Lưu ý: Thông tin yêu cầu API (request url, response code, timestamp, v.v.) cũng được tự động ghi lại(Sử dụng [morgan](https://github.com/expressjs/morgan)).
 
 ## Custom Mongoose Plugins
 
-The app also contains 2 custom mongoose plugins that you can attach to any mongoose model schema. You can find the plugins in `src/models/plugins`.
+Ứng dụng này cũng chứa 2 plugin mongoose tùy chỉnh mà bạn có thể gắn vào bất kỳ lược đồ mô hình mongoose nào. Bạn có thể tìm thấy các plugin này trong `src/models/plugins`.
 
 ```javascript
 const mongoose = require('mongoose');
@@ -484,16 +551,16 @@ const User = mongoose.model('User', userSchema);
 
 ### toJSON
 
-The toJSON plugin applies the following changes in the toJSON transform call:
+Plugin toJSON áp dụng các thay đổi sau trong lệnh gọi chuyển đổi toJSON:
 
-- removes \_\_v, createdAt, updatedAt, and any schema path that has private: true
-- replaces \_id with id
+- xóa \_\_v, createdAt, updatedAt, và bất kỳ đường dẫn lược đồ nào có private: true
+- thay thế \_id với id
 
 ### paginate
 
-The paginate plugin adds the `paginate` static method to the mongoose schema.
+Plugin paginate thêm phương thức tĩnh `paginate` vào schema của Mongoose.
 
-Adding this plugin to the `User` model schema will allow you to do the following:
+Việc thêm plugin này vào lược đồ mô hình `User` sẽ cho phép bạn thực hiện những điều sau:
 
 ```javascript
 const queryUsers = async (filter, options) => {
@@ -502,9 +569,9 @@ const queryUsers = async (filter, options) => {
 };
 ```
 
-The `filter` param is a regular mongo filter.
+Tham số `filter` là một bộ lọc mongo thông thường.
 
-The `options` param can have the following (optional) fields:
+Tham số `options` có thể có các trường (tùy chọn) sau:
 
 ```javascript
 const options = {
@@ -514,9 +581,9 @@ const options = {
 };
 ```
 
-The plugin also supports sorting by multiple criteria (separated by a comma): `sortBy: name:desc,role:asc`
+Plugin cũng hỗ trợ sắp xếp theo nhiều tiêu chí (phân tách bằng dấu phẩy): `sortBy: name:desc,role:asc`
 
-The `paginate` method returns a Promise, which fulfills with an object having the following properties:
+Phương thức `paginate` trả về một Promise, giải quyết bằng một đối tượng có các thuộc tính sau:
 
 ```json
 {
@@ -527,29 +594,3 @@ The `paginate` method returns a Promise, which fulfills with an object having th
   "totalResults": 48
 }
 ```
-
-## Linting
-
-Linting is done using [ESLint](https://eslint.org/) and [Prettier](https://prettier.io).
-
-In this app, ESLint is configured to follow the [Airbnb JavaScript style guide](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base) with some modifications. It also extends [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier) to turn off all rules that are unnecessary or might conflict with Prettier.
-
-To modify the ESLint configuration, update the `.eslintrc.json` file. To modify the Prettier configuration, update the `.prettierrc.json` file.
-
-To prevent a certain file or directory from being linted, add it to `.eslintignore` and `.prettierignore`.
-
-To maintain a consistent coding style across different IDEs, the project contains `.editorconfig`
-
-## Contributing
-
-Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
-
-## Inspirations
-
-- [danielfsousa/express-rest-es2017-boilerplate](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
-- [madhums/node-express-mongoose](https://github.com/madhums/node-express-mongoose)
-- [kunalkapadia/express-mongoose-es6-rest-api](https://github.com/kunalkapadia/express-mongoose-es6-rest-api)
-
-## License
-
-[MIT](LICENSE)
