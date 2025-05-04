@@ -4,12 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Notification from "./Notification";
 
-const BottomNavBar = ({ toggleProfile, cartItemCount }) => {
+const BottomNavBar = ({ toggleProfile, cartItemCount, onHomePress }) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.bottomNav}>
-      <TouchableOpacity style={styles.navItem}>
+      <TouchableOpacity style={styles.navItem} onPress={onHomePress}>
         <Ionicons name="home" size={24} color="#ffffff" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Cart")}>
@@ -24,6 +24,7 @@ const BottomNavBar = ({ toggleProfile, cartItemCount }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   bottomNav: {

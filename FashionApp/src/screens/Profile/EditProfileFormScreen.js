@@ -5,6 +5,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { updateUser } from "../../services/userService";
+import Toast from 'react-native-toast-message';
+
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();
@@ -18,7 +20,11 @@ const EditProfileFormScreen = () => {
 
   const handleSave = async () => {
     if (!name.trim() || !email.trim() || !phone.trim() || !address.trim()) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin");
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi',
+        text2: 'Vui lòng điền đầy đủ thông tin',
+      });      
       return;
     }
 
@@ -33,12 +39,21 @@ const EditProfileFormScreen = () => {
 
       const updatedUser = { name, email, phone, address };
       await updateUser(userId, updatedUser);
-      Alert.alert("Thành công", "Thông tin đã được cập nhật!");
+      Toast.show({
+        type: 'success',
+        text1: 'Thanh công',
+        text2: 'Thông tin đã được cập nhật',
+      });
+      
       navigation.goBack();
 
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
-      Alert.alert("Lỗi", "Không thể cập nhật thông tin.");
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi',
+        text2: 'Không thể cập nhật thông tin. Vui lòng thử lại sau.',
+      }); 
     }
   };
 

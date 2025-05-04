@@ -6,6 +6,8 @@ import axios from "axios";
 import { addToCart } from "../../services/cartService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getProductDetail } from "../../services/productService";
+import Toast from 'react-native-toast-message';
+
 
 const ProductDetailScreen = () => {
   const route = useRoute();
@@ -27,13 +29,27 @@ const ProductDetailScreen = () => {
         if (data.colors && data.colors.length > 0) {
           const defaultColor = data.colors[0];
           setSelectedColor(defaultColor);
-  
-          if (defaultColor.sizes && defaultColor.sizes.length > 0) {
-            const defaultSize = defaultColor.sizes[0];
-            setSelectedSize(defaultSize);
-            setStockQuantity(defaultSize.quantity);
+        
+          // Tìm size còn hàng đầu tiên
+          const availableSize = defaultColor.sizes.find(size => size.quantity > 0);
+        
+          if (availableSize) {
+            setSelectedSize(availableSize);
+            setStockQuantity(availableSize.quantity);
+            setSelectedQuantity(1);
+          } else {
+            setSelectedSize(null);
+            setStockQuantity(0);
+            setSelectedQuantity(1);
+            Toast.show({
+              type: 'error',
+              text1: 'Thông báo',
+              text2: 'Màu mặc định không còn size nào còn hàng.',
+            });
+            
           }
         }
+        
       } catch (error) {
         console.error("Lỗi khi lấy chi tiết sản phẩm:", error.message);
       }
@@ -51,15 +67,36 @@ const ProductDetailScreen = () => {
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
-    setSelectedSize(color.sizes[0]);
-    setStockQuantity(color.sizes[0].quantity);
+    
+    const availableSize = color.sizes.find(size => size.quantity > 0);
+    
+    if (availableSize) {
+      setSelectedSize(availableSize);
+      setStockQuantity(availableSize.quantity);
+      setSelectedQuantity(1);
+    } else {
+      // Không có size nào còn hàng
+      setSelectedSize(null);
+      setStockQuantity(0);
+      setSelectedQuantity(1);
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Màu này không còn size nào có sẵn.',
+      });
+      
+    }
   };
+  
+  
 
   // Xử lý sự kiện chọn kích cỡ
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    setStockQuantity(size.quantity);  // Cập nhật lại số lượng kho khi thay đổi kích cỡ
+    setStockQuantity(size.quantity);
+    setSelectedQuantity(1); // Reset số lượng khi đổi kích thước
   };
+  
 
   // Thay đổi số lượng sản phẩm
   const handleQuantityChange = (operation) => {
@@ -74,7 +111,11 @@ const ProductDetailScreen = () => {
     if (newQuantity > 0 && newQuantity <= stockQuantity) {
       setSelectedQuantity(newQuantity);
     } else {
-      alert(`Số lượng không hợp lệ. Tối đa là ${stockQuantity} sản phẩm.`);
+      Toast.show({
+        type: 'error',
+        text1: 'Số lượng không hợp lệ',
+        text2: `Tối đa là ${stockQuantity} sản phẩm.`,
+      });;
     }
   };
 
@@ -100,11 +141,19 @@ const ProductDetailScreen = () => {
       console.log("Thêm vào giỏ hàng:", { name });
 
       await addToCart(productId, name, image_url, brand, price, quantity, color, size); // Gọi hàm thêm sản phẩm vào giỏ hàng
-      alert("Đã thêm sản phẩm vào giỏ hàng!");
+      Toast.show({
+        type: 'success',
+        text1: 'Thành công',
+        text2: 'Đã thêm sản phẩm vào giỏ hàng!',
+      });      
       navigation.navigate("Home"); // Chuyển hướng đến giỏ hàng sau khi thêm thành công
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      alert("Lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi',
+        text2: 'Thêm sản phẩm thất bại!',
+      });      
     }
   };
 
@@ -116,7 +165,7 @@ const ProductDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
         <View style={styles.imageContainer}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="black" />
@@ -180,26 +229,36 @@ const ProductDetailScreen = () => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.sizeScrollContainer}
           >
-            {selectedColor.sizes.map((size) => (
+            {selectedColor?.sizes.map((size) => {
+            const isOutOfStock = size.quantity === 0;
+            const isSelected = selectedSize?.size === size.size;
+            return (
               <TouchableOpacity
                 key={size._id}
                 style={[
                   styles.sizeButtonHorizontal,
-                  selectedSize.size === size.size && styles.selectedSize,
+                  isSelected && styles.selectedSize,
+                  isOutOfStock && styles.disabledSizeButton,
                 ]}
-                onPress={() => handleSizeSelect(size)}
+                onPress={() => !isOutOfStock && handleSizeSelect(size)}
+                disabled={isOutOfStock}
               >
                 <Text
                   style={[
                     styles.sizeText,
-                    selectedSize.size === size.size && styles.selectedSizeText,
+                    isSelected && styles.selectedSizeText,
+                    isOutOfStock && styles.disabledSizeText,
                   ]}
                 >
                   {size.size}
                 </Text>
-                <Text style={styles.sizeQuantity}>Còn {size.quantity}</Text>
+                <Text style={styles.sizeQuantity}>
+                  {isOutOfStock ? "Hết hàng" : `Còn ${size.quantity}`}
+                </Text>
               </TouchableOpacity>
-            ))}
+            );
+          })}
+
           </ScrollView>
 
           <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
@@ -369,6 +428,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
+  disabledSizeButton: {
+    backgroundColor: "#ccc",
+    opacity: 0.6,
+  },
+  
+  disabledSizeText: {
+    color: "#999",
+  },  
 });
 
 export default ProductDetailScreen;

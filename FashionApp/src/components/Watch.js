@@ -6,19 +6,29 @@ import ProductCard from "./ProductCard";
 import Brand from "./Brand";
 import Banner from "./Banner";
 
-const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand,}) => {
+const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand, scrollViewRef}) => {
   const navigation = useNavigation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showStickyBrand, setShowStickyBrand] = useState(false);
 
   const renderItem = ({ item }) => (
-    <ProductCard
-      product={item}
-      onPress={() =>
-        navigation.navigate("ProductDetail", { productId: item._id })
-      }
-    />
+    <View
+      style={{
+        flex: 1,
+        margin: 5,
+        maxWidth: products.length === 1 ? "50%" : "48%", 
+        alignSelf: products.length === 1 ? "center" : "flex-start",
+      }}
+    >
+      <ProductCard
+        product={item}
+        onPress={() =>
+          navigation.navigate("ProductDetail", { productId: item._id })
+        }
+      />
+    </View>
   );
+  
 
   const handleScroll = (event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -42,6 +52,7 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <ScrollView
+          ref={scrollViewRef}
           onScroll={handleScroll}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
@@ -111,7 +122,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#fff",
     paddingVertical: 10,
-    zIndex: 999,
+    zIndex: 1,
     elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
