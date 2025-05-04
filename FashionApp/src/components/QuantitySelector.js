@@ -1,20 +1,21 @@
-// Ví dụ về component QuantitySelector
+// components/QuantitySelector.js
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 
 export default function QuantitySelector({ value, onChange }) {
   const decrement = () => {
     if (value > 1) {
-      onChange(value - 1);
+        onChange(value - 1);
+    } else {
+        onChange(0); 
     }
-  };
+};
 
   const increment = () => {
     onChange(value + 1);
   };
 
-  // Đảm bảo value luôn là số
-  const displayValue = typeof value === 'number' ? value : 1;
+  const displayValue = typeof value === "number" ? value : 1;
 
   return (
     <View style={styles.container}>
@@ -31,7 +32,14 @@ export default function QuantitySelector({ value, onChange }) {
 
 const styles = StyleSheet.create({
   container: { flexDirection: "row", alignItems: "center" },
-  button: { width: 30, height: 30, borderRadius: 15, backgroundColor: "#e0e0e0", justifyContent: "center", alignItems: "center" },
+  button: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   buttonText: { fontSize: 18, fontWeight: "bold" },
   quantity: { marginHorizontal: 10, fontSize: 16 },
 });
