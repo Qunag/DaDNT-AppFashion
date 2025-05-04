@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Animated, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Animated, Image, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Toolbar from "../../components/Toolbar";
-import Brand from "../../components/Brand";
 import Watch from "../../components/Watch";
 import Profile from "../Profile/Profile";
 import BottomNavBar from "../../components/BottomNavBar";
@@ -23,6 +22,7 @@ const HomeScreen = () => {
   const [pendingOrderCount, setPendingOrderCount] = useState(0);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const scrollViewRef = useRef(null);
 
   const fetchProducts = async () => {
     try {
@@ -87,6 +87,12 @@ const HomeScreen = () => {
     fetchProducts();
   };
 
+  const scrollToTop = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    }
+  };
+
   const filteredProducts = products.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,6 +147,7 @@ const HomeScreen = () => {
         onRefresh={handleRefresh}
         selectedBrand={selectedBrand}
         onSelectBrand={setSelectedBrand}
+        scrollViewRef={scrollViewRef}
       />
 
 
@@ -148,6 +155,7 @@ const HomeScreen = () => {
       <BottomNavBar
         toggleProfile={toggleProfile}
         cartItemCount={cartItemCount}
+        onHomePress={scrollToTop}
       />
     </View>
   );

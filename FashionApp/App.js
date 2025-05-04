@@ -21,12 +21,14 @@ import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
 import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
+import Toast from 'react-native-toast-message';
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <>
     <NavigationContainer>
       <Stack.Navigator
 
@@ -53,6 +55,9 @@ export default function App() {
         <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       </Stack.Navigator>
+      
     </NavigationContainer>
+    <Toast />
+    </>
   );
 }
