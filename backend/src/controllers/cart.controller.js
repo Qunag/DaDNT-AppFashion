@@ -72,9 +72,7 @@ const updateCartItem = catchAsync(async (req, res) => {
     res.send(cart);
 });
 
-module.exports = {
-    updateCartItem,
-};
+
 const addToCart = catchAsync(async (req, res) => {
     const { productId, name, image_url, brand, price, quantity, color, size } = req.body;
 

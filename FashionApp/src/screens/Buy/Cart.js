@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CheckboxField from "../../components/CheckBoxField";
 import { getUserID } from '../../services/authService';
 import { fetchCart, createCart, updateCartItem, removeFromCart } from '../../services/cartService';
+import { getProductDetail } from '../../services/productService'; // Thêm import để lấy chi tiết sản phẩm
 import Toast from 'react-native-toast-message';
 
 export default function Cart() {
@@ -14,24 +15,50 @@ export default function Cart() {
     const [checkedItems, setCheckedItems] = useState({});
     const [loading, setLoading] = useState(true);
 
-
-
     const fetchCartItems = async () => {
         try {
             const userId = await getUserID();
             const cart = await fetchCart(userId);
+            let validCartItems = [];
+
             if (cart && cart.items) {
-                const validCartItems = cart.items.map(item => ({
-                    ...item,
-                    productId: typeof item.productId === 'object' ? item.productId : { id: item.productId },
-                }));
+
+                validCartItems = await Promise.all(
+                    cart.items.map(async (item) => {
+                        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+                        try {
+                            // Gọi API để lấy chi tiết sản phẩm và stockQuantity
+                            const productDetails = await getProductDetail(productId);
+                            const selectedColor = productDetails.colors.find(
+                                (color) => color.color_name === item.color
+                            );
+                            const selectedSize = selectedColor?.sizes.find(
+                                (size) => size.size === item.size
+                            );
+
+                            return {
+                                ...item,
+                                productId: { id: productId },
+                                stockQuantity: selectedSize?.quantity || 0, // Cập nhật stockQuantity từ API
+                            };
+                        } catch (error) {
+                            console.error(`Lỗi khi lấy chi tiết sản phẩm ${productId}:`, error);
+                            return {
+                                ...item,
+                                productId: { id: productId },
+                                stockQuantity: 0, // Nếu lỗi, đặt stockQuantity là 0
+                            };
+                        }
+                    })
+                );
                 setCartItems(validCartItems);
             } else {
                 const newCart = await createCart(userId);
                 setCartItems(newCart.items);
             }
         } catch (error) {
-
+            console.error("Lỗi khi lấy giỏ hàng:", error);
+            const userId = await getUserID();
             const newCart = await createCart(userId);
             setCartItems(newCart.items);
         } finally {
@@ -41,43 +68,90 @@ export default function Cart() {
 
     const handleQuantityChange = async (index, value) => {
         const item = cartItems[index];
-        if (!item || !item.productId) return;
 
-        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-
-        if (!productId || !item.color || !item.size) {
-            console.error("Thiếu thông tin cần thiết.");
-            return;
-        }
-
-        if (value === 0) {
-            handleRemove(index)
-            return;
-        }
-
-        if (value > item.stockQuantity) {
+        if (!item || !item.productId) {
             Toast.show({
                 type: 'error',
-                text1: 'Số lượng trong kho không đủ',
-                text2: `Chỉ còn ${item.stockQuantity} sản phẩm`,
-                position: 'top'
+                text1: 'Lỗi',
+                text2: 'Thông tin sản phẩm không hợp lệ',
+                position: 'top',
+                visibilityTime: 2000,
             });
             return;
         }
 
+        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+
+        if (!productId || !item.color || !item.size) {
+            Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Thiếu thông tin sản phẩm',
+                position: 'top',
+                visibilityTime: 2000,
+            });
+            return;
+        }
+
+        if (value === 0) {
+            handleRemove(index);
+            return;
+        }
+
+        // Kiểm tra stockQuantity từ API
         try {
+            const productDetails = await getProductDetail(productId);
+
+            const selectedColor = productDetails.colors.find(
+                (color) => color.color_name == item.color
+            );
+
+            const selectedSize = selectedColor?.sizes.find(
+                (size) => size.size == item.size
+            );
+
+
+            const stockQuantity = selectedSize?.quantity || 0;
+            // Kiểm tra số lượng trong kho
+            if (value > stockQuantity) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Số lượng không đủ',
+                    text2: `Chỉ còn ${stockQuantity} sản phẩm trong kho`,
+                    position: 'top',
+                    visibilityTime: 2000,
+                });
+                return;
+            }
+
+            // Cập nhật số lượng nếu hợp lệ
             await updateCartItem(productId, {
                 quantity: value,
                 color: item.color,
                 size: item.size,
             });
 
+            // Cập nhật giỏ hàng
             const updatedItems = [...cartItems];
-            updatedItems[index] = { ...updatedItems[index], quantity: value };
+            updatedItems[index] = { ...updatedItems[index], quantity: value, stockQuantity };
             setCartItems(updatedItems);
+
+            Toast.show({
+                type: 'success',
+                text1: 'Thành công',
+                text2: 'Cập nhật số lượng thành công',
+                position: 'top',
+                visibilityTime: 2000,
+            });
         } catch (error) {
             console.error("Lỗi khi cập nhật số lượng:", error);
-            Alert.alert("Cập nhật thất bại", "Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.");
+            Toast.show({
+                type: 'error',
+                text1: 'Cập nhật thất bại',
+                text2: 'Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.',
+                position: 'top',
+                visibilityTime: 2000,
+            });
         }
     };
 
@@ -96,7 +170,13 @@ export default function Cart() {
                     onPress: async () => {
                         const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
                         if (!productId || !item.color || !item.size) {
-                            Alert.alert("Lỗi", "Không thể xóa sản phẩm do thiếu thông tin.");
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Lỗi',
+                                text2: 'Không thể xóa sản phẩm do thiếu thông tin.',
+                                position: 'top',
+                                visibilityTime: 2000,
+                            });
                             return;
                         }
                         try {
@@ -111,20 +191,27 @@ export default function Cart() {
 
                             Toast.show({
                                 type: 'success',
-                                text1: 'Đã xóa sản phẩm khỏi giỏ hàng',
+                                text1: 'Thành công',
+                                text2: 'Đã xóa sản phẩm khỏi giỏ hàng',
                                 position: 'top',
                                 visibilityTime: 2000,
                             });
-
                         } catch (error) {
-                            console.error("Error removing item:", error);
-                            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
+                            console.error("Lỗi khi xóa sản phẩm:", error);
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Xóa thất bại',
+                                text2: 'Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.',
+                                position: 'top',
+                                visibilityTime: 2000,
+                            });
                         }
                     }
                 }
             ]
         );
     };
+
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
     };
@@ -133,7 +220,13 @@ export default function Cart() {
         const selectedItems = cartItems.filter((_, i) => checkedItems[i]);
 
         if (selectedItems.length === 0) {
-            Alert.alert("Thông báo", "Vui lòng chọn sản phẩm để thanh toán!");
+            Toast.show({
+                type: 'error',
+                text1: 'Thông báo',
+                text2: 'Vui lòng chọn sản phẩm để thanh toán!',
+                position: 'top',
+                visibilityTime: 2000,
+            });
         } else {
             navigation.navigate("Checkout", { cartItems: selectedItems });
         }
@@ -160,12 +253,11 @@ export default function Cart() {
             <Text style={styles.header}>Giỏ hàng</Text>
 
             {loading ? (
-                <Text>Loading...</Text>
+                <Text>Đang tải...</Text>
             ) : cartItems.length === 0 ? (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontSize: 18 }}>Giỏ hàng trống!</Text>
                 </View>
-
             ) : (
                 <ScrollView style={styles.scrollView}>
                     {cartItems.map((item, index) => (

@@ -135,10 +135,34 @@ const fetchProducts = async () => {
 
 # II. Triển khai hệ thống FrontEnd
 
+## 1. Kiến trúc tổng quan
+
+Frontend được xây dựng bằng **ReactNative** sử dụng kiến trúc component-based phân chia theo tính năng :
+- `screens/` : Chứa các tệp phân loại các màn hình như (Auth , Buy , Home , v.v.)
+- `component/` : Các component dùng chung như Header , Button , v.v
+- `services/` : Chứa các hàm gọi API (axios)
+- `constant/` : Chứa các hàm không thường xuyên thay đổi như API_ENDPOINT , themes , v.v.
+- `assets/` : ảnh hệ thống
 
 
+Cấu trúc thư mục :
 
+├── App.js
+├── assets/
+├── components/
+├── screens/
+├── services/
+├── styles/
+├── package-lock.json/
+└── ...
 
+## 2. Các thư viện chính 
+
+- `react-native`: khung chính để phát triển ứng dụng mobile
+- `react-navigation`: điều hướng giữa các màn hình
+- `axios`: gửi yêu cầu HTTP đến backend
+- `react-native-vector-icons`: icon giao diện
+- `@react-native-async-storage/async-storage`: lưu token/giỏ hàng local
 
 
 # III. Triển khai hệ thống Backend 
