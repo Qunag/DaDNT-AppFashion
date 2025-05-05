@@ -45,7 +45,10 @@
 
 ### 4.2 Sơ đồ kiến trúc
 
-```bash React Native (Mobile App) ---> API Server (NodeJS + Express) ---> MongoDB (Database) 
+```bash 
+React Native (Mobile App) 
+---> API Server (NodeJS + Express) 
+---> MongoDB (Database) 
 ```
 
 ### 4.3 Thiết kế cơ sở dữ liệu
@@ -135,39 +138,279 @@ const fetchProducts = async () => {
 
 # II. Triển khai hệ thống FrontEnd
 
-## 1. Kiến trúc tổng quan
-
-Frontend được xây dựng bằng **ReactNative** sử dụng kiến trúc component-based phân chia theo tính năng :
-- `screens/` : Chứa các tệp phân loại các màn hình như (Auth , Buy , Home , v.v.)
-- `component/` : Các component dùng chung như Header , Button , v.v
-- `services/` : Chứa các hàm gọi API (axios)
-- `constant/` : Chứa các hàm không thường xuyên thay đổi như API_ENDPOINT , themes , v.v.
-- `assets/` : ảnh hệ thống
 
 
-Cấu trúc thư mục :
+## 1. Mục tiêu , Kiến trúc tổng quan
+- Mục tiêu của phần frontend là xây dựng một ứng dụng bán giày thân thiện với người dùng, chạy mượt trên cả Android và iOS, cung cấp đầy đủ tính năng như:
 
-├── App.js
-├── assets/
-├── components/
-├── screens/
-├── services/
-├── styles/
-├── package-lock.json/
+  - Xem danh sách sản phẩm
+
+  - Xem chi tiết sản phẩm
+
+  - Tìm kiếm và lọc sản phẩm
+
+  - Thêm vào giỏ hàng
+
+  - Thanh toán (checkout)
+
+  - Xem lịch sử đơn hàng
+
+  - Đăng ký, đăng nhập, đăng xuất
+
+
+- Frontend được xây dựng bằng **ReactNative** sử dụng kiến trúc component-based phân chia theo tính năng :
+  - `screens/` : Chứa các tệp phân loại các màn hình như (Auth , Buy , Home , v.v.)
+
+  - `component/` : Các component dùng chung như Header , Button , v.v
+
+  - `services/` : Chứa các hàm gọi API (axios)
+
+  - `constant/` : Chứa các hàm không thường xuyên thay đổi như API_ENDPOINT , themes , v.v.
+
+  - `assets/` : ảnh hệ thống
+
+
+- Cấu trúc thư mục :
+``` bash
+├── App.js\
+├── assets\
+├── components\
+├── screens\
+├── services\
+├── styles\
+├── package-lock.json\
 └── ...
+```
+- Quick Start
+
+
+
 
 ## 2. Các thư viện chính 
 
-- `react-native`: khung chính để phát triển ứng dụng mobile
-- `react-navigation`: điều hướng giữa các màn hình
-- `axios`: gửi yêu cầu HTTP đến backend
-- `react-native-vector-icons`: icon giao diện
-- `@react-native-async-storage/async-storage`: lưu token/giỏ hàng local
+| Thư viện | Mục đích |
+|----------|----------|
+| `react-navigation` | Điều hướng giữa các màn hình |
+| `axios` | Gửi yêu cầu HTTP tới server backend |
+| `react-native-vector-icons` | Icon |
+| `formik`, `yup` | Quản lý form và xác thực dữ liệu |
+| `@react-native-async-storage/async-storage` | Lưu trữ dữ liệu cục bộ |
+| `react-native-dotenv` | Quản lý biến môi trường |
+
+## 3. Thiết kế UI
+- Thiết kế sử dụng `Flexbox` , `ScrollView` , `TouchableOpacity` , `FlatList` để hiển thị danh sách động
+
+- Áp dụng `theme` nhất quán (màu sắc , cỡ chữ )
+
+- `Responsive` cho các kích thước màn hình
+
+***MỘT SỐ MÀN HÌNH CHÍNH*** :
+
+  - *Auth* :  
+    - `LoginScreen` : Màn hình đăng nhập 
+    - `RegisterScreen` : Màn hình đăng kí tài khoản
+    - `ForgotPassWordScreen` : Màn hình quên mật khẩu
+    - v.v.
+  - *Home* :
+    - `HomeScreen` :  Hiển thị danh sách giày
+    - `ProductDetailScreen` : Chi tiết sản phẩm (thông tin , màu sắc , giá bán , ... )
+    - v.v.
+  - *Buy* :
+    - `CartScreen` : danh sách sản phẩm
+    - `CheckoutScreen` : thông tin giao hàng và đặt hàng
+    - `OrderScreen` : Chứa các đơn hàng mà người dùng đã đặt
+    - v.v.
+  - *Profile* : 
+    - `ProfileScreen` : Thông tin của người dùng
+    - `EditProfileScreen` : Sửa thông tin của người dùng
+    - v.v
+## 4. Navigation
+
+Sử dụng **React NAvigation v6** với `Stack.Navigator` và `BottomTab.Navigator`
+
+Ví dụ : 
+``` javascript
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+export default function AppNavigator() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+```
+
+## 5. Giao tiếp với BackEnd 
+
+Tạo các API_ENDPOINTS là định dạng các đường dẫn của các route backend . Ví Dụ :
+
+```javascript
+const API_URL = "http://localhost:3000/v1";
+
+export const API_ENDPOINTS = {
+    AUTH: {
+        REGISTER: `${API_URL}/auth/register`,
+        LOGIN: `${API_URL}/auth/login`,
+        LOGOUT: `${API_URL}/auth/logout`,
+        REFRESH_TOKENS: `${API_URL}/auth/refresh-tokens`,
+        FORGOT_PASSWORD: `${API_URL}/auth/forgot-password`,
+    },
+    USERS: {
+        BASE: `${API_URL}/users`,
+        DETAIL: (userId) => `${API_URL}/users/${userId}`,
+        UPDATE: (userId) => `${API_URL}/users/${userId}`,
+        DELETE: (userId) => `${API_URL}/users/${userId}`,
+    },
+    PRODUCTS: {
+        BASE: `${API_URL}/products`,
+        DETAIL: (productId) => `${API_URL}/products/${productId}`,
+        SEARCH: `${API_URL}/products/search`,
+    },
+    CARTS: {
+        BASE: `${API_URL}/carts`,
+        DETAIL: (userId) => `${API_URL}/carts/${userId}`,
+        CREATE: `${API_URL}/carts`,
+        ADD_ITEM: `${API_URL}/carts/add`,
+        UPDATE_ITEM: (productId) => `${API_URL}/carts/item/${productId}`,
+    },
+    ORDERS: {
+        BASE: `${API_URL}/orders`,
+        DETAIL: (orderId) => `${API_URL}/orders/${orderId}`,
+        CREATE: `${API_URL}/orders/create`,
+        UPDATE_STATUS: (orderId) => `${API_URL}/orders/update-status/${orderId}`,
+        CANCEL: (orderId) => `${API_URL}/orders/cancel/${orderId}`,
+        CONFIRM: (orderId) => `${API_URL}/orders/confirm/${orderId}`,
+    },
+};
+```
+
+và ta có thể gọi từng services bằng cách tạo các file `cartService.js` , `productService.js` , `authService` , ... dùng Axios gọi API backend NodeJS .
+
+Ví dụ thêm sản phẩm vào giỏ hàng :
+
+``` javascript
+//services/authService.js
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || 'Registration failed.';
+        throw new Error(message);
+    }
+
+};
+
+```
+
+## 6. Xử lý xác thực
+
+- Lưu token vào `AsyncStorage` sau khi login
+
+- Dùng token để gọi các API yêu cầu xác thực như (giỏ hàng , đơn hàng)
+
+Ví dụ
+```javascript 
+
+// authService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const login = async (email, password) => {
+  const res = await axios.post('/auth/login', { email, password });
+  await AsyncStorage.setItem('refreshToken', res.data.token);
+  return res.data;
+};
+
+```
+
+## 7. Trải nghiệm người dùng (User Experience - UX)
+
+Ứng dụng đặc biệt chú trọng đến trải nghiệm người dùng trong toàn bộ quá trình sử dụng từ việc truy cập, xem sản phẩm, chọn hàng cho đến thanh toán. Một số yếu tố được chú ý:
+
+###  Phản hồi tức thì
+
+- Sử dụng **ActivityIndicator** (spinner) để hiển thị trong lúc tải dữ liệu từ API, giúp người dùng biết hệ thống đang xử lý.
+- Khi người dùng thực hiện hành động như "thêm vào giỏ hàng", "đặt hàng", hoặc "đăng nhập thành công", ứng dụng hiển thị thông báo (`Toast`, `Alert`) để phản hồi nhanh.
+
+###  Quản lý lỗi thân thiện
+
+- Các lỗi như mất mạng, sai thông tin đăng nhập hoặc lỗi từ server đều được xử lý gọn gàng với thông báo dễ hiểu.
+- Tránh tình trạng crash app hoặc hiện lỗi thô từ server ra giao diện.
+
+###  Tối ưu thao tác
+
+- Tự động focus vào ô tiếp theo khi điền thông tin đăng ký/đăng nhập.
+- Nút "Đăng nhập" và "Thêm vào giỏ hàng" sẽ tự động vô hiệu hóa trong lúc đang xử lý để tránh click nhiều lần.
+
+###  Tương thích với nhiều thiết bị
+
+- Dùng `ScrollView` bọc các form để đảm bảo không bị che bởi bàn phím trên iOS/Android.
+- Thiết kế phản hồi tốt với các kích thước màn hình khác nhau (responsive).
+
+###  Cảm nhận thị giác (UI friendly)
+
+- Sử dụng màu sắc nổi bật cho hành động chính (primary action), ví dụ: nút “Mua ngay” màu cam, “Thêm vào giỏ” màu xanh.
+- Font chữ rõ ràng, kích thước phù hợp, hình ảnh sản phẩm được crop gọn đẹp.
+- Hiển thị rating, brand, size, màu sắc dễ nhìn.
+
+###  Giao diện hiện đại
+
+- Sử dụng các biểu tượng (`react-native-vector-icons`) cho trải nghiệm trực quan (ví dụ: giỏ hàng, mắt xem mật khẩu, lọc,...)
+- Các hiệu ứng nhỏ như khi nhấn nút (opacity, scale) làm cảm giác mượt mà hơn.
+
+---
+
+## 8. Hạn chế hiện tại và đề xuất cải tiến
+
+| **Hạn chế** | **Mô tả chi tiết** | **Đề xuất cải tiến** |
+|------------|---------------------|------------------------|
+|  Thiếu chế độ Dark Mode | Người dùng sử dụng buổi tối có thể bị chói mắt do nền trắng sáng | Áp dụng dynamic theme sử dụng context/theme provider |
+|  Chưa có xác thực 2 bước (2FA) | Tài khoản có thể bị truy cập nếu rò rỉ token | Bổ sung xác minh OTP qua email hoặc SMS khi đăng nhập |
+|  Bộ lọc còn cơ bản | Người dùng chỉ có thể tìm kiếm sản phẩm theo tên | Thêm tính năng lọc nâng cao: theo giá, màu sắc, size, thương hiệu |
+|  Chưa có gợi ý sản phẩm liên quan | Không có phần “Bạn có thể thích” ở cuối trang sản phẩm | Dùng ML hoặc đơn giản lọc theo brand, category |
+|  Không có push notification | Người dùng không được báo khi đơn hàng thay đổi hoặc có ưu đãi | Tích hợp Firebase Cloud Messaging để gửi thông báo |
+|  Lịch sử tìm kiếm không được lưu | Người dùng không thể xem lại các từ khóa đã từng tìm | Lưu vào AsyncStorage hoặc backend để gợi ý lại |
+|  Không có hình thức thanh toán đa dạng | Chỉ có hình thức “thanh toán khi nhận hàng” | Thêm cổng thanh toán như Momo, VNPay, Stripe,... |
+|  Thiếu đa ngôn ngữ | Ứng dụng chỉ hỗ trợ tiếng Việt | Thêm i18n để hỗ trợ nhiều ngôn ngữ khác như English |
+|  Giỏ hàng chưa đồng bộ đa thiết bị | Nếu đăng nhập trên nhiều máy, giỏ hàng không đồng bộ | Lưu giỏ hàng trên backend, đồng bộ theo userId/token |
+
+---
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # III. Triển khai hệ thống Backend 
 
-## Quick Start
+## 1. Quick Start
 
 Để tạo một dự án, chỉ cần chạy:
 
@@ -181,7 +424,7 @@ hoặc
 npm init nodejs-express-app <project-name>
 ```
 
-## Cài đặt thủ công
+## 2. Cài đặt thủ công
 
 Nếu bạn vẫn muốn tự cài đặt thủ công, hãy làm theo các bước sau:
 
@@ -211,23 +454,22 @@ cp .env.example .env
 # mở .env và sửa biến môi trường (nếu cần)
 ```
 
-## Table of Contents
+## 3. Table of Contents
 
-- [Features](#features)
-- [Commands](#commands)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Validation](#validation)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Logging](#logging)
-- [Custom Mongoose Plugins](#custom-mongoose-plugins)
-- [Linting](#linting)
-- [Contributing](#contributing)
+- [Features](#4features)
+- [Commands](#5commands)
+- [Environment Variables](#6-biến-môi-trường)
+- [Project Structure](#7-project-structure)
+- [API Documentation](#8-api-documentation)
+- [Error Handling](#9-error-handling)
+- [Validation](#10-validation)
+- [Authentication](#11-authentication)
+- [Authorization](#12-authorization)
+- [Logging](#13-logging)
+- [Custom Mongoose Plugins](#14-custom-mongoose-plugins)
 
-## Features
+
+## 4.Features
 
 - **NoSQL database**: [MongoDB](https://www.mongodb.com) mô hình hóa dữ liệu đối tượng sử dụng [Mongoose](https://mongoosejs.com)
 - **Authentication and authorization**: Sử dụng [passport](http://www.passportjs.org)
@@ -244,7 +486,7 @@ cp .env.example .env
 - **CORS**: Chia sẻ tài nguyên khác nguồn (Cross-Origin Resource-Sharing) được kích hoạt bằng [cors](https://github.com/expressjs/cors)
 
 
-## Commands
+## 5.Commands
 
 Chạy cục bộ:
 
@@ -300,7 +542,7 @@ npm run prettier
 npm run prettier:fix
 ```
 
-## Biến môi trường
+## 6. Biến môi trường
 
 Các biến môi trường có thể được tìm thấy và sửa đổi trong tệp `.env`. Chúng đi kèm với các giá trị mặc định sau:
 
@@ -333,7 +575,7 @@ SMTP_PASSWORD=123456
 EMAIL_FROM=mqunagsk1510@gmail.com
 ```
 
-## Project Structure
+## 7. Project Structure
 
 ```
 src\
@@ -350,11 +592,11 @@ src\
  |--index.js        # App entry point
 ```
 
-## API Documentation
+## 8. API Documentation
 
 Để xem danh sách các API có sẵn và thông số kỹ thuật của chúng, hãy chạy máy chủ và truy cập `http://localhost:3000/v1/docs` trong trình duyệt của bạn. Trang tài liệu này được tạo tự động bằng cách sử dụng các định nghĩa swagger được viết dưới dạng nhận xét trong các tệp định tuyến.
 
-### API Endpoints
+### 8.1 API Endpoints
 
 Danh sách các tuyến đường có sẵn:
 
@@ -419,7 +661,7 @@ Danh sách các tuyến đường có sẵn:
 
 
 
-## Error Handling
+## 9. Error Handling
 
 Ứng dụng có một cơ chế xử lý lỗi tập trung.
 
@@ -462,7 +704,7 @@ const getUser = async (userId) => {
 };
 ```
 
-## Validation
+## 10. Validation
 
 Dữ liệu yêu cầu được xác thực bằng [Joi](https://joi.dev/). Xem [documentation](https://joi.dev/api/) để biết thêm chi tiết về cách viết lược đồ xác thực Joi..
 
@@ -479,7 +721,7 @@ const router = express.Router();
 router.post('/users', validate(userValidation.createUser), userController.createUser);
 ```
 
-## Authentication
+## 11. Authentication
 
 Để yêu cầu xác thực cho một số tuyến nhất định, bạn có thể sử dụng `auth` middleware.
 
@@ -507,7 +749,7 @@ Sau khi access token hết hạn, một access token mới có thể được t�
 
 Mã thông báo làm mới có giá trị trong 30 ngày. Bạn có thể sửa đổi thời gian hết hạn này bằng cách thay đổi biến môi trường `JWT_REFRESH_EXPIRATION_DAYS` trong tệp `.env`.
 
-## Authorization
+## 12. Authorization
 
 Middleware `auth` cũng có thể được sử dụng để yêu cầu các quyền/giấy phép nhất định để truy cập một `route`.
 
@@ -527,7 +769,7 @@ Các quyền được phân theo vai trò. Bạn có thể xem các quyền/quy�
 
 Nếu người dùng đưa ra yêu cầu không có đủ quyền cần thiết để truy cập tuyến đường này, Forbidden (403) error sẽ được trả về.
 
-## Logging
+## 13. Logging
 
 Nhập trình ghi nhật ký từ `src/config/logger.js`. Sử dụng thư viện ghi nhật ký  [Winston](https://github.com/winstonjs/winston).
 
@@ -552,7 +794,7 @@ Việc đọc chúng từ bảng điều khiển và lưu trữ chúng vào các
 
 Lưu ý: Thông tin yêu cầu API (request url, response code, timestamp, v.v.) cũng được tự động ghi lại(Sử dụng [morgan](https://github.com/expressjs/morgan)).
 
-## Custom Mongoose Plugins
+## 14. Custom Mongoose Plugins
 
 Ứng dụng này cũng chứa 2 plugin mongoose tùy chỉnh mà bạn có thể gắn vào bất kỳ lược đồ mô hình mongoose nào. Bạn có thể tìm thấy các plugin này trong `src/models/plugins`.
 
@@ -573,14 +815,14 @@ userSchema.plugin(paginate);
 const User = mongoose.model('User', userSchema);
 ```
 
-### toJSON
+### 14.11 toJSON
 
 Plugin toJSON áp dụng các thay đổi sau trong lệnh gọi chuyển đổi toJSON:
 
 - xóa \_\_v, createdAt, updatedAt, và bất kỳ đường dẫn lược đồ nào có private: true
 - thay thế \_id với id
 
-### paginate
+### 14.2 paginate
 
 Plugin paginate thêm phương thức tĩnh `paginate` vào schema của Mongoose.
 
@@ -618,6 +860,18 @@ Phương thức `paginate` trả về một Promise, giải quyết bằng một
   "totalResults": 48
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
+
 # IV. Test Cases (Giỏ hàng, Thanh Toán, Đơn Hàng)
 
 ## 1. Test Cases Giỏ hàng
