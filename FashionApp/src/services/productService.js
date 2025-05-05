@@ -92,3 +92,38 @@ export const updateProductStock = async (productId, quantity) => {
 
 
 
+export const fetchProduct = async () => {
+    try {
+        const data = await getProductDetail(productId);
+        setProduct(data);
+
+        if (data.colors && data.colors.length > 0) {
+            const defaultColor = data.colors[0];
+            setSelectedColor(defaultColor);
+
+            // Tìm size còn hàng đầu tiên
+            const availableSize = defaultColor.sizes.find(size => size.quantity > 0);
+
+            if (availableSize) {
+                setSelectedSize(availableSize);
+                setStockQuantity(availableSize.quantity);
+                setSelectedQuantity(1);
+            } else {
+                setSelectedSize(null);
+                setStockQuantity(0);
+                setSelectedQuantity(1);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Thông báo',
+                    text2: 'Màu mặc định không còn size nào còn hàng.',
+                });
+
+            }
+        }
+
+    } catch (error) {
+        console.error("Lỗi khi lấy chi tiết sản phẩm:", error.message);
+    }
+}
+
+
