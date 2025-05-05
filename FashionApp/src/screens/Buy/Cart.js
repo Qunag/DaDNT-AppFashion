@@ -136,13 +136,7 @@ export default function Cart() {
             updatedItems[index] = { ...updatedItems[index], quantity: value, stockQuantity };
             setCartItems(updatedItems);
 
-            Toast.show({
-                type: 'success',
-                text1: 'Thành công',
-                text2: 'Cập nhật số lượng thành công',
-                position: 'top',
-                visibilityTime: 2000,
-            });
+
         } catch (error) {
             console.error("Lỗi khi cập nhật số lượng:", error);
             Toast.show({

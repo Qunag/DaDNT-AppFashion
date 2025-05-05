@@ -641,7 +641,14 @@ Phương thức `paginate` trả về một Promise, giải quyết bằng một
 | TC_TT_04 | Chọn phương thức thanh toán | - Người dùng đã đăng nhập.<br>- Giỏ hàng có ít nhất 1 sản phẩm đã được chọn để thanh toán. | - Chọn phương thức Thanh Toán. | Chọn 1 trong 3 phương thức: <br>- "MoMo"<br>- "Thanh toán khi nhận hàng"<br>- "Thẻ tín dụng".<br> (Mặc định lựa chọn phương thức "Thanh toán khi nhận hàng".) | - Hệ thống sẽ hiển thị phương thức được chọn. | - Hệ thống đã hiển thị phương thức được chọn. |
 | TC_TT_05 | Đặt hàng | - Người dùng đã đăng nhập.<br>- Giỏ hàng có ít nhất 1 sản phẩm đã được chọn.<br>- Thông tin người nhận và phương thức thanh toán/giao hàng đã được chọn. | - Nhấn “Đặt hàng”.<br>- Kiểm tra chuyển hướng. | - TH1: Đã có đầy đủ thông tin.<br>- TH2: Chưa có đầy đủ thông tin. | - TH1: Hệ thống sẽ chuyển hướng đến màn hình “Đặt hàng thành công”, giỏ hàng sẽ xóa sản phẩm vừa mua.<br>- TH2: Nút "Đặt hàng" sẽ bị vô hiệu hóa và không thể nhấn. | - TH1: Hệ thống đã chuyển hướng đến màn hình “Đặt hàng thành công”, giỏ hàng đã xóa sản phẩm vừa mua.<br>- TH2: Nút "Đặt hàng" đã bị vô hiệu hóa và không thể nhấn. |
 
-## 3. Test Cases Đơn Hàng
+
+## 3. Test Cases Đặt hàng thành công 
+| Test Case ID | Mô tả | Điều kiện tiên quyết | Bước thực hiện | Các trường hợp dữ liệu | Kết quả mong đợi | Kết quả thực tế |
+|--------------|-------|----------------------|----------------|----------------------|------------------|----------|
+| TC_SC_01 | Hiển thị trang Đặt hàng thành công | - Người dùng đã đăng nhập.<br>- Người dùng đã đặt ít nhất 1 đơn hàng thành công. | - Vào app và chọn món đồ yêu thích.<br>- Kiểm tra thông tin và đặt hàng thành công. | - TH1: Nhấn "Xem đơn hàng".<br>- TH2: Nhấn "Tiếp tục mua hàng".  | - TH1: Hệ thống sẽ hiển thị thông tin đơn hàng bao gồm: Thông tin người nhận, thông tin mặt hàng (mẫu, màu, số lượng, size), phương thức giao hàng và phương thức thanh toán.<br>- TH2: Hệ thống sẽ đưa trở lại màn hình Home để tiếp tục mua sắm. | - TH1: Hệ thống đã hiển thị thông tin đơn hàng bao gồm: Thông tin người nhận, thông tin mặt hàng (mẫu, màu, số lượng, size), phương thức giao hàng và phương thức thanh toán.<br>- TH2: Hệ thống đã đưa trở lại màn hình Home để tiếp tục mua sắm.  |
+
+
+## 4. Test Cases Đơn Hàng
 
 | Test Case ID | Mô tả | Điều kiện tiên quyết | Bước thực hiện | Các trường hợp dữ liệu | Kết quả mong đợi | Kết quả thực tế |
 |--------------|-------|----------------------|----------------|----------------------|------------------|----------|
