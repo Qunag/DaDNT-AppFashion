@@ -46,9 +46,7 @@
 ### 4.2 Sơ đồ kiến trúc
 
 ```bash 
-React Native (Mobile App) 
----> API Server (NodeJS + Express) 
----> MongoDB (Database) 
+React Native (Mobile App) ---> API Server (NodeJS + Express) ---> MongoDB (Database) 
 ```
 
 ### 4.3 Thiết kế cơ sở dữ liệu
