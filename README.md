@@ -593,6 +593,8 @@ Phương thức `paginate` trả về một Promise, giải quyết bằng một
   "totalPages": 10,
   "totalResults": 48
 }
+
+```
 # IV. Test Cases (Giỏ hàng, Thanh Toán, Đơn Hàng, Đăng Nhập, Đăng Ký, Mã OTP)
 
 ## 1. Test Cases Giỏ hàng
@@ -671,5 +673,3 @@ Phương thức `paginate` trả về một Promise, giải quyết bằng một
 | TC\_OTP\_03      | Nhập sai mã OTP, xác thực thất bại                            | Có mã OTP hợp lệ nhưng người dùng nhập sai                                           | 1. Nhập “111111” (khác mã thật)<br>2. Nhấn “Xác minh”<br>3. Server trả về lỗi OTP không đúng                                                                                              | OTP sai: “111111”                                                                       | Hiển thị lỗi “Mã OTP không đúng. Vui lòng thử lại.”<br>Không chuyển hướng                                                                                            | Đúng như mong đợi   |
 | TC\_OTP\_04      | Kiểm tra tính năng gửi lại mã OTP khi hết thời gian đếm ngược | Người dùng chưa xác minh, hết thời gian đếm ngược                                    | 1. Đợi đồng hồ đếm ngược về 0<br>2. Nhấn “Gửi lại mã”<br>3. Gửi request gửi lại mã OTP<br>4. Quan sát giao diện sau khi gửi lại                                                           | Email: mesena686@gmail.com                                          | Hiển thị “Mã OTP mới đã được gửi đến mesena@gmail.com<br>Reset đồng hồ đếm ngược 60s<br>Các ô nhập OTP được reset                              | Đúng như mong đợi   |
 
-
-```
