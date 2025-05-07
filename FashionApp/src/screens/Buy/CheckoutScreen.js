@@ -117,7 +117,6 @@ export default function CheckoutScreen() {
                 try {
                     const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
                     await removeFromCart(productId, item.color, item.size);
-                    console.log(`Đã xóa sản phẩm ${item.name} khỏi giỏ hàng`);
                 } catch (error) {
                     console.warn(`Không thể xóa sản phẩm ${item.name} khỏi giỏ hàng: ${error.message}`);
                 }

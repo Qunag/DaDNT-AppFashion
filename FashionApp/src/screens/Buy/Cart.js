@@ -212,15 +212,7 @@ export default function Cart() {
     };
 
 
-                        } catch (error) {
-                            console.error("Error removing item:", error);
-                            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
-                        }
-                    }
-                }
-            ]
-        );
-    };
+
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
     };
