@@ -18,7 +18,7 @@ const ProductDetailScreen = () => {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [stockQuantity, setStockQuantity] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const [allColorsOutOfStock, setAllColorsOutOfStock] = useState(false); 
+  const [allColorsOutOfStock, setAllColorsOutOfStock] = useState(false);
   const [outOfStockColor, setOutOfStockColor] = useState(null);
 
   useEffect(() => {
@@ -124,19 +124,19 @@ const ProductDetailScreen = () => {
         alert("ID sản phẩm không hợp lệ.");
         return;
       }
-  
+
       const color = selectedColor.color_name ? selectedColor.color_name.toString() : '';
-      const size = selectedSize.size ? selectedSize.size.toString() : ''; 
+      const size = selectedSize.size ? selectedSize.size.toString() : '';
       const quantity = parseInt(selectedQuantity) || 1;
-  
+
       const name = product.name;
       const brand = product.brand;
       const price = product.price;
       const image_url = selectedColor.image_url || '';
-  
+
       // Kiểm tra nếu tất cả các size của màu đã chọn hết hàng
       const isOutOfStock = selectedColor.sizes.every(size => size.quantity === 0);
-  
+
       if (isOutOfStock) {
         Toast.show({
           type: 'error',
@@ -145,9 +145,7 @@ const ProductDetailScreen = () => {
         });
         return;
       }
-  
-      console.log("Thêm vào giỏ hàng:", { name });
-  
+
       await addToCart(productId, name, image_url, brand, price, quantity, color, size);
       Toast.show({
         type: 'success',
@@ -164,9 +162,9 @@ const ProductDetailScreen = () => {
       });
     }
   };
-  
+
   const isAddToCartDisabled = !selectedColor || !selectedSize || selectedSize.quantity === 0;
-  
+
 
   if (!product) {
     return <Text>Đang tải sản phẩm...</Text>;
@@ -237,15 +235,15 @@ const ProductDetailScreen = () => {
                 onPress={() => handleColorSelect(color)}
               >
                 <View
-                  style={[ 
-                    styles.colorCircle, 
+                  style={[
+                    styles.colorCircle,
                     {
                       backgroundColor:
                         color.color_name === "Đen"
                           ? "black"
                           : color.color_name === "Trắng"
-                          ? "white"
-                          : color.color_name,
+                            ? "white"
+                            : color.color_name,
                     },
                     selectedColor?.color_name === color.color_name && styles.selectedColorCircle,
                   ]}
@@ -291,9 +289,9 @@ const ProductDetailScreen = () => {
             })}
           </ScrollView>
 
-          <TouchableOpacity 
-            style={[styles.addToCartButton, isAddToCartDisabled && { backgroundColor: "#D3D3D3" }]} 
-            onPress={handleAddToCart} 
+          <TouchableOpacity
+            style={[styles.addToCartButton, isAddToCartDisabled && { backgroundColor: "#D3D3D3" }]}
+            onPress={handleAddToCart}
             disabled={isAddToCartDisabled}
           >
             <Ionicons name="cart-outline" size={24} color="white" />
@@ -467,7 +465,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  
+
   iconPlaceholder: {
     justifyContent: "center",
     alignItems: "center",
