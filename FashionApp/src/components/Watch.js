@@ -1,12 +1,11 @@
 import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, FlatList, Animated, RefreshControl, // Thêm RefreshControl
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, FlatList, Animated, RefreshControl, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ProductCard from "./ProductCard";
 import Brand from "./Brand";
 import Banner from "./Banner";
 
-const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand, scrollViewRef}) => {
+const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSelectBrand, scrollViewRef }) => {
   const navigation = useNavigation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showStickyBrand, setShowStickyBrand] = useState(false);
@@ -16,7 +15,7 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
       style={{
         flex: 1,
         margin: 5,
-        maxWidth: products.length === 1 ? "50%" : "48%", 
+        maxWidth: products.length === 1 ? "50%" : "48%",
         alignSelf: products.length === 1 ? "center" : "flex-start",
       }}
     >
@@ -28,7 +27,6 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
       />
     </View>
   );
-  
 
   const handleScroll = (event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -41,7 +39,6 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Brand sticky ở top nếu scroll lên qua banner */}
       {showStickyBrand && (
         <View style={styles.stickyBrand}>
           <Brand selectedBrand={selectedBrand} onSelectBrand={onSelectBrand} />
@@ -58,21 +55,18 @@ const Watch = ({ products, loading, refreshing, onRefresh, selectedBrand, onSele
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing} 
-              onRefresh={onRefresh} 
-              colors={["#0000ff"]} 
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0000ff"]}
               tintColor="#0000ff"
             />
           }
         >
           <View style={styles.container}>
             <Banner />
-            <Text style={styles.sectionTitle}>Categories</Text>
+            <Text style={styles.sectionTitle}>Thương hiệu</Text>
             {!showStickyBrand && (
-              <Brand
-                selectedBrand={selectedBrand}
-                onSelectBrand={onSelectBrand}
-              />
+              <Brand selectedBrand={selectedBrand} onSelectBrand={onSelectBrand} />
             )}
             <Text style={styles.text}>Danh sách sản phẩm</Text>
 
@@ -109,11 +103,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#333",
     marginVertical: 10,
-    textAlign: "left",
+    textAlign: "center",
   },
   stickyBrand: {
     position: "absolute",

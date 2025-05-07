@@ -84,19 +84,6 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
           <Ionicons name="chevron-forward-outline" size={20} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleCart}
-          disabled={loading}
-        >
-          {loading ? (
-            <Ionicons name="hourglass" size={24} color="white" />
-          ) : (
-            <Ionicons name="bag-outline" size={24} color="white" />
-          )}
-          <Text style={styles.buttonText}>Cart</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.button}>
           <Ionicons name="help-circle-outline" size={24} color="white" />
           <Text style={styles.buttonText}>Help</Text>
@@ -109,7 +96,7 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
 
         <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>LogOut</Text>
+          <Text style={styles.buttonText}>Đăng Xuất</Text>
         </TouchableOpacity>
       </Animated.View>
     </>

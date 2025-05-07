@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CheckboxField from "../../components/CheckBoxField";
 import { getUserID } from '../../services/authService';
 import { fetchCart, createCart, updateCartItem, removeFromCart } from '../../services/cartService';
+import Toast from 'react-native-toast-message';
 
 export default function Cart() {
     const navigation = useNavigation();
@@ -40,24 +41,37 @@ export default function Cart() {
 
     const handleQuantityChange = async (index, value) => {
         const item = cartItems[index];
-        if (!item || !item.productId) {
-            console.error("Không tìm thấy mục hợp lệ tại vị trí:", index);
-            return;
-        }
+        if (!item || !item.productId) return;
+
         const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-        if (!productId) {
-            console.error("Không thể tìm thấy ID sản phẩm trong:", item.productId);
+
+        if (!productId || !item.color || !item.size) {
+            console.error("Thiếu thông tin cần thiết.");
             return;
         }
+
+        if (value === 0) {
+            handleRemove(index)
+            return;
+        }
+
+        if (value > item.stockQuantity) {
+            Toast.show({
+                type: 'error',
+                text1: 'Số lượng trong kho không đủ',
+                text2: `Chỉ còn ${item.stockQuantity} sản phẩm`,
+                position: 'top'
+            });
+            return;
+        }
+
         try {
-            if (!item.color || !item.size) {
-                throw new Error("Thiếu thông tin màu sắc hoặc kích thước");
-            }
             await updateCartItem(productId, {
                 quantity: value,
                 color: item.color,
                 size: item.size,
             });
+
             const updatedItems = [...cartItems];
             updatedItems[index] = { ...updatedItems[index], quantity: value };
             setCartItems(updatedItems);
@@ -67,38 +81,50 @@ export default function Cart() {
         }
     };
 
+
     const handleRemove = async (index) => {
         const item = cartItems[index];
-        if (!item.productId) {
-            console.error("Không tìm thấy productId trong item:", item);
-            return;
-        }
-        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
-        if (!productId) {
-            console.error("Could not find product ID in:", item.productId);
-            return;
-        }
-        if (!item.color || !item.size) {
-            console.error("Missing color or size in item:", item);
-            Alert.alert("Lỗi", "Không thể xóa sản phẩm do thiếu thông tin màu sắc hoặc kích thước.");
-            return;
-        }
-        try {
-            await removeFromCart(productId, item.color, item.size);
-            const updatedItems = cartItems.filter((_, i) => i !== index);
-            setCartItems(updatedItems);
-            setCheckedItems(prev => {
-                const newChecked = { ...prev };
-                delete newChecked[index];
-                return newChecked;
-            });
-            Alert.alert("Thành công", "Sản phẩm đã được xóa khỏi giỏ hàng!");
-        } catch (error) {
-            console.error("Error removing item:", error);
-            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
-        }
-    };
+        if (!item || !item.productId) return;
 
+        Alert.alert(
+            "Xác nhận",
+            "Bạn có muốn xóa sản phẩm khỏi giỏ hàng không?",
+            [
+                { text: "Không", style: "cancel" },
+                {
+                    text: "Có",
+                    onPress: async () => {
+                        const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
+                        if (!productId || !item.color || !item.size) {
+                            Alert.alert("Lỗi", "Không thể xóa sản phẩm do thiếu thông tin.");
+                            return;
+                        }
+                        try {
+                            await removeFromCart(productId, item.color, item.size);
+                            const updatedItems = cartItems.filter((_, i) => i !== index);
+                            setCartItems(updatedItems);
+                            setCheckedItems(prev => {
+                                const newChecked = { ...prev };
+                                delete newChecked[index];
+                                return newChecked;
+                            });
+
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Đã xóa sản phẩm khỏi giỏ hàng',
+                                position: 'top',
+                                visibilityTime: 2000,
+                            });
+
+                        } catch (error) {
+                            console.error("Error removing item:", error);
+                            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
+                        }
+                    }
+                }
+            ]
+        );
+    };
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
     };
@@ -136,7 +162,10 @@ export default function Cart() {
             {loading ? (
                 <Text>Loading...</Text>
             ) : cartItems.length === 0 ? (
-                <Text>Your cart is empty!</Text>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18 }}>Giỏ hàng trống!</Text>
+                </View>
+
             ) : (
                 <ScrollView style={styles.scrollView}>
                     {cartItems.map((item, index) => (
@@ -228,7 +257,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#ccc",
         marginBottom: 8,
-    },    
+    },
     productName: {
         fontSize: 16,
         fontWeight: "bold",
@@ -241,7 +270,7 @@ const styles = StyleSheet.create({
     },
     colorContainer: {
         flexDirection: "row",
-        alignItems: "center", 
+        alignItems: "center",
         marginTop: 5,
     },
     price: {

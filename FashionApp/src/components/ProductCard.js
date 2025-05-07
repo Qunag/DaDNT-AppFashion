@@ -1,28 +1,67 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Thêm icon làm placeholder
+import { Ionicons } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 const ProductCard = ({ product, onPress }) => {
-  const firstColor = product.colors?.[0];
+  const colors = product.colors || [];
+
+  // Kiểm tra xem một màu còn hàng không
+  const isColorAvailable = (color) =>
+    color.sizes?.some((size) => size.quantity > 0);
+
+  // Mặc định là màu đầu tiên
+  let displayColor = colors[0];
+
+  // Nếu màu đầu tiên hết hàng, tìm màu tiếp theo còn hàng
+  if (displayColor && !isColorAvailable(displayColor)) {
+    const nextAvailableColor = colors.slice(1).find(isColorAvailable);
+    if (nextAvailableColor) {
+      displayColor = nextAvailableColor;
+    }
+  }
+
+  const isOutOfStock = !colors.some(isColorAvailable);
+
+  const isMissingInfo = !product.name || !product.price || !product.brand;
+
+  const handlePress = () => {
+    if (isMissingInfo) {
+      Toast.show({
+        type: "error",
+        text1: "Thông báo",
+        text2: "Sản phẩm đang được cập nhật, vui lòng quay lại sau.",
+      });
+    } else {
+      onPress?.();
+    }
+  };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      {firstColor?.image_url ? (
-        <Image
-          source={{ uri: firstColor.image_url }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      {displayColor?.image_url ? (
+        <View style={styles.imageWrapper}>
+          <Image
+            source={{ uri: displayColor.image_url }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          {isOutOfStock && (
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>Hết hàng</Text>
+            </View>
+          )}
+        </View>
       ) : (
         <View style={styles.imagePlaceholder}>
           <Ionicons name="image-outline" size={40} color="#999" />
-          <Text style={styles.placeholderText}>Không có ảnh</Text>
+          <Text style={styles.placeholderText}>Chưa có ảnh</Text>
         </View>
       )}
 
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
-          {product.name}
+          {product.name || "Đang cập nhật..."}
         </Text>
         <Text style={styles.price}>
           {product.price
@@ -30,7 +69,7 @@ const ProductCard = ({ product, onPress }) => {
             : "Đang cập nhật..."}
         </Text>
         <Text style={styles.brand} numberOfLines={1} ellipsizeMode="tail">
-          {product.brand}
+          {product.brand || "Đang cập nhật..."}
         </Text>
       </View>
     </TouchableOpacity>
@@ -40,22 +79,41 @@ const ProductCard = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: "#ffffff", // Nền trắng để sạch sẽ
-    margin: 8, // Giảm margin để các thẻ sát nhau hơn trong 2 cột
+    backgroundColor: "#ffffff",
+    margin: 8,
     padding: 10,
-    borderRadius: 12, // Góc bo tròn mềm mại
-    elevation: 4, // Bóng đổ cho Android
-    shadowColor: "#000", // Bóng đổ cho iOS
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    height: 240, // Tăng chiều cao một chút để cân đối
+    height: 240,
+  },
+  imageWrapper: {
+    position: "relative",
   },
   image: {
     width: "100%",
-    height: 140, // Giảm chiều cao hình ảnh để cân đối với phần thông tin
+    height: 140,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0", // Nền xám nhạt khi hình ảnh đang tải
+    backgroundColor: "#f0f0f0",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: 140,
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  overlayText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   imagePlaceholder: {
     width: "100%",
@@ -72,13 +130,13 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    marginTop: 8, // Giảm khoảng cách trên để cân đối
+    marginTop: 8,
     alignItems: "center",
-    justifyContent: "space-between", // Phân bố đều các dòng thông tin
+    justifyContent: "space-between",
     paddingVertical: 4,
   },
   name: {
-    fontSize: 14, // Giảm kích thước chữ để vừa với 1 dòng
+    fontSize: 14,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
@@ -86,7 +144,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 13,
     fontWeight: "bold",
-    color: "#e63946", // Màu đỏ nổi bật cho giá
+    color: "#e63946",
     marginVertical: 4,
   },
   brand: {
