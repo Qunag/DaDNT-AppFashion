@@ -22,7 +22,7 @@ import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
 import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
 import Toast from 'react-native-toast-message';
-
+import LoadingOverlay from './src/components/LoadingOverlay';
 
 const Stack = createStackNavigator();
 

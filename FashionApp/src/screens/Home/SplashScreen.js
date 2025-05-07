@@ -15,13 +15,13 @@ const SplashScreen = () => {
       <Image source={require('../../assets/anh4.png')} style={styles.anh4} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>Panda</Text>
-        <Text style={{ fontSize: 20, color: '#000', textAlign: 'center', fontWeight: 'bold', marginTop: 110 }}>Create your fashion{'\n'}in your own way</Text>
-        <Text style={{ fontSize: 12, fontWeight: 'bold', marginTop: 30, textAlign: 'center' }}>Each men and women has their own style,{'\n'}  Panda help you to create your unique style.</Text>
+        <Text style={{ fontSize: 20, color: '#000', textAlign: 'center', fontWeight: 'bold', marginTop: 110 }}>Tạo phong cách thời trang {'\n'} theo cách riêng của bạn.</Text>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', marginTop: 30, textAlign: 'center' }}>Mỗi người đàn ông và phụ nữ đều có phong cách riêng của mình, {'\n'} Panda giúp bạn tạo nên phong cách độc đáo của riêng mình.</Text>
 
 
-        <CustomButton title="LOGIN" type='fill' onPress={() => navigation.push('Login')} />
-        <Text style={{ top: 98, fontSize: 14, fontWeight: 'bold' }}>--- OR ---</Text>
-        <CustomButton title="REGISTER" type='outline' onPress={() => navigation.push('Register')} />
+        <CustomButton title="ĐĂNG NHẬP" type='fill' onPress={() => navigation.push('Login')} />
+        <Text style={{ top: 98, fontSize: 14, fontWeight: 'bold' }}>--- HOẶC ---</Text>
+        <CustomButton title="ĐĂNG KÝ" type='outline' onPress={() => navigation.push('Register')} />
 
       </View>
     </View>
