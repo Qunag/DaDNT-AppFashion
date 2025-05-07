@@ -211,8 +211,6 @@ export default function Cart() {
         );
     };
 
-
-
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
     };
