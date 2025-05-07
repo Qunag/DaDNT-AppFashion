@@ -22,14 +22,47 @@ import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
 import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
 import Toast from 'react-native-toast-message';
-
+import { Linking } from 'react-native';
 
 const Stack = createStackNavigator();
+
+const linking = {
+  prefixes: ['https://fashionapp.com', 'fashionapp://'],
+  config: {
+    screens: {
+      Loading: 'loading',
+      Splash: 'splash',
+      Login: 'login',
+      Register: 'register',
+      ForgotPassword: { path: 'forgot-password', parse: { token: (token) => token } },
+      CodeScreen: 'code-screen',
+      ResetPasswordScreen: {
+        path: 'reset-password',
+        parse: {
+          token: (token) => token,
+        },
+      },
+      Success: 'success',
+      Home: 'home',
+      SearchResults: 'search-results/:query?',
+      ProductDetail: 'product-detail/:id?',
+      Cart: 'cart',
+      Checkout: 'checkout',
+      EditProfile: 'edit-profile',
+      EditProfileForm: 'edit-profile-form/:id?',
+      Watch: 'watch/:id?',
+      Order: 'order/:id?',
+      NoticeOrder: 'notice-order/:id?',
+      OrderDetail: 'order-detail/:id?',
+      ChangePassword: 'change-password'
+    },
+  },
+}
 
 export default function App() {
   return (
     <>
-      <NavigationContainer>
+      <NavigationContainer Linking={linking}>
         <Stack.Navigator
 
           initialRouteName="Loading"

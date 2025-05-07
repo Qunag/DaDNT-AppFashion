@@ -24,24 +24,17 @@ const sendEmail = async (to, subject, text) => {
 };
 
 
-const sendResetPasswordEmail = async (to) => {
-  const subject = 'Your New Password';
-
-  // Tạo mật khẩu ngẫu nhiên
-  const newPassword = crypto.randomBytes(6).toString('hex'); // VD: "a3f2b9c8"
-  const hashedPassword = await bcrypt.hash(newPassword, 10); // Mã hóa mật khẩu
-
-  // Cập nhật mật khẩu mới vào database
-  await updateUserPassword(to, hashedPassword);
-
+const sendResetPasswordEmail = async (to, token) => {
+  const subject = 'Reset password';
+  // replace this url with the link to the reset password page of your front-end app
+  const resetPasswordUrl = `https://fashionapp.com/reset-password?token=${token}`;
   const text = `Dear user,
-Your password has been reset successfully. Your new password is: ${newPassword}
-Please log in and change your password as soon as possible for security reasons.`;
-
+To reset your password, click on this link: ${resetPasswordUrl}
+If you did not request any password resets, then ignore this email.`;
   await sendEmail(to, subject, text);
-};
+}; 
 
-module.exports = { sendResetPasswordEmail };
+
 
 /**
  * Send verification email

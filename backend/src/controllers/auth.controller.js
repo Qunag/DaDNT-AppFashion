@@ -64,33 +64,11 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Tạo mật khẩu mới (8 ký tự ngẫu nhiên)
-    const newPassword = Math.random().toString(36).slice(-8);
-
-    // Hash mật khẩu trước khi lưu vào DB
-    const hashedPassword = await bcrypt.hash(newPassword, 8);
-
-    // Cập nhật mật khẩu trực tiếp vào DB mà không gọi `save()`
-    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
-
-    // Gửi email chứa mật khẩu mới
-    await sendEmail(user.email, "Password Reset", `Your new password is: ${newPassword}`);
-
-    res.json({ message: 'New password has been sent to your email' });
-  } catch (error) {
-    console.error('Forgot Password Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.status(httpStatus.NO_CONTENT).send();
+});
 
 
 const sendOtp = async (req, res) => {

@@ -31,32 +31,32 @@ export default function ForgotPasswordScreen() {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.container}>
-            <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
-                <BackButton/>
-                <View style={styles.overlay} />
-                <Text style={styles.welcomeText}>Forgot Password</Text>
-            </ImageBackground>
+            <View style={styles.container}>
+                <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
+                    <BackButton />
+                    <View style={styles.overlay} />
+                    <Text style={styles.welcomeText}>Forgot Password</Text>
+                </ImageBackground>
 
-            <View style={styles.bottomSection}>
-                <Text style={styles.instructionText}>
-                    Enter your email to receive a password reset link.
-                </Text>
-                <InputField
-                    label="Email address"
-                    icon="mail-outline"
-                    placeholder="Enter email"
-                    keyboardType="email-address"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                />
-                <AuthButton title="SEND RESET LINK" onPress={handleForgotPassword} />
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.signupText}>Back to Login</Text>
-                </TouchableOpacity>
+                <View style={styles.bottomSection}>
+                    <Text style={styles.instructionText}>
+                        Enter your email to receive a password reset link.
+                    </Text>
+                    <InputField
+                        label="Email address"
+                        icon="mail-outline"
+                        placeholder="Enter email"
+                        keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                    />
+                    <AuthButton title="SEND RESET LINK" onPress={handleForgotPassword} />
+                    <TouchableOpacity onPress={() => navigation.navigate('ResetPasswordScreen')}>
+                        <Text style={styles.signupText}>Back to Login</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
         </TouchableWithoutFeedback>
     );
 }
