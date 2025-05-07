@@ -7,6 +7,7 @@ import CheckboxField from "../../components/CheckBoxField";
 import { getUserID } from '../../services/authService';
 import { fetchCart, createCart, updateCartItem, removeFromCart } from '../../services/cartService';
 import { getProductDetail } from '../../services/productService'; // Thêm import để lấy chi tiết sản phẩm
+
 import Toast from 'react-native-toast-message';
 
 export default function Cart() {
@@ -68,6 +69,7 @@ export default function Cart() {
 
     const handleQuantityChange = async (index, value) => {
         const item = cartItems[index];
+
 
         if (!item || !item.productId) {
             Toast.show({
@@ -132,6 +134,7 @@ export default function Cart() {
             });
 
             // Cập nhật giỏ hàng
+
             const updatedItems = [...cartItems];
             updatedItems[index] = { ...updatedItems[index], quantity: value, stockQuantity };
             setCartItems(updatedItems);
@@ -164,6 +167,7 @@ export default function Cart() {
                     onPress: async () => {
                         const productId = typeof item.productId === 'object' ? item.productId.id : item.productId;
                         if (!productId || !item.color || !item.size) {
+
                             Toast.show({
                                 type: 'error',
                                 text1: 'Lỗi',
@@ -185,6 +189,7 @@ export default function Cart() {
 
                             Toast.show({
                                 type: 'success',
+
                                 text1: 'Thành công',
                                 text2: 'Đã xóa sản phẩm khỏi giỏ hàng',
                                 position: 'top',
@@ -206,6 +211,16 @@ export default function Cart() {
         );
     };
 
+
+                        } catch (error) {
+                            console.error("Error removing item:", error);
+                            Alert.alert("Xóa thất bại", "Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.");
+                        }
+                    }
+                }
+            ]
+        );
+    };
     const handleCheckboxChange = (index, value) => {
         setCheckedItems(prev => ({ ...prev, [index]: value }));
     };

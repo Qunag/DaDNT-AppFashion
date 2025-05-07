@@ -1,30 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Image, ScrollView, Dimensions } from "react-native";
+import { View, StyleSheet, Image, ScrollView, Dimensions, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BANNER_HEIGHT = SCREEN_WIDTH * (9 / 16); // Tỉ lệ 16:9
 
+const allBanners = [
+  { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDZsX9CZ5JF98NBnzhTBxocAf6Zd8sl3xz7w&s" },
+  { uri: "https://example.com/image-that-does-not-exist.jpg" }, // ảnh lỗi
+  { uri: "https://example.com/image.jpg" },
+  { uri: null }, // giả sử lỗi
+];
+
 const Banner = () => {
-  // Danh sách banner, có thể chứa null nếu ảnh lỗi
-  const allBanners = [
-    { image: require("../assets/nike.jpg") },
-    { image: require("../assets/nike.jpg") },
-    { image: null }, // Giả sử ảnh lỗi
-    { image: require("../assets/image.jpg") },
-  ];
-
-  // Lọc ảnh hợp lệ
-  const validBanners = allBanners.filter(banner => !!banner.image);
-
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const scrollViewRef = useRef(null);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [imageErrors, setImageErrors] = useState({}); // key: index, value: true nếu lỗi
+
+  const validBanners = allBanners.filter((banner, index) => banner?.uri || imageErrors[index] === true);
 
   useEffect(() => {
     if (validBanners.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentBannerIndex(prevIndex => {
+      setCurrentBannerIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % validBanners.length;
         scrollViewRef.current?.scrollTo({
           x: nextIndex * SCREEN_WIDTH,
@@ -34,10 +33,9 @@ const Banner = () => {
       });
     }, 5000);
 
-    return () => clearInterval(interval);
+        return () => clearInterval(interval);
   }, [validBanners.length]);
 
-  // Nếu không có ảnh hợp lệ, ẩn banner
   if (validBanners.length === 0) {
     return null;
   }
@@ -53,13 +51,23 @@ const Banner = () => {
         contentContainerStyle={{ width: SCREEN_WIDTH * validBanners.length }}
         scrollEnabled={validBanners.length > 1}
       >
-        {validBanners.map((banner, index) => (
+        {allBanners.map((banner, index) => (
           <View key={index} style={[styles.bannerItem, { width: SCREEN_WIDTH }]}>
-            <Image
-              source={banner.image}
-              style={styles.bannerImage}
-              resizeMode="cover"
-            />
+            {banner.uri && !imageErrors[index] ? (
+              <Image
+                source={{ uri: banner.uri }}
+                style={styles.bannerImage}
+                resizeMode="cover"
+                onError={() => {
+                  setImageErrors(prev => ({ ...prev, [index]: true }));
+                }}
+              />
+            ) : (
+              <View style={styles.imagePlaceholder}>
+                <Ionicons name="image-outline" size={40} color="#999" />
+                <Text style={styles.placeholderText}>Không tải được hình</Text>
+              </View>
+            )}
           </View>
         ))}
       </ScrollView>
@@ -99,6 +107,18 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: BANNER_HEIGHT,
     backgroundColor: "#f0f0f0",
+  },
+  imagePlaceholder: {
+    width: SCREEN_WIDTH,
+    height: BANNER_HEIGHT,
+    backgroundColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  placeholderText: {
+    marginTop: 8,
+    color: "#999",
+    fontSize: 14,
   },
   dotsContainer: {
     flexDirection: "row",

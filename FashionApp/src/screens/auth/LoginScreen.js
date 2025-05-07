@@ -11,6 +11,8 @@ import styles from '../../styles/LoginStyles';
 import { Ionicons } from '@expo/vector-icons'; // Import thêm icon nếu chưa có
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserID } from '../../services/authService'; // Import hàm lấy user ID nếu cần thiết
+import Toast from 'react-native-toast-message';
+
 
 
 
@@ -37,7 +39,12 @@ export default function LoginScreen() {
                 await AsyncStorage.setItem('user', JSON.stringify(response.user));
 
                 // Hiển thị thông báo thành công
-                Alert.alert('Login Successful', 'You have successfully logged in.');
+                Toast.show({
+                    type: 'success',
+                    text1: 'Đăng nhập thành công',
+                    text2: 'Chào mừng bạn đến với Panda Shop!',
+                });
+                  
 
                 // Chuyển đến màn hình Home
                 navigation.navigate('Home');
