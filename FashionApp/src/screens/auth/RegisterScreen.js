@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ImageBackground,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
@@ -47,7 +39,7 @@ export default function RegisterScreen() {
   };
 
   const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
@@ -58,6 +50,11 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     const { name, email, password, confirmPassword } = form;
+
+    if (!name.trim() && !email.trim() && !password && !confirmPassword) {
+      showToast('Vui lòng nhập đầy đủ thông tin.');
+      return;
+    }
 
     if (!name.trim()) {
       showToast('Vui lòng nhập họ tên.');
@@ -119,75 +116,82 @@ export default function RegisterScreen() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        {loading && <LoadingOverlay />}
-
-        <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.welcomeText}>Tạo tài khoản</Text>
-        </ImageBackground>
-
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.bottomSection}>
-            <InputField
-              label="Họ và tên"
-              icon="person-outline"
-              placeholder="Nhập họ tên"
-              value={form.name}
-              onChangeText={(text) => handleChange('name', text)}
-            />
-            <InputField
-              label="Email"
-              icon="mail-outline"
-              placeholder="Nhập email"
-              keyboardType="email-address"
-              value={form.email}
-              onChangeText={(text) => handleChange('email', text)}
-            />
-            <InputField
-              label="Mật khẩu"
-              icon="lock-closed-outline"
-              placeholder="Nhập mật khẩu"
-              secureTextEntry={!isPasswordVisible}
-              value={form.password}
-              onChangeText={(text) => handleChange('password', text)}
-              rightIcon={
-                <Ionicons
-                  name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
-                  size={24}
-                  color="gray"
-                  onPress={() => setPasswordVisible(!isPasswordVisible)}
-                />
-              }
-            />
-            <InputField
-              label="Xác nhận mật khẩu"
-              icon="lock-closed-outline"
-              placeholder="Nhập lại mật khẩu"
-              secureTextEntry={!isConfirmPasswordVisible}
-              value={form.confirmPassword}
-              onChangeText={(text) => handleChange('confirmPassword', text)}
-              rightIcon={
-                <Ionicons
-                  name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
-                  size={24}
-                  color="gray"
-                  onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)}
-                />
-              }
-            />
+          <View style={styles.container}>
+            <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
+              <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+              <Text style={styles.welcomeText}>Tạo tài khoản</Text>
+            </ImageBackground>
 
-            <AuthButton title="ĐĂNG KÝ" onPress={handleRegister} />
+            <ScrollView
+              contentContainerStyle={[styles.scrollContent]}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.bottomSection}>
+                <InputField
+                  label="Họ và tên"
+                  icon="person-outline"
+                  placeholder="Nhập họ tên"
+                  value={form.name}
+                  onChangeText={(text) => handleChange('name', text)}
+                />
+                <InputField
+                  label="Email"
+                  icon="mail-outline"
+                  placeholder="Nhập email"
+                  keyboardType="email-address"
+                  value={form.email}
+                  onChangeText={(text) => handleChange('email', text)}
+                />
+                <InputField
+                  label="Mật khẩu"
+                  icon="lock-closed-outline"
+                  placeholder="Nhập mật khẩu"
+                  secureTextEntry={!isPasswordVisible}
+                  value={form.password}
+                  onChangeText={(text) => handleChange('password', text)}
+                  rightIcon={
+                    <Ionicons
+                      name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                      size={24}
+                      color="gray"
+                      onPress={() => setPasswordVisible(!isPasswordVisible)}
+                    />
+                  }
+                />
+                <InputField
+                  label="Xác nhận mật khẩu"
+                  icon="lock-closed-outline"
+                  placeholder="Nhập lại mật khẩu"
+                  secureTextEntry={!isConfirmPasswordVisible}
+                  value={form.confirmPassword}
+                  onChangeText={(text) => handleChange('confirmPassword', text)}
+                  rightIcon={
+                    <Ionicons
+                      name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+                      size={24}
+                      color="gray"
+                      onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                    />
+                  }
+                />
+
+                <AuthButton title="ĐĂNG KÝ" onPress={handleRegister} />
+              </View>
+            </ScrollView>
           </View>
-        </ScrollView>
-      </View>
-    </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+
+      {loading && <LoadingOverlay />}
+    </>
   );
 }
