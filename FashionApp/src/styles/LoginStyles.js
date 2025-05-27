@@ -8,7 +8,7 @@ export default StyleSheet.create({
 
     // Phần trên: Ảnh nền + overlay
     topSection: {
-        flex: 1.2,
+        flex: 0.5,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
