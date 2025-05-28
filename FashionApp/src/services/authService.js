@@ -43,7 +43,6 @@ export const loginUser = async (email, password) => {
 
         return response.data;
     } catch (error) {
-        console.error('Login failed', error);
         throw error;
     }
 };
@@ -90,10 +89,24 @@ export const forgotPassword = async (email) => {
         const response = await api.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
         return response.data;
     } catch (error) {
-        const message = error.response?.data?.message || 'Failed to send reset link.';
+        // Kiểm tra lỗi mất mạng bằng cách:
+        // 1. Không có phản hồi từ server
+        // 2. Có request mà không có response (thường là mất mạng)
+        // 3. Hoặc lỗi có message 'Network Error'
+        if (
+            !error.response &&  // Không có phản hồi từ server
+            (error.request || error.message === 'Network Error')
+        ) {
+            throw new Error('Không có kết nối mạng. Vui lòng kiểm tra kết nối Internet.');
+        }
+
+        // Nếu có response, lấy thông báo lỗi server trả về
+        const message = error.response?.data?.message || 'Gửi liên kết đặt lại thất bại.';
         throw new Error(message);
     }
 };
+
+
 
 export const resetPassword = async (email, code, password) => {
     try {

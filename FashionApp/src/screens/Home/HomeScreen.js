@@ -46,7 +46,6 @@ const HomeScreen = () => {
       const count = await getPendingOrderCount();
       setPendingOrderCount(count);
     } catch (error) {
-      console.error("Error fetching pending order count:", error.message);
     }
   };
 

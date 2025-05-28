@@ -100,7 +100,7 @@ export default function LoginScreen() {
 //     setIsLoading(false);
 //   }
 // };
-    const handleLogin = async () => {
+  const handleLogin = async () => {
   const { email, password, isRemember } = credentials;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -138,7 +138,7 @@ export default function LoginScreen() {
       navigation.navigate('Home');
     } else {
       const message = response?.message?.toLowerCase() || '';
-      if (message.includes('incorrect email or password')) {
+      if (message.includes('')) {
         
         showToast('Đăng nhập thất bại. Vui lòng nhập đúng email hoặc mật khẩu');
       } else {

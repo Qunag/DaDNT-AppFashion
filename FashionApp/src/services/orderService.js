@@ -23,7 +23,6 @@ export const fetchOrders = async (userId) => {
         return response.data;
     } catch (error) {
         const message = error.response?.data?.message || error.message;
-        console.error('Fetch orders error:', message);
         throw new Error(message || 'Không thể tải danh sách đơn hàng.');
     }
 };
@@ -94,7 +93,6 @@ export const getPendingOrderCount = async () => {
         const pendingOrders = orders.filter(order => order.status == 'pending');
         return pendingOrders.length;
     } catch (error) {
-        console.error('Error fetching pending order count:', error.message);
         return 0;
     }
 };
