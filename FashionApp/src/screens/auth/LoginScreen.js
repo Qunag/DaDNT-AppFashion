@@ -48,115 +48,63 @@ export default function LoginScreen() {
     });
   };
 
-  
-// const handleLogin = async () => {
-//   const { email, password, isRemember } = credentials;
-//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-//   if (!email && !password) {
-//         showToast('Vui lòng nhập email và mật khẩu');
-//         return;
-//     }
-
-//     if (!emailRegex.test(email)) {
-//       showToast('Email không hợp lệ');
-//       return;
-//     }
-
-//     if (!password) {
-//         showToast('Vui lòng nhập mật khẩu');
-//         return;
-//     }
-//     if (!email) {
-//         showToast('Vui lòng nhập email');
-//         return;
-//     }
-
-//     if (!email || !password || !emailRegex.test(email)) {
-//       showToast('Email hoặc mật khẩu không đúng. Kiểm tra lại.');
-//       return;
-//     }
-    
-
-
-//   try {
-//     setIsLoading(true);
-//     const response = await loginUser(email, password);
-
-//     if (response?.tokens?.access?.token) {
-//       if (isRemember) {
-//         await AsyncStorage.setItem('accessToken', response.tokens.access.token);
-//         await AsyncStorage.setItem('user', JSON.stringify(response.user));
-//       }
-
-//       showToast('Đăng nhập thành công! Chào mừng bạn trở lại!', 'success');
-//       navigation.navigate('Home');
-//     } else {
-//       showToast('Email hoặc mật khẩu không đúng. Kiểm tra lại.');
-//     }
-//   } catch (error) {
-//     showToast('Email hoặc mật khẩu không đúng. Kiểm tra lại.');
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
   const handleLogin = async () => {
-  const { email, password, isRemember } = credentials;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const { email, password, isRemember } = credentials;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Kiểm tra input cơ bản
-  if (!email && !password) {
-    showToast('Vui lòng nhập đầy đủ cả email và mật khẩu.'); 
-    return;
-  }
+    // Kiểm tra input cơ bản
+    if (!email && !password) {
+      showToast('Vui lòng nhập đầy đủ cả email và mật khẩu.');
+      return;
+    }
 
-  if (!email) {
-    showToast('Vui lòng nhập email'); 
-    return;
-  }
+    if (!email) {
+      showToast('Vui lòng nhập email');
+      return;
+    }
 
-  if (!emailRegex.test(email)) {
-    showToast('Đăng nhập thất bại. Vui lòng nhập đúng email'); 
-    return;
-  }
+    if (!emailRegex.test(email)) {
+      showToast('Đăng nhập thất bại. Vui lòng nhập đúng email');
+      return;
+    }
 
-  if (!password) {
-    showToast('Vui lòng nhập mật khẩu'); 
-    return;
-  }
+    if (!password) {
+      showToast('Vui lòng nhập mật khẩu');
+      return;
+    }
 
-  try {
-    setIsLoading(true);
-    const response = await loginUser(email, password);
+    try {
+      setIsLoading(true);
+      const response = await loginUser(email, password);
 
-    if (response?.tokens?.access?.token) {
-      if (isRemember) {
-        await AsyncStorage.setItem('accessToken', response.tokens.access.token);
-        await AsyncStorage.setItem('user', JSON.stringify(response.user || {}));
+      if (response?.tokens?.access?.token) {
+        if (isRemember) {
+          await AsyncStorage.setItem('accessToken', response.tokens.access.token);
+          await AsyncStorage.setItem('user', JSON.stringify(response.user || {}));
+        }
+        showToast('Đăng nhập thành công! Chào mừng bạn trở lại!', 'success');
+        navigation.navigate('Home');
+      } else {
+        const message = response?.message?.toLowerCase() || '';
+        if (message.includes('incorrect email or password')) {
+
+          showToast('Đăng nhập thất bại. Vui lòng nhập đúng email hoặc mật khẩu');
+        } else {
+          showToast('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
+        }
       }
-      showToast('Đăng nhập thành công! Chào mừng bạn trở lại!', 'success');
-      navigation.navigate('Home');
-    } else {
-      const message = response?.message?.toLowerCase() || '';
-      if (message.includes('')) {
-        
+    } catch (error) {
+
+      const message = error.response?.data?.message?.toLowerCase() || '';
+      if (message.includes('incorrect email or password')) {
         showToast('Đăng nhập thất bại. Vui lòng nhập đúng email hoặc mật khẩu');
       } else {
-        showToast('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
+        showToast('Đã xảy ra lỗi. Vui lòng thử lại.');
       }
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    // Xử lý lỗi chung (bao gồm lỗi mạng hoặc server)
-    const message = error.response?.data?.message?.toLowerCase() || '';
-    if (message.includes('incorrect email or password')) {
-      showToast('Đăng nhập thất bại. Vui lòng nhập đúng email hoặc mật khẩu');
-    } else {
-      showToast('Đã xảy ra lỗi. Vui lòng thử lại.');
-    }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
   return (
@@ -168,7 +116,7 @@ export default function LoginScreen() {
         >
           <View style={styles.container}>
             <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
-              <BackButton />
+              <BackButton destination="Splash" />
               <View style={styles.overlay} />
               <Text style={styles.welcomeText}>Chào mừng bạn trở lại!</Text>
             </ImageBackground>

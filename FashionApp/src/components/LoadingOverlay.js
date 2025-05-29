@@ -1,64 +1,40 @@
-// import React from "react";
-// import { View, Modal, ActivityIndicator, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, ActivityIndicator, StyleSheet, Modal } from 'react-native';
 
-// const LoadingOverlay = ({ visible, text = "Đang tải..." }) => {
-//     return (
-//         <Modal transparent={true} animationType="fade" visible={visible}>
-//             <View style={styles.modalBackground}>
-//                 <View style={styles.modalContainer}>
-//                     <ActivityIndicator size="large" color="#fff" />
-//                     <Text style={styles.loadingText}>{text}</Text>
-//                 </View>
-//             </View>
-//         </Modal>
-//     );
-// };
+// Component LoadingOverlay
+const LoadingOverlay = ({ visible, duration = 2000, onFinish }) => {
+  const [isVisible, setIsVisible] = useState(visible);
 
-// const styles = StyleSheet.create({
-//     modalBackground: {
-//         flex: 1,
-//         justifyContent: "center",
-//         alignItems: "center",
-//         backgroundColor: "rgba(0,0,0,0.5)", // Làm mờ nền
-//     },
-//     modalContainer: {
-//         width: 120,
-//         height: 120,
-//         backgroundColor: "#333",
-//         borderRadius: 10,
-//         justifyContent: "center",
-//         alignItems: "center",
-//     },
-//     loadingText: {
-//         marginTop: 10,
-//         color: "#fff",
-//         fontSize: 14,
-//     },
-// });
+  useEffect(() => {
+    setIsVisible(visible);
+    if (visible) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        if (onFinish) onFinish(); // Gọi callback khi kết thúc
+      }, duration);
+      return () => clearTimeout(timer); // Dọn dẹp timer
+    }
+  }, [visible, duration, onFinish]);
 
-// export default LoadingOverlay;
-import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
-
-const LoadingOverlay = () => {
   return (
-    <View style={styles.overlay}>
-      <ActivityIndicator size="large" color="#fff" />
-    </View>
+    <Modal
+      transparent={true}
+      animationType="fade"
+      visible={isVisible}
+      onRequestClose={() => { }}>
+      <View style={styles.overlay}>
+        <ActivityIndicator size="large" color="#6342E8" />
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Màn hình đen mờ
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 100,
   },
 });
 

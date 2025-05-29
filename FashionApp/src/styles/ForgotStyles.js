@@ -1,49 +1,46 @@
 // import { StyleSheet } from 'react-native';
+
 // export default StyleSheet.create({
 //     container: {
 //         flex: 1,
-//         backgroundColor: '#fff',
+//         backgroundColor: white,
 //     },
-//     backButton: {
-//         position: 'absolute',
-//         top: 40,
-//         left: 10,
-//         padding: 10,
-//         zIndex: 10,
-//     },
-//     content: {
-//         flex: 1,
+//     topSection: {
+//         flex: 1.2,
 //         justifyContent: 'center',
-//         alignItems: 'center'
+//         alignItems: 'center',
+//         width: '100%',
 //     },
-//     title: {
+//     overlay: {
+//         ...StyleSheet.absoluteFillObject,
+//         backgroundColor: 'rgba(0, 0, 0, 0.3)',
+//     },
+//     welcomeText: {
 //         fontSize: 24,
 //         fontWeight: 'bold',
-//         marginBottom: 10
+//         color: white,
+//         textAlign: 'center',
 //     },
-//     subtitle: {
-//         fontSize: 16,
-//         color: 'gray',
-//         marginBottom: 20
-//     },
-//     input: {
-//         width: '80%',
-//         borderWidth: 1,
-//         borderColor: '#ccc',
-//         borderRadius: 10,
-//         padding: 12,
-//         marginBottom: 20
-//     },
-//     button: {
-//         backgroundColor: '#6342E8',
-//         paddingVertical: 12,
-//         width: '80%',
+//     bottomSection: {
+//         flex: 1.8,
+//         backgroundColor: white,
+//         borderTopLeftRadius: 30,
+//         borderTopRightRadius: 30,
+//         padding: padding,
 //         alignItems: 'center',
-//         borderRadius: 54
+//         shadowColor: '#000',
+//         shadowOpacity: 0.1,
+//         shadowOffset: { width: 0, height: -3 },
+//         shadowRadius: 10,
 //     },
-//     buttonText: {
-//         color: '#fff',
-//         fontSize: 16,
-//         fontWeight: 'bold'
-//     }
-// })
+//     instructionText: {
+//         fontSize: font,
+//         marginBottom: 20,
+//         textAlign: 'center',
+//     },
+//     signupText: {
+//         color: primary,
+//         fontWeight: 'bold',
+//         marginTop: 15,
+//     },
+// });
