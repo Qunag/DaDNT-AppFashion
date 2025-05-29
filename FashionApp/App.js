@@ -57,38 +57,7 @@ const linking = {
 };
 
 export default function App() {
-  useEffect(() => {
-    const handleDeepLink = ({ url }) => {
-      console.log('Deep link received:', url);
-      if (url) {
-        // Phân tích URL để kiểm tra scheme và path
-        const parsedUrl = Linking.parse(url);
-        console.log('Parsed URL:', parsedUrl);
-        Toast.show({
-          type: 'info',
-          text1: 'Deep Link',
-          text2: `Received URL: ${url}`,
-        });
-        // Xử lý tùy chỉnh nếu cần
-        if (parsedUrl.path === 'reset-password' && parsedUrl.queryParams?.token) {
-          console.log('Reset Password Token:', parsedUrl.queryParams.token);
-        }
-      }
-    };
-
-    // Lắng nghe sự kiện deep link
-    const subscription = Linking.addEventListener('url', handleDeepLink);
-
-    // Kiểm tra URL ban đầu
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink({ url });
-      }
-    });
-
-    // Dọn dẹp listener
-    return () => subscription.remove();
-  }, []);
+  
 
   return (
     <>
