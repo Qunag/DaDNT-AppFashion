@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import icon
+import { View, Text, TouchableWithoutFeedback, Keyboard, Alert, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles/ResetPasswordStyles';
 import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/Button';
 import InputField from '../../components/InputField';
+import { resetPassword } from '../../services/authService';
 
 export default function ResetPassword() {
     const navigation = useNavigation();
@@ -13,8 +14,9 @@ export default function ResetPassword() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isPasswordVisible, setPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const handleResetPassword = () => {
+    const handleResetPassword = async () => {
         if (!newPassword || !confirmPassword) {
             Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin');
             return;
@@ -30,8 +32,16 @@ export default function ResetPassword() {
             return;
         }
 
-        Alert.alert('Thành công', 'Mật khẩu đã được đặt lại!');
-        navigation.replace('Login'); // Chuyển về màn hình đăng nhập
+        setLoading(true);
+        try {
+            await resetPassword(newPassword);
+            Alert.alert('Thành công', 'Mật khẩu đã được đặt lại!');
+            navigation.replace('Login');
+        } catch (error) {
+            Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra, vui lòng thử lại');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,44 +52,45 @@ export default function ResetPassword() {
                 <Text style={styles.title}>Reset Password</Text>
                 <Text style={styles.subtitle}>Enter your new password</Text>
 
-                {/* Trường nhập mật khẩu mới */}
                 <InputField
                     label="New Password"
                     icon="lock-closed"
                     placeholder="Enter new password"
                     value={newPassword}
                     onChangeText={setNewPassword}
-                    secureTextEntry={!isPasswordVisible} // Ẩn/hiện mật khẩu
+                    secureTextEntry={!isPasswordVisible}
                     rightIcon={
                         <Ionicons
                             name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                             size={24}
                             color="gray"
-                            onPress={() => setPasswordVisible(!isPasswordVisible)} // Toggle trạng thái
+                            onPress={() => setPasswordVisible(!isPasswordVisible)}
                         />
                     }
                 />
 
-                {/* Trường xác nhận mật khẩu */}
                 <InputField
                     label="Confirm Password"
                     icon="lock-closed"
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
-                    secureTextEntry={!isConfirmPasswordVisible} // Ẩn/hiện mật khẩu xác nhận
+                    secureTextEntry={!isConfirmPasswordVisible}
                     rightIcon={
                         <Ionicons
                             name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
                             size={24}
                             color="gray"
-                            onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)} // Toggle trạng thái
+                            onPress={() => setConfirmPasswordVisible(!isConfirmPasswordVisible)}
                         />
                     }
                 />
 
-                {/* Nút xác nhận */}
-                <CustomButton title="Reset Password" type="fill" onPress={handleResetPassword} />
+                {loading ? (
+                    <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 20 }} />
+                ) : (
+                    <CustomButton title="Reset Password" type="fill" onPress={handleResetPassword} />
+                )}
             </View>
         </TouchableWithoutFeedback>
     );

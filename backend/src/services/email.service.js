@@ -41,7 +41,6 @@ Please log in and change your password as soon as possible for security reasons.
   await sendEmail(to, subject, text);
 };
 
-module.exports = { sendResetPasswordEmail };
 
 /**
  * Send verification email

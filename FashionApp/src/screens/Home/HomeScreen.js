@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Animated, Image, TouchableOpacity, ScrollView } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Animated, ScrollView } from "react-native";
 import Toolbar from "../../components/Toolbar";
 import Watch from "../../components/Watch";
 import Profile from "../Profile/Profile";
 import BottomNavBar from "../../components/BottomNavBar";
+import LoadingOverlay from "../../components/LoadingOverlay"; // Import LoadingOverlay
 import { getProducts } from "../../services/productService";
 import { getPendingOrderCount } from "../../services/orderService";
 import { getCartCount } from "../../services/cartService";
@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [isProfileVisible, setProfileVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // State cho loading overlay
+  const [loadingCallback, setLoadingCallback] = useState(null); // Lưu callback
   const profileAnim = useRef(new Animated.Value(-250)).current;
 
   const [products, setProducts] = useState([]);
@@ -66,13 +68,16 @@ const HomeScreen = () => {
   }, []);
 
   const toggleProfile = () => {
-    const toValue = isProfileVisible ? -250 : 0;
-    Animated.timing(profileAnim, {
-      toValue,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    setProfileVisible(!isProfileVisible);
+    setIsLoading(true);
+    setLoadingCallback(() => () => {
+      const toValue = isProfileVisible ? -250 : 0;
+      Animated.timing(profileAnim, {
+        toValue,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+      setProfileVisible(!isProfileVisible);
+    });
   };
 
   const handleSearch = (term) => {
@@ -93,6 +98,13 @@ const HomeScreen = () => {
     }
   };
 
+  const handleNavigation = (screen) => {
+    setIsLoading(true);
+    setLoadingCallback(() => () => {
+      navigation.navigate(screen);
+    });
+  };
+
   const filteredProducts = products.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,6 +118,13 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Sử dụng LoadingOverlay */}
+      <LoadingOverlay
+        visible={isLoading}
+        duration={500} // Thời gian hiển thị loading
+        onFinish={loadingCallback}
+      />
+
       <Toolbar
         toggleProfile={toggleProfile}
         onSearch={handleSearch}
@@ -118,28 +137,6 @@ const HomeScreen = () => {
         profileAnim={profileAnim}
       />
 
-      {/* Banner Section */}
-      {/* <View style={styles.bannerContainer}>
-        <Image
-          source={{ uri: "https://example.com/shoe-image.png" }} // Replace with actual image URL
-          style={styles.bannerImage}
-        />
-        <View style={styles.bannerTextContainer}>
-          <Text style={styles.bannerTitle}>New Collection</Text>
-          <Text style={styles.bannerSubtitle}>Đây là một đôi giày NGON.</Text>
-          <TouchableOpacity style={styles.shopNowButton}>
-            <Text style={styles.shopNowText}>Shop now</Text>
-          </TouchableOpacity>
-        </View>
-      </View> */}
-
-      {/* Categories Section */}
-      {/* <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Categories</Text>
-      </View>
-      <Brand onSelectBrand={setSelectedBrand} selectedBrand={selectedBrand} /> */}
-
-      {/* Recommendation Section */}
       <Watch
         products={filteredProducts}
         loading={loading}
@@ -150,12 +147,11 @@ const HomeScreen = () => {
         scrollViewRef={scrollViewRef}
       />
 
-
-      {/* Sử dụng BottomNavBar component */}
       <BottomNavBar
         toggleProfile={toggleProfile}
         cartItemCount={cartItemCount}
         onHomePress={scrollToTop}
+        onNavigate={handleNavigation} // Truyền hàm handleNavigation
       />
     </View>
   );

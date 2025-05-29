@@ -43,7 +43,6 @@ export const loginUser = async (email, password) => {
 
         return response.data;
     } catch (error) {
-        console.error('Login failed', error);
         throw error;
     }
 };
@@ -95,15 +94,23 @@ export const forgotPassword = async (email) => {
     }
 };
 
-export const resetPassword = async (email, code, password) => {
-    try {
-        const response = await api.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, { email, code, password });
-        return response.data;
-    } catch (error) {
-        const message = error.response?.data?.message || 'Failed to reset password.';
-        throw new Error(message);
+export const resetPassword = async (newPassword) => {
+    const token = await AsyncStorage.getItem('accessToken');
+    if (!token) {
+        throw new Error('Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn');
     }
-}
+
+    const response = await api.post(
+        API_ENDPOINTS.AUTH.RESET_PASSWORD,
+        { password: newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    return response.data;
+};
+
+
+
 
 
 export const sendVerificationEmail = async () => {
