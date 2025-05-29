@@ -9,6 +9,7 @@ import { getProducts } from "../../services/productService";
 import { getPendingOrderCount } from "../../services/orderService";
 import { getCartCount } from "../../services/cartService";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import styles from "../../styles/Home/HomeStyles"; // Import styles
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -64,27 +65,24 @@ const HomeScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchCartItemCount();
+      fetchPendingOrderCount();
     }, [])
   );
 
   useEffect(() => {
     fetchProducts();
-    fetchPendingOrderCount();
-    fetchCartItemCount();
   }, []);
 
   const toggleProfile = () => {
-    setIsLoading(true);
-    setLoadingCallback(() => () => {
-      const toValue = isProfileVisible ? -250 : 0;
-      Animated.timing(profileAnim, {
-        toValue,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-      setProfileVisible(!isProfileVisible);
-    });
+    const toValue = isProfileVisible ? -250 : 0;
+    Animated.timing(profileAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    setProfileVisible(!isProfileVisible);
   };
+  
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -124,12 +122,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Sử dụng LoadingOverlay */}
-      <LoadingOverlay
-        visible={isLoading}
-        duration={500} // Thời gian hiển thị loading
-        onFinish={loadingCallback}
-      />
+
 
       <Toolbar
         toggleProfile={toggleProfile}
@@ -163,39 +156,5 @@ const HomeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-    position: "relative",
-  },
-  shopNowButton: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    alignSelf: "flex-start",
-  },
-  shopNowText: {
-    color: "#6342E8",
-    fontWeight: "bold",
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    marginVertical: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  seeAllText: {
-    fontSize: 14,
-    color: "#6342E8",
-  },
-});
 
 export default HomeScreen;

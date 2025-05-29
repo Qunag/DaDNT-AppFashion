@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import styles from '../../styles/CodeScreenStyles';
+import styles from '../../styles/Auth/CodeScreenStyles';
 import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/Button';
 import { sendOtp, sendVerificationEmail, verifyEmail, verifyOtp } from '../../services/authService';

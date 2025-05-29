@@ -20,9 +20,6 @@ export default function SuccessScreen() {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
-                <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
             <Image source={require('../../assets/image1.png')} style={styles.image1} />
             <Text style={{ fontSize: 30, color: '#6342E8', textAlign: 'center', fontWeight: 'bold', marginTop: 30 }}>Thank You</Text>
             <Text style={{ fontSize: 25, color: '#000', textAlign: 'center', fontWeight: 'bold', marginTop: 10 }}>Bạn đã đặt hàng thành công!</Text>
@@ -62,11 +59,4 @@ const styles = StyleSheet.create({
         height: 116,
         top: 5,
     },
-    backButton: {
-        position: 'absolute',
-        top: 50,
-        left: 20,
-        zIndex: 10,
-    },
-
 })
