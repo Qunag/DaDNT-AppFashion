@@ -10,7 +10,7 @@ const SplashScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton destination="Loading" />
       <Image source={require('../../assets/anh2.png')} style={styles.anh2} />
       <Image source={require('../../assets/anh4.png')} style={styles.anh4} />
       <View style={styles.textContainer}>

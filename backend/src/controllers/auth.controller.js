@@ -49,9 +49,13 @@ const refreshTokens = catchAsync(async (req, res) => {
 
 
 const resetPassword = catchAsync(async (req, res) => {
-  await authService.resetPassword(req.query.token, req.body.password);
+  const userId = req.user.id;
+  const { password } = req.body;
+
+  await authService.resetPassword(userId, password);
   res.status(httpStatus.NO_CONTENT).send();
 });
+
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);

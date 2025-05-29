@@ -1,25 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import CustomButton from '../../components/ButtonLoading';
 import { useNavigation } from '@react-navigation/native';
-
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 const LoadingScreen = () => {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingCallback, setLoadingCallback] = useState(null);
+
+  const handleButtonPress = () => {
+    setIsLoading(true);
+    setLoadingCallback(() => () => {
+      navigation.push('Splash');
+    });
+  };
+
   return (
     <View style={styles.container}>
+      <LoadingOverlay
+        visible={isLoading}
+        duration={500}
+        onFinish={loadingCallback}
+      />
+
       <Image source={require('../../assets/anh3.png')} style={styles.image} />
 
       <View style={styles.textContainer}>
         <Text style={styles.title}>Panda</Text>
-        <CustomButton title="SHOP NOW" type='outline' onPress={() => navigation.push('Splash')} />
-
+        <CustomButton
+          title="SHOP NOW"
+          type="outline"
+          onPress={handleButtonPress}
+        />
       </View>
     </View>
   );
 };
-
-export default LoadingScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -33,13 +50,15 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     position: 'absolute',
-    bottom: 150, // Đẩy text & button lên 100px từ bottom
+    bottom: 150,
     alignItems: 'center',
   },
   title: {
     fontSize: 80,
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: 20, // Tạo khoảng cách giữa title và button
+    marginBottom: 20,
   },
 });
+
+export default LoadingScreen;
