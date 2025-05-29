@@ -8,7 +8,7 @@ import LoadingOverlay from "../../components/LoadingOverlay"; // Import LoadingO
 import { getProducts } from "../../services/productService";
 import { getPendingOrderCount } from "../../services/orderService";
 import { getCartCount } from "../../services/cartService";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -60,6 +60,12 @@ const HomeScreen = () => {
       console.error("Error fetching cart item count:", error.message);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCartItemCount();
+    }, [])
+  );
 
   useEffect(() => {
     fetchProducts();
@@ -162,34 +168,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     position: "relative",
-  },
-  bannerContainer: {
-    flexDirection: "row",
-    backgroundColor: "#6342E8",
-    marginHorizontal: 15,
-    marginVertical: 10,
-    borderRadius: 15,
-    padding: 15,
-    alignItems: "center",
-  },
-  bannerImage: {
-    width: 120,
-    height: 80,
-    resizeMode: "contain",
-  },
-  bannerTextContainer: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  bannerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  bannerSubtitle: {
-    fontSize: 14,
-    color: "#fff",
-    marginVertical: 5,
   },
   shopNowButton: {
     backgroundColor: "#fff",
