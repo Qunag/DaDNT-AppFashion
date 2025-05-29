@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Platform,
-} from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { updateUser } from "../../services/userService";
 import Toast from "react-native-toast-message";
 import Spinner from "react-native-loading-spinner-overlay";
+import styles from "../../styles/Profile/EditProfileFormStyles";
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();
@@ -31,6 +21,9 @@ const EditProfileFormScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
+    const specialCharOrEmojiRegex = /[^\p{L}\p{N}\s]/gu;
+  
+    // 1. Kiểm tra nhập đầy đủ
     if (!name.trim() || !email.trim() || !phone.trim() || !address.trim()) {
       Toast.show({
         type: "error",
@@ -39,9 +32,60 @@ const EditProfileFormScreen = () => {
       });
       return;
     }
-
+  
+    // 2. Tên không vượt quá 30 ký tự
+    if (name.trim().length > 30) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Tên không được vượt quá 30 ký tự",
+      });
+      return;
+    }
+  
+    // 3. Tên không chứa ký tự đặc biệt và emoji
+    if (specialCharOrEmojiRegex.test(name)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Tên không được chứa ký tự đặc biệt hoặc emoji",
+      });
+      return;
+    }
+  
+    // 4. Số điện thoại phải đúng 10 chữ số
+    if (!/^\d{10}$/.test(phone)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Số điện thoại phải gồm đúng 10 chữ số",
+      });
+      return;
+    }
+  
+    // 5. Địa chỉ không vượt quá 50 ký tự
+    if (address.trim().length > 50) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Địa chỉ không được vượt quá 50 ký tự",
+      });
+      return;
+    }
+  
+    // 6. Địa chỉ không chứa ký tự đặc biệt và emoji
+    if (specialCharOrEmojiRegex.test(address)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Địa chỉ không được chứa ký tự đặc biệt hoặc emoji",
+      });
+      return;
+    }
+  
+    // 7. Cập nhật thông tin người dùng
     try {
-      setIsLoading(true); // Hiện overlay
+      setIsLoading(true);
       const accessToken = await AsyncStorage.getItem("accessToken");
       const decodedToken = jwtDecode(accessToken);
       const userId =
@@ -49,16 +93,16 @@ const EditProfileFormScreen = () => {
         decodedToken.userId ||
         decodedToken.id ||
         decodedToken.user;
-
+  
       const updatedUser = { name, email, phone, address };
       await updateUser(userId, updatedUser);
-
+  
       Toast.show({
         type: "success",
         text1: "Thành công",
         text2: "Thông tin đã được cập nhật",
       });
-
+  
       navigation.goBack();
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
@@ -68,9 +112,9 @@ const EditProfileFormScreen = () => {
         text2: "Không thể cập nhật thông tin. Vui lòng thử lại sau.",
       });
     } finally {
-      setIsLoading(false); // Tắt overlay
+      setIsLoading(false);
     }
-  };
+  };    
 
   return (
     <>
@@ -143,76 +187,5 @@ const EditProfileFormScreen = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f9f9f9",
-  },
-  header: {
-    backgroundColor: "#6342E8",
-    height: 250,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    paddingTop: Platform.OS === "ios" ? 60 : 40,
-  },
-  backButton: {
-    position: "absolute",
-    left: 20,
-    top: Platform.OS === "ios" ? 60 : 40,
-    padding: 10,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "#fff",
-    backgroundColor: "#eee",
-    marginTop: 10,
-  },
-  form: {
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 6,
-    color: "#333",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#6342E8",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    shadowColor: "#6342E8",
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 3,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
 
 export default EditProfileFormScreen;

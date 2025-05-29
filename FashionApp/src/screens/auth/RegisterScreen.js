@@ -8,7 +8,7 @@ import InputField from '../../components/InputField';
 import AuthButton from '../../components/AuthButton';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { registerUser } from '../../services/authService';
-import styles from '../../styles/RegisterStyles';
+import styles from '../../styles/Auth/RegisterStyles';
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({

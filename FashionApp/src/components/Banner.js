@@ -45,7 +45,7 @@ const Banner = () => {
     return (
       <View style={styles.imagePlaceholder}>
         <Ionicons name="image-outline" size={40} color="#999" />
-        <Text style={styles.placeholderText}>Không có banner hợp lệ</Text>
+        <Text style={styles.placeholderText}>Không có banner</Text>
       </View>
     );
   }

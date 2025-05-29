@@ -21,7 +21,6 @@ import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
-import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
 import Toast from 'react-native-toast-message';
 import NoInternetNotice from './src/components/NoInternetNotice';
 
@@ -57,38 +56,7 @@ const linking = {
 };
 
 export default function App() {
-  useEffect(() => {
-    const handleDeepLink = ({ url }) => {
-      console.log('Deep link received:', url);
-      if (url) {
-        // Phân tích URL để kiểm tra scheme và path
-        const parsedUrl = Linking.parse(url);
-        console.log('Parsed URL:', parsedUrl);
-        Toast.show({
-          type: 'info',
-          text1: 'Deep Link',
-          text2: `Received URL: ${url}`,
-        });
-        // Xử lý tùy chỉnh nếu cần
-        if (parsedUrl.path === 'reset-password' && parsedUrl.queryParams?.token) {
-          console.log('Reset Password Token:', parsedUrl.queryParams.token);
-        }
-      }
-    };
-
-    // Lắng nghe sự kiện deep link
-    const subscription = Linking.addEventListener('url', handleDeepLink);
-
-    // Kiểm tra URL ban đầu
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink({ url });
-      }
-    });
-
-    // Dọn dẹp listener
-    return () => subscription.remove();
-  }, []);
+  
 
   return (
     <>
@@ -117,7 +85,6 @@ export default function App() {
           <Stack.Screen name="Order" component={OrderScreen} />
           <Stack.Screen name="NoticeOrder" component={NoticeOrderScreen} />
           <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
-          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

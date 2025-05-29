@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, ActivityIndicator } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,7 @@ import { getUserById } from '../../services/userService';
 import { useFocusEffect } from '@react-navigation/native';
 import { createOrder } from '../../services/orderService';
 import { removeFromCart } from '../../services/cartService';
+import styles from '../../styles/Buy/CheckoutStyles';
 
 export default function CheckoutScreen() {
     const navigation = useNavigation();
@@ -19,6 +20,8 @@ export default function CheckoutScreen() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isUserInfoComplete, setIsUserInfoComplete] = useState(true);
+    const [placingOrder, setPlacingOrder] = useState(false);
+
 
     const colorMap = {
         '#CC0000': 'Đỏ',
@@ -95,6 +98,8 @@ export default function CheckoutScreen() {
             return;
         }
 
+        setPlacingOrder(true); // Bắt đầu hiển thị spinner
+
         try {
             const orderItems = cartItems.map(item => {
                 const colorObj = item.productId.colors ? item.productId.colors.find(c => c.code === item.color) : null;
@@ -122,6 +127,7 @@ export default function CheckoutScreen() {
                 }
             }
 
+            setPlacingOrder(false); // Tắt spinner trước khi chuyển màn
             navigation.navigate("Success", {
                 cartItems: orderItems,
                 deliveryMethod,
@@ -134,18 +140,22 @@ export default function CheckoutScreen() {
             });
 
         } catch (error) {
+            setPlacingOrder(false); // Tắt spinner nếu có lỗi
             console.error("Error creating order:", error.response ? error.response.data : error.message);
             Alert.alert("Lỗi", "Không thể tạo đơn hàng. Vui lòng thử lại.");
         }
     };
 
-    if (loading) {
+
+    if (loading || placingOrder) {
         return (
-            <View style={styles.container}>
-                <Text>Đang tải...</Text>
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Text style={{ marginBottom: 10 }}>Đang xử lý đơn hàng...</Text>
+                <ActivityIndicator size="large" color="#6342E8" />
             </View>
         );
     }
+
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -261,149 +271,3 @@ export default function CheckoutScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    infoRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginVertical: 5,
-    },
-    infoText: {
-        fontSize: 14,
-        color: "#000",
-        marginLeft: 10,
-    },
-    errorText: {
-        fontSize: 14,
-        color: "red",
-        marginTop: 10,
-    },
-    container: {
-        flexGrow: 1,
-        padding: 10,
-        backgroundColor: "#ecf0f1",
-    },
-    view: {
-        backgroundColor: "white",
-        borderRadius: 10,
-        padding: 10,
-        width: "100%",
-        marginBottom: 10,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        textAlign: "center",
-        marginBottom: 20,
-        marginTop: 50,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
-    placeholderText: {
-        fontSize: 14,
-        color: "gray",
-    },
-    itemBox: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-    },
-    image: {
-        width: 60,
-        height: 60,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    content: {
-        flex: 1,
-    },
-    productName: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "#6342E8",
-    },
-    collection: {
-        fontSize: 12,
-        color: "gray",
-        marginVertical: 2,
-    },
-    price: {
-        fontSize: 15,
-        fontWeight: "bold",
-    },
-    quantity: {
-        fontSize: 14,
-        color: "gray",
-    },
-    option: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 12,
-        borderWidth: 1,
-        borderColor: "#6342E8",
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        marginVertical: 5,
-        alignItems: "center",
-    },
-    selectedOption: {
-        backgroundColor: "#EDE7FF",
-        borderColor: "#6342E8",
-    },
-    optionText: {
-        fontSize: 16,
-        flex: 1,
-    },
-    optionCost: {
-        fontSize: 14,
-        color: "#6342E8",
-        marginRight: 10,
-    },
-    totalCostContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 20,
-    },
-    totalCost: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#6342E8",
-    },
-    costBreakdown: {
-        marginTop: 10,
-    },
-    costDetail: {
-        fontSize: 14,
-        color: "gray",
-    },
-    terms: {
-        fontSize: 12,
-        color: "gray",
-        textAlign: "center",
-        marginTop: 10,
-    },
-    placeOrderButton: {
-        backgroundColor: "#6342E8",
-        paddingVertical: 15,
-        borderRadius: 50,
-        alignItems: "center",
-        marginTop: 20,
-    },
-    disabledButton: {
-        backgroundColor: "#cccccc",
-    },
-    placeOrderText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    backButton: {
-        position: "absolute",
-        left: 20,
-        top: 40,
-    },
-});
