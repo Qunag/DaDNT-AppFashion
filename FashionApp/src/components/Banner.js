@@ -6,9 +6,9 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BANNER_HEIGHT = SCREEN_WIDTH * (9 / 16);
 
 const initialBanners = [
-  { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDZsX9CZ5JF98NBnzhTBxocAf6Zd8sl3xz7w&s" },
-  { uri: "https://scontent.fhan5-6.fna.fbcdn.net/v/t1.15752-9/489730579_669715899197275_152952505542692274_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=107&ccb=1-7&_nc_sid=0024fc&_nc_ohc=U6jsfRxKbnEQ7kNvwHgvuFj&_nc_oc=Adm40zBavPuoKVGouoCbC7X63EDWyMqzzbjq7wPl_ZkXpWiXMn_xKz6g5NYXs_7KAxY&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.fhan5-6.fna&oh=03_Q7cD2QG5DIYg5vWq26fHb2BKwoC83CcndrOT3Lyu11-w-WHxjQ&oe=685FCC09" },
-  { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVaf_e7v-FyOfDVswXesJXpy8HkKXAgpG8yQ&s" },
+  { uri: "https://i.pinimg.com/736x/64/a5/95/64a59515ffcf7b852a7b3d01f6445477.jpg" },
+  { uri: "https://i.pinimg.com/736x/2e/2f/c7/2e2fc723669c2022d584b85fdcabb944.jpg" },
+  { uri: "https://i.pinimg.com/736x/38/33/e3/3833e32a6336c767a0ca1eb3e333d5c8.jpg" },
   { uri: null },
 ];
 

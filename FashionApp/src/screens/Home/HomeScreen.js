@@ -64,27 +64,24 @@ const HomeScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchCartItemCount();
+      fetchPendingOrderCount();
     }, [])
   );
 
   useEffect(() => {
     fetchProducts();
-    fetchPendingOrderCount();
-    fetchCartItemCount();
   }, []);
 
   const toggleProfile = () => {
-    setIsLoading(true);
-    setLoadingCallback(() => () => {
-      const toValue = isProfileVisible ? -250 : 0;
-      Animated.timing(profileAnim, {
-        toValue,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-      setProfileVisible(!isProfileVisible);
-    });
+    const toValue = isProfileVisible ? -250 : 0;
+    Animated.timing(profileAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    setProfileVisible(!isProfileVisible);
   };
+  
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -124,12 +121,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Sử dụng LoadingOverlay */}
-      <LoadingOverlay
-        visible={isLoading}
-        duration={500} // Thời gian hiển thị loading
-        onFinish={loadingCallback}
-      />
+
 
       <Toolbar
         toggleProfile={toggleProfile}
