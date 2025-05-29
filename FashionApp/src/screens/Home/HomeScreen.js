@@ -118,12 +118,6 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Sử dụng LoadingOverlay */}
-      <LoadingOverlay
-        visible={isLoading}
-        duration={500} // Thời gian hiển thị loading
-        onFinish={loadingCallback}
-      />
 
       <Toolbar
         toggleProfile={toggleProfile}

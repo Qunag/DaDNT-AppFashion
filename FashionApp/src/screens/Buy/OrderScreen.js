@@ -22,6 +22,12 @@ export default function OrderScreen() {
                 <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
 
+            <LoadingOverlay
+                visible={isLoading}
+                duration={500} // Thời gian hiển thị loading
+                onFinish={loadingCallback}
+            />
+
             <Text style={styles.header}>Đơn hàng</Text>
 
             <View style={styles.section}>
