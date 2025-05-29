@@ -1,8 +1,3 @@
-
-
-
-
-
 const COLORS = {
     primary: "#7F00FF", // Màu chính
     secondary: "#E100FF", // Màu phụ
