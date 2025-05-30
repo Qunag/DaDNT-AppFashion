@@ -18,11 +18,8 @@ import { jwtDecode } from "jwt-decode";
 import { updateUser } from "../../services/userService";
 import Toast from "react-native-toast-message";
 import Spinner from "react-native-loading-spinner-overlay";
-<<<<<<< HEAD
-import styles from "../../styles/Profile/EditProfileFormStyles"; 
-=======
 import styles from "../../styles/Profile/EditProfileFormStyles";
->>>>>>> Nguyen1
+
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();
@@ -100,11 +97,7 @@ const EditProfileFormScreen = () => {
   
     // 7. Cập nhật thông tin người dùng
     try {
-<<<<<<< HEAD
-      setIsLoading(true); // Hiện overlay
-=======
       setIsLoading(true);
->>>>>>> Nguyen1
       const accessToken = await AsyncStorage.getItem("accessToken");
       const decodedToken = jwtDecode(accessToken);
       const userId =
@@ -115,21 +108,12 @@ const EditProfileFormScreen = () => {
   
       const updatedUser = { name, email, phone, address };
       await updateUser(userId, updatedUser);
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> Nguyen1
       Toast.show({
         type: "success",
         text1: "Thành công",
         text2: "Thông tin đã được cập nhật",
       });
-<<<<<<< HEAD
-
-=======
   
->>>>>>> Nguyen1
       navigation.goBack();
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
@@ -139,11 +123,7 @@ const EditProfileFormScreen = () => {
         text2: "Không thể cập nhật thông tin. Vui lòng thử lại sau.",
       });
     } finally {
-<<<<<<< HEAD
-      setIsLoading(false); // Tắt overlay
-=======
       setIsLoading(false);
->>>>>>> Nguyen1
     }
   };    
 
@@ -219,8 +199,4 @@ const EditProfileFormScreen = () => {
   );
 };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> Nguyen1
 export default EditProfileFormScreen;

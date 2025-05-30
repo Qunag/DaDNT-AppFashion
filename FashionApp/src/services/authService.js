@@ -53,7 +53,7 @@ export const registerUser = async (name, email, password) => {
         const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, { name, email, password });
         return response.data;
     } catch (error) {
-        const message = error.response?.data?.message || 'Registration failed.';
+        const message = error.response?.data?.message || 'Email đã tồn tại.';
         throw new Error(message);
     }
 
@@ -89,7 +89,7 @@ export const forgotPassword = async (email) => {
         const response = await api.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
         return response.data;
     } catch (error) {
-        const message = error.response?.data?.message || 'Failed to send reset link.';
+        const message = error.response?.data?.message || 'Email không tồn tại.';
         throw new Error(message);
     }
 };

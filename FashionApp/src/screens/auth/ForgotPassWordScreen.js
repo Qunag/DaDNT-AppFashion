@@ -35,25 +35,25 @@ export default function ForgotPasswordScreen() {
             <ImageBackground source={require('../../assets/anh2.png')} style={styles.topSection}>
                 <BackButton/>
                 <View style={styles.overlay} />
-                <Text style={styles.welcomeText}>Forgot Password</Text>
+                <Text style={styles.welcomeText}>Quên mật khẩu</Text>
             </ImageBackground>
 
             <View style={styles.bottomSection}>
                 <Text style={styles.instructionText}>
-                    Enter your email to receive a password reset link.
+                    Vui lòng nhập email để nhận mật khẩu mới.
                 </Text>
                 <InputField
-                    label="Email address"
+                    label="Nhập Email"
                     icon="mail-outline"
-                    placeholder="Enter email"
+                    placeholder="Nhập email"
                     keyboardType="email-address"
                     value={email}
                     onChangeText={setEmail}
                     autoCapitalize="none"
                 />
-                <AuthButton title="SEND RESET LINK" onPress={handleForgotPassword} />
+                <AuthButton title="Gửi mật khẩu mới" onPress={handleForgotPassword} />
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <Text style={styles.signupText}>Back to Login</Text>
+                    <Text style={styles.signupText}>Quay lại Đăng Nhập</Text>
                 </TouchableOpacity>
             </View>
         </View>
