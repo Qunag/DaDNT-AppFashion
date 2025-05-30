@@ -17,18 +17,24 @@ export default function ResetPassword() {
     const [loading, setLoading] = useState(false);
 
     const handleResetPassword = async () => {
-        if (!newPassword || !confirmPassword) {
-            Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin');
+        if (!newPassword && !confirmPassword) {
+            Alert.alert('Lỗi', 'Vui lòng nhập mật khẩu mới và xác nhận mật khẩu');
+            return;
+        }
+    
+        if (!newPassword) {
+            Alert.alert('Lỗi', 'Vui lòng nhập mật khẩu mới');
+            return;
+        }
+    
+        if (!confirmPassword) {
+            Alert.alert('Lỗi', 'Vui lòng nhập xác nhận mật khẩu');
             return;
         }
 
-        if (newPassword.length < 6) {
-            Alert.alert('Lỗi', 'Mật khẩu phải có ít nhất 6 ký tự');
-            return;
-        }
 
         if (newPassword !== confirmPassword) {
-            Alert.alert('Lỗi', 'Mật khẩu không khớp');
+            Alert.alert('Lỗi', 'Mật khẩu xác nhận không khớp');
             return;
         }
 

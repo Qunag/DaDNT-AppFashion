@@ -21,7 +21,6 @@ import Watch from './src/components/Watch';
 import OrderScreen from './src/screens/Buy/OrderScreen';
 import NoticeOrderScreen from './src/screens/Buy/NoticeOrderScreen';
 import OrderDetailScreen from './src/screens/Buy/OrderDetailScreen';
-import ChangePasswordScreen from './src/screens/Profile/ChangePasswordScreen';
 import Toast from 'react-native-toast-message';
 import NoInternetNotice from './src/components/NoInternetNotice';
 
@@ -86,7 +85,6 @@ export default function App() {
           <Stack.Screen name="Order" component={OrderScreen} />
           <Stack.Screen name="NoticeOrder" component={NoticeOrderScreen} />
           <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
-          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

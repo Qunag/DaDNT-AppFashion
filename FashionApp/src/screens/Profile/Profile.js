@@ -1,40 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, Animated, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import { getUserById } from "../../services/userService";
 import { logoutUser } from "../../services/authService";
 import { createCartIfNotExists } from "../../services/cartService";
+<<<<<<< HEAD
 import styles from "../../styles/Profile/ProfileStyles"; 
+=======
+import styles from "../../styles/Profile/ProfileStyles";
+>>>>>>> Nguyen1
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const accessToken = await AsyncStorage.getItem("accessToken");
-        if (!accessToken) return;
+  const fetchUser = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      if (!accessToken) return;
 
-        const decoded = jwtDecode(accessToken);
-        const userId =
-          decoded.sub || decoded.userId || decoded.id || decoded.user;
+      const decoded = jwtDecode(accessToken);
+      const userId =
+        decoded.sub || decoded.userId || decoded.id || decoded.user;
 
-        if (!userId) return;
+      if (!userId) return;
 
-        const userData = await getUserById(userId);
-        setUser(userData);
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin user ở Profile:", error.message);
-      }
-    };
+      const userData = await getUserById(userId);
+      setUser(userData);
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin user ở Profile:", error.message);
+    }
+  };
 
-    fetchUser();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [])
+  );
 
   const handleLogout = async () => {
     try {
@@ -94,5 +100,8 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Nguyen1
 export default Profile;

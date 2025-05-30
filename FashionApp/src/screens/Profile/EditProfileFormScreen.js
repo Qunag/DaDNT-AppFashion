@@ -18,7 +18,11 @@ import { jwtDecode } from "jwt-decode";
 import { updateUser } from "../../services/userService";
 import Toast from "react-native-toast-message";
 import Spinner from "react-native-loading-spinner-overlay";
+<<<<<<< HEAD
 import styles from "../../styles/Profile/EditProfileFormStyles"; 
+=======
+import styles from "../../styles/Profile/EditProfileFormStyles";
+>>>>>>> Nguyen1
 
 const EditProfileFormScreen = () => {
   const navigation = useNavigation();
@@ -32,6 +36,9 @@ const EditProfileFormScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
+    const specialCharOrEmojiRegex = /[^\p{L}\p{N}\s]/gu;
+  
+    // 1. Kiểm tra nhập đầy đủ
     if (!name.trim() || !email.trim() || !phone.trim() || !address.trim()) {
       Toast.show({
         type: "error",
@@ -40,9 +47,64 @@ const EditProfileFormScreen = () => {
       });
       return;
     }
-
+  
+    // 2. Tên không vượt quá 30 ký tự
+    if (name.trim().length > 30) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Tên không được vượt quá 30 ký tự",
+      });
+      return;
+    }
+  
+    // 3. Tên không chứa ký tự đặc biệt và emoji
+    if (specialCharOrEmojiRegex.test(name)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Tên không được chứa ký tự đặc biệt hoặc emoji",
+      });
+      return;
+    }
+  
+    // 4. Số điện thoại phải đúng 10 chữ số
+    if (!/^\d{10}$/.test(phone)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Số điện thoại phải gồm đúng 10 chữ số",
+      });
+      return;
+    }
+  
+    // 5. Địa chỉ không vượt quá 50 ký tự
+    if (address.trim().length > 50) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Địa chỉ không được vượt quá 50 ký tự",
+      });
+      return;
+    }
+  
+    // 6. Địa chỉ không chứa ký tự đặc biệt và emoji
+    if (specialCharOrEmojiRegex.test(address)) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Địa chỉ không được chứa ký tự đặc biệt hoặc emoji",
+      });
+      return;
+    }
+  
+    // 7. Cập nhật thông tin người dùng
     try {
+<<<<<<< HEAD
       setIsLoading(true); // Hiện overlay
+=======
+      setIsLoading(true);
+>>>>>>> Nguyen1
       const accessToken = await AsyncStorage.getItem("accessToken");
       const decodedToken = jwtDecode(accessToken);
       const userId =
@@ -50,16 +112,24 @@ const EditProfileFormScreen = () => {
         decodedToken.userId ||
         decodedToken.id ||
         decodedToken.user;
-
+  
       const updatedUser = { name, email, phone, address };
       await updateUser(userId, updatedUser);
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> Nguyen1
       Toast.show({
         type: "success",
         text1: "Thành công",
         text2: "Thông tin đã được cập nhật",
       });
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> Nguyen1
       navigation.goBack();
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
@@ -69,9 +139,13 @@ const EditProfileFormScreen = () => {
         text2: "Không thể cập nhật thông tin. Vui lòng thử lại sau.",
       });
     } finally {
+<<<<<<< HEAD
       setIsLoading(false); // Tắt overlay
+=======
+      setIsLoading(false);
+>>>>>>> Nguyen1
     }
-  };
+  };    
 
   return (
     <>
@@ -145,5 +219,8 @@ const EditProfileFormScreen = () => {
   );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Nguyen1
 export default EditProfileFormScreen;
