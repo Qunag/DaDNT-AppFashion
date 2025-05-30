@@ -17,7 +17,6 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(false); // State cho loading overlay
   const [loadingCallback, setLoadingCallback] = useState(null); // Lưu callback
   const profileAnim = useRef(new Animated.Value(-250)).current;
-
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
