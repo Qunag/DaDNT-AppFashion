@@ -99,7 +99,7 @@ export default function LoginScreen() {
       if (message.includes('incorrect email or password')) {
         showToast('Đăng nhập thất bại. Vui lòng nhập đúng email hoặc mật khẩu');
       } else {
-        showToast('Đã xảy ra lỗi. Vui lòng thử lại.');
+        showToast('Vui lòng kiểm tra lại Email và Mật khẩu của bạn');
       }
     } finally {
       setIsLoading(false);

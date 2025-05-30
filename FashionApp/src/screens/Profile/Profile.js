@@ -7,11 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { getUserById } from "../../services/userService";
 import { logoutUser } from "../../services/authService";
 import { createCartIfNotExists } from "../../services/cartService";
-<<<<<<< HEAD
-import styles from "../../styles/Profile/ProfileStyles"; 
-=======
 import styles from "../../styles/Profile/ProfileStyles";
->>>>>>> Nguyen1
 
 const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
   const navigation = useNavigation();
@@ -99,9 +95,4 @@ const Profile = ({ isVisible, toggleProfile, profileAnim }) => {
     </>
   );
 };
-
-<<<<<<< HEAD
-
-=======
->>>>>>> Nguyen1
 export default Profile;
